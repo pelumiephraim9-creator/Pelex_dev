@@ -42,6 +42,10 @@
       videoId: videoId,
       playerVars: { controls: 1, rel: 0, playsinline: 1, enablejsapi: 1, modestbranding: 1, iv_load_policy: 3, origin: location.origin },
       events: {
+        onReady: function (event) {
+          var frame = event && event.target && event.target.getIframe ? event.target.getIframe() : null;
+          if (frame) frame.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope');
+        },
         onError: function () {
           var stage = shell.querySelector('.px-yt-stage');
           if (stage) stage.insertAdjacentHTML('beforeend', '<div class="px-yt-fallback">This video cannot be played here. Please open it on YouTube.</div>');
