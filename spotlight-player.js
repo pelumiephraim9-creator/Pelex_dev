@@ -45,6 +45,7 @@
       '<button type="button" class="px-yt-forward" aria-label="Forward 10 seconds">+10</button>' +
       '<span class="px-yt-current">0:00</span><input class="px-yt-range" type="range" min="0" max="1000" value="0" step="1" aria-label="Video position"><span class="px-yt-duration">0:00</span>' +
       '<select class="px-yt-speed" aria-label="Playback speed"><option value="1">1×</option></select>' +
+      '<label class="px-yt-volume-label">Volume <input class="px-yt-volume" type="range" min="0" max="100" value="100" aria-label="Volume"></label>' +
       '<button type="button" class="px-yt-full" aria-label="Fullscreen">Full screen</button></div>' +
       '<div class="px-yt-note">Double-tap either side to skip 10 seconds</div></div></div>' +
       '<div class="spot-meta"><b>' + safeText(v.title) + '</b><span>' + safeText(v.channel) + ' · ' + safeText(v.views) + ' views · ' + safeText(v.length) + ' · ' + safeText(v.published) + '</span>' +
@@ -58,7 +59,7 @@
     shell.dataset.pxPlayerReady = '1';
     var player, range = shell.querySelector('.px-yt-range'), current = shell.querySelector('.px-yt-current');
     var duration = shell.querySelector('.px-yt-duration'), play = shell.querySelector('.px-yt-play');
-    var speed = shell.querySelector('.px-yt-speed'), toast = shell.querySelector('.px-yt-toast');
+    var speed = shell.querySelector('.px-yt-speed'), volume = shell.querySelector('.px-yt-volume'), toast = shell.querySelector('.px-yt-toast');
     var lastTap = { left: 0, right: 0 }, toastTimer;
     function notify(text) {
       toast.textContent = text; toast.classList.add('is-visible');
@@ -106,6 +107,7 @@
     range.addEventListener('input', function () { current.textContent = timeLabel(Number(range.value) / 10); });
     range.addEventListener('change', function () { if (player) player.seekTo(Number(range.value) / 10, true); });
     speed.addEventListener('change', function () { if (player) { try { player.setPlaybackRate(Number(speed.value)); } catch (_) {} } });
+    volume.addEventListener('input', function () { if (player) { try { player.setVolume(Number(volume.value)); if (Number(volume.value) === 0) player.mute(); else player.unMute(); } catch (_) {} } });
     shell.querySelector('.px-yt-full').addEventListener('click', function () {
       var stage = shell.querySelector('.px-yt-stage');
       if (document.fullscreenElement) document.exitFullscreen();
