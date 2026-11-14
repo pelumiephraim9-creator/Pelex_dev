@@ -2346,6 +2346,125 @@ function add(t,cls,img,retryFn){
 })();
 </script>
 
+
+<style id="px-spotlight-save-mini-style">
+.px-spot-tools{display:flex;gap:8px;flex-wrap:wrap;padding:9px 12px;border-top:1px solid var(--line);background:var(--panel)}
+.px-spot-tools button,.px-mini-actions button,.px-saved-head button,.px-saved-row button{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer}
+.px-spot-tools button:disabled{opacity:.5;cursor:not-allowed}
+#pxSpotMini{position:fixed;right:18px;bottom:18px;z-index:99999;width:min(390px,calc(100vw - 24px));background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 48px rgba(0,0,0,.28);overflow:hidden}
+#pxSpotMini[hidden],#pxSpotSaved[hidden]{display:none}
+#pxSpotMiniHead,.px-saved-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;font-size:12px;font-weight:800}
+.px-mini-actions{display:flex;gap:6px}
+#pxSpotMiniMedia{background:#000;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden}
+#pxSpotMiniMedia video,#pxSpotMiniMedia iframe{width:100%;height:100%;border:0;object-fit:contain}
+#pxSpotMiniMedia .px-yt-shell{width:100%;height:100%}
+#pxSpotMiniMedia .px-yt-stage{height:100%;aspect-ratio:16/9}
+#pxSpotMiniMedia .px-yt-host,#pxSpotMiniMedia .px-yt-host iframe{width:100%;height:100%}
+#pxSpotMiniTitle{padding:8px 11px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pxSpotMiniFoot{display:flex;gap:7px;padding:0 11px 10px}
+#pxSpotMiniFoot button{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:9px;padding:7px 10px;font-size:11px;font-weight:700}
+#pxSpotSaved{margin:14px 0;padding:8px 14px;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--ink)}
+.px-saved-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.px-saved-row strong{display:block;font-size:13px}.px-saved-row small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.px-saved-row>div:first-child{min-width:0;overflow:hidden}
+@media(max-width:600px){#pxSpotMini{right:8px;bottom:calc(8px + env(safe-area-inset-bottom));width:min(340px,calc(100vw - 16px))}}
+</style>
+<script id="px-spotlight-save-mini">
+(function(){
+ 'use strict';
+ var current=null,mini=null,media=null,miniTitle=null,miniFoot=null,observer=null;
+ function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+ function client(){return window.sb&&window.curUser&&window.curUser.id?window.sb:null}
+ function getMeta(card){
+  var yt=card.querySelector('.px-yt-shell'),v=card.querySelector('video'),frame=card.querySelector('iframe');
+  var a=card.querySelector('.spot-meta a,.px-yt-meta a'),page=a&&a.href||'';
+  var source=yt?'youtube':(/vimeo\.com/i.test(page)?'vimeo':/pexels\.com/i.test(page)?'pexels':/pixabay\.com/i.test(page)?'pixabay':'');
+  var ref=yt&&yt.getAttribute('data-video-id')||page;
+  var title=(card.querySelector('.spot-meta b,.px-yt-meta b')||{}).textContent||'Video';
+  var channel=(card.querySelector('.spot-meta span,.px-yt-meta span')||{}).textContent||'';
+  return {source:source,ref:ref,title:title.trim(),channel:channel.trim(),page:page||ref,thumb:v&&v.poster||null,media:yt||v||frame};
+ }
+ function ensureMini(){
+  if(mini)return;
+  mini=document.createElement('section');mini.id='pxSpotMini';mini.hidden=true;
+  mini.innerHTML='<div id="pxSpotMiniHead"><span>Spotlight player</span><div class="px-mini-actions"><button type="button" data-mini="return">Return</button><button type="button" data-mini="close">Close</button></div></div><div id="pxSpotMiniMedia"></div><div id="pxSpotMiniTitle"></div><div id="pxSpotMiniFoot"><button type="button" data-mini="save">☆ Save video</button><button type="button" data-mini="pip">Picture in Picture</button></div>';
+  document.body.appendChild(mini);media=mini.querySelector('#pxSpotMiniMedia');miniTitle=mini.querySelector('#pxSpotMiniTitle');miniFoot=mini.querySelector('#pxSpotMiniFoot');
+  mini.addEventListener('click',function(e){
+   var b=e.target.closest('[data-mini]');if(!b)return;
+   if(b.dataset.mini==='close'){media.innerHTML='';mini.hidden=true;current=null}
+   if(b.dataset.mini==='return'){if(typeof window.go==='function')window.go('spotlight');mini.hidden=true}
+   if(b.dataset.mini==='save')save(current,b);
+   if(b.dataset.mini==='pip')pip();
+  });
+ }
+ async function save(meta,button){
+  var db=client();if(!db){if(button)button.textContent='Sign in to save';return}
+  if(!meta||!meta.source||!meta.ref||!meta.page)return;
+  if(button){button.disabled=true;button.textContent='Saving…'}
+  try{
+   var result=await db.from('spotlight_saved').upsert({owner_id:window.curUser.id,source:meta.source,video_ref:String(meta.ref),title:meta.title||'Video',thumb_url:meta.thumb,channel:meta.channel,page_url:meta.page},{onConflict:'owner_id,source,video_ref'});
+   if(result.error)throw result.error;
+   if(button)button.textContent='✓ Saved';
+   loadSaved();
+  }catch(err){if(button){button.textContent='Could not save';button.title='Please try again'}}
+  finally{if(button)button.disabled=false}
+ }
+ function pip(){
+  var video=media&&media.querySelector('video');
+  if(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture){video.requestPictureInPicture().catch(function(){alert('Picture in Picture is not available for this video in this browser.')});return}
+  alert('This provider controls Picture in Picture inside its own player. Use the player controls if the Picture in Picture option is available on your device.');
+ }
+ function floatCard(card){
+  var meta=getMeta(card);if(!meta.media)return;
+  current=meta;ensureMini();media.innerHTML='';media.appendChild(meta.media);miniTitle.textContent=meta.title;mini.hidden=false;
+  var frame=media.querySelector('iframe');if(frame)frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture; encrypted-media');
+  var video=media.querySelector('video');if(video){video.setAttribute('playsinline','');video.setAttribute('controls','');}
+ }
+ function decorate(){
+  var root=document.getElementById('pxSpotResults');if(!root)return;
+  root.querySelectorAll('.spot-card,.px-provider-card').forEach(function(card){
+   if(card.querySelector('.px-spot-tools'))return;
+   var meta=getMeta(card),bar=document.createElement('div');bar.className='px-spot-tools';
+   var saveBtn=document.createElement('button');saveBtn.type='button';saveBtn.textContent='☆ Save video';saveBtn.dataset.spAction='save';
+   if(!['youtube','vimeo','pexels','pixabay'].includes(meta.source)||!meta.ref||!meta.page){saveBtn.disabled=true;saveBtn.title='Saving is not supported for this source yet'}
+   var floatBtn=document.createElement('button');floatBtn.type='button';floatBtn.textContent='▣ Keep playing';floatBtn.dataset.spAction='float';
+   bar.append(saveBtn,floatBtn);card.appendChild(bar);
+  });
+ }
+ function ensureSavedPanel(){
+  var list=document.getElementById('spList');if(!list)return null;
+  var panel=document.getElementById('pxSpotSaved');if(panel)return panel;
+  panel=document.createElement('section');panel.id='pxSpotSaved';panel.hidden=true;
+  panel.innerHTML='<div class="px-saved-head"><strong>Saved videos</strong><button type="button" id="pxSpotSavedRefresh">Refresh</button></div><div id="pxSpotSavedRows"><p class="ls-empty">Your saved videos will appear here.</p></div>';
+  list.appendChild(panel);panel.querySelector('#pxSpotSavedRefresh').onclick=loadSaved;return panel;
+ }
+ async function loadSaved(){
+  var panel=ensureSavedPanel();if(!panel)return;
+  var db=client();panel.hidden=false;var rows=panel.querySelector('#pxSpotSavedRows');
+  if(!db){rows.innerHTML='<p class="ls-empty">Sign in to view your saved videos.</p>';return}
+  rows.innerHTML='<p class="ls-empty">Loading saved videos…</p>';
+  var result=await db.from('spotlight_saved').select('id,source,video_ref,title,channel,page_url,saved_at').eq('owner_id',window.curUser.id).order('saved_at',{ascending:false});
+  if(result.error){rows.innerHTML='<p class="ls-empty">Saved videos could not be loaded. Please try again.</p>';return}
+  if(!result.data||!result.data.length){rows.innerHTML='<p class="ls-empty">No saved videos yet. Use “Save video” on any supported card.</p>';return}
+  rows.innerHTML=result.data.map(function(v){return '<div class="px-saved-row"><div><strong>'+esc(v.title)+'</strong><small>'+esc(v.source)+' · '+esc(v.channel||'Saved video')+'</small></div><div><a href="'+esc(v.page_url)+'" target="_blank" rel="noopener noreferrer">Open</a> <button type="button" data-remove-saved="'+esc(v.id)+'">Remove</button></div></div>'}).join('');
+ }
+ document.addEventListener('click',function(e){
+  var action=e.target.closest('[data-sp-action]');if(action){var card=action.closest('.spot-card,.px-provider-card');if(!card)return;var meta=getMeta(card);if(action.dataset.spAction==='save')save(meta,action);if(action.dataset.spAction==='float')floatCard(card);return}
+  var remove=e.target.closest('[data-remove-saved]');if(remove){var db=client();if(!db)return;remove.disabled=true;db.from('spotlight_saved').delete().eq('id',remove.dataset.removeSaved).eq('owner_id',window.curUser.id).then(function(r){if(r.error){remove.disabled=false;remove.textContent='Retry'}else loadSaved()});}
+ });
+ function start(){
+  var root=document.getElementById('pxSpotResults');
+  if(root){observer=new MutationObserver(decorate);observer.observe(root,{childList:true,subtree:true});decorate()}
+  var panel=ensureSavedPanel();
+  if(panel){
+   var head=document.querySelector('.px-spot-feedhead');
+   if(head&&!head.querySelector('[data-open-saved]')){var b=document.createElement('button');b.type='button';b.dataset.openSaved='1';b.className='px-spot-more';b.textContent='Saved videos';b.style.marginLeft='auto';b.onclick=function(){panel.hidden=!panel.hidden;if(!panel.hidden)loadSaved()};head.appendChild(b)}
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+
 </body></html>'};
       var pdf=document.createElement('button');pdf.type='button';pdf.className='dl';pdf.textContent='PDF';pdf.setAttribute('aria-label','Save as PDF');
       pdf.onclick=function(){var w=window.open('','_blank');if(!w){add('Your browser blocked the PDF window. Allow pop-ups for this site and try again.','sys');return}w.document.write(docHtml());w.document.close();w.focus();setTimeout(function(){try{w.print()}catch(e){}},400)};
