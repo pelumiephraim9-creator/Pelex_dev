@@ -1282,6 +1282,13 @@ main{min-height:0;height:100%;overflow:hidden}
 .px-structure-review .px-review-table td input{width:100%!important;min-width:0!important;padding:5px 3px!important;font-size:clamp(10px,3vw,12px)!important}
 @media(max-width:520px){.px-structure-review{padding:9px!important}.px-structure-review .px-review-table-wrap{overflow-x:auto!important}.px-structure-review .px-review-table{min-width:340px!important}}
 
+
+/* Main chat controls: show only New Chat and Ignitor in the header. */
+.top #menu{display:none!important}
+/* Chat messages sit directly on the chat surface, without message cards. */
+#chat>.msg:not(.sys){background:transparent!important;background-image:none!important;border:0!important;border-color:transparent!important;box-shadow:none!important;color:var(--ink)!important;border-radius:0!important;padding:8px 0!important}
+#chat>.msg.me:not(.sys){background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;color:var(--ink)!important;border-radius:0!important;padding:8px 0!important}
+#chat>.msg.me .txtp{color:var(--ink)!important}
 </style>
 </head>
 <body>
