@@ -7177,6 +7177,7 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
  }
  function empty(text){var l=$('spList');if(l)l.innerHTML='<div class="ls-empty">'+esc(text)+'</div>'}
  function loadProviders(){
+  if(!(window.sb&&window.curUser)){empty('Sign in to browse video sources in Spotlight.');return}
   empty('Checking available video sources...');
   call('providers').then(function(out){var j=parse(out),list=j.providers||[],l=$('spList');
    if(!list.length){empty('No video sources are connected and responding yet. Add provider credentials and try again.');return}
