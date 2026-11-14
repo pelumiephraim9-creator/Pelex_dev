@@ -2426,7 +2426,7 @@ function add(t,cls,img,retryFn){
    if(card.querySelector('.px-spot-tools'))return;
    var meta=getMeta(card),bar=document.createElement('div');bar.className='px-spot-tools';
    var saveBtn=document.createElement('button');saveBtn.type='button';saveBtn.textContent='☆ Save video';saveBtn.dataset.spAction='save';
-   if(!['youtube','vimeo','pexels','pixabay'].includes(meta.source)||!meta.ref||!meta.page){saveBtn.disabled=true;saveBtn.title='Saving is not supported for this source yet'}
+   if(!['youtube','vimeo','pexels','pixabay','internet_archive','peertube'].includes(meta.source)||!meta.ref||!meta.page){saveBtn.disabled=true;saveBtn.title='Saving is not supported for this source yet'}
    var floatBtn=document.createElement('button');floatBtn.type='button';floatBtn.textContent='▣ Keep playing';floatBtn.dataset.spAction='float';
    bar.append(saveBtn,floatBtn);card.appendChild(bar);
   });
