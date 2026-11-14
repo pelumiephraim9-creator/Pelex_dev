@@ -3589,7 +3589,7 @@ var _ec=ensureChat;ensureChat=async function(t){if(window.__ign)return false;var
 var _sm=saveMsg;saveMsg=function(){if(window.__ign)return Promise.resolve({ok:true,skipped:true});var result=_sm.apply(this,arguments);if(arguments[0]==='assistant'&&curChatId&&!window.__ign&&dbOk()&&!ls('pelex_keep_asked'))ask.hidden=false;return result};
 setInterval(function(){$('keepBtn').hidden=!(curChatId&&!window.__ign&&dbOk())},1500);
 // Image generation is temporarily unavailable in Pelex.
-  ;
+})();
 </script>
 <script>
 /* Installed iOS Home Screen apps do not have an app-store update flow.
