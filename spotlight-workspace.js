@@ -8,8 +8,8 @@ function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(c){return
 function parse(v){return JSON.parse(String(v||'').replace(/^```json\s*|\s*```$/g,'').trim())}
 function signed(){return !!(window.sb&&window.curUser&&window.curUser.id)}
 function call(action,provider,query,pageToken){
- if(typeof window.askPublicAgent!=='function'||typeof window.agentMeta!=='function')return Promise.reject(new Error('Spotlight service is not ready'));
- return window.askPublicAgent(action==='providers'?'List the video sources available in Spotlight':'Search '+provider+' videos for '+query,Object.assign({},window.agentMeta(),{intent:'spotlight_catalog',action:action,provider:provider||'',query:query||'',pageToken:pageToken||'',__sid:'spotlight-'+Date.now()}));
+ if(typeof askPublicAgent!=='function'||typeof agentMeta!=='function')return Promise.reject(new Error('Spotlight service is not ready'));
+ return askPublicAgent(action==='providers'?'List the video sources available in Spotlight':'Search '+provider+' videos for '+query,Object.assign({},agentMeta(),{intent:'spotlight_catalog',action:action,provider:provider||'',query:query||'',pageToken:pageToken||'',__sid:'spotlight-'+Date.now()}));
 }
 function sourceMarkup(){
  var all='<button class="px-spot-source" type="button" data-source="" aria-pressed="'+(!state.active)+'"><span class="px-spot-source-icon">✦</span><span class="px-spot-source-copy"><b>All sources</b><small>Explore everything</small></span></button>';
@@ -19,7 +19,7 @@ function renderSourceNav(){var root=$('pxSpotSources');if(root)root.innerHTML=so
 function renderCard(v,provider){
  var title=esc(v.title||'Video'),channel=esc(v.channel||v.creator||names[provider]||provider),duration=esc(v.duration||v.length||''),url=(typeof v.url==='string'&&/^https:\/\//i.test(v.url))?v.url:'';
  var media='';
- if(provider==='youtube'&&window.PelexYouTubePlayer)media=window.PelexYouTubePlayer.cardHtml(v);
+ if(provider==='youtube'&&window.PelexYouTubePlayer)media='<div class="px-spot-media">'+window.PelexYouTubePlayer.cardHtml(v)+'</div>';
  else if((provider==='pexels'||provider==='pixabay')&&v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<video controls playsinline preload="metadata" src="'+esc(v.embedUrl)+'"></video>';
  else if(v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<iframe src="'+esc(v.embedUrl)+'" title="'+title+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
  else media='<div class="px-spot-loading">Preview unavailable · open on source</div>';
@@ -54,7 +54,7 @@ function ensureMini(){
  if(state.mini)return state.mini;
  var box=document.createElement('section');box.id='pxSpotMini';box.hidden=true;box.innerHTML='<header><b>Spotlight player</b><span><button type="button" data-mini-return>Return to video</button> <button type="button" data-mini-close>Close</button></span></header><div id="pxSpotMiniMedia"></div>';
  document.body.appendChild(box);state.mini=box;
- box.addEventListener('click',function(e){if(e.target.closest('[data-mini-close]'))restoreMedia(true);if(e.target.closest('[data-mini-return]')){restoreMedia(false);if(typeof window.go==='function')window.go('spotlight')}});
+ box.addEventListener('click',function(e){if(e.target.closest('[data-mini-close]'))restoreMedia(true);if(e.target.closest('[data-mini-return]')){restoreMedia(false);if(typeof go==='function')go('spotlight')}});
  return box;
 }
 function restoreMedia(close){
