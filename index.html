@@ -2179,8 +2179,8 @@ function add(t,cls,img,retryFn){
     uc.onclick=function(){(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(t):Promise.reject()).catch(function(){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove()}).then(function(){uc.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';uc.title='Copied';setTimeout(function(){uc.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>';uc.title='Copy'},1200)})};ur.appendChild(uc);ur.appendChild(ue);d.appendChild(ur);
   }
   if(!cls&&typeof displayT==='string'&&window.PelexYouTubePlayer){
-    var ytText=displayT.replace(/```[\\s\\S]*?```/g,'');
-    var ytRe=/(?:https?:\\/\\/)?(?:www\\.)?(?:youtube\\.com\\/(?:watch\\?v=|shorts\\/|embed\\/)|youtu\\.be\\/)([A-Za-z0-9_-]{11})/gi;
+    var ytText=displayT.replace(/```[\s\S]*?```/g,'');
+    var ytRe=/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/gi;
     var ytIds=[],ytMatch;while((ytMatch=ytRe.exec(ytText))!==null){if(ytIds.indexOf(ytMatch[1])<0)ytIds.push(ytMatch[1]);if(ytIds.length>=3)break}
     if(ytIds.length){var ytBox=document.createElement('div');ytBox.className='px-chat-video';ytBox.innerHTML=ytIds.map(function(id){return window.PelexYouTubePlayer.cardHtml({id:id,title:'YouTube video'})}).join('');d.appendChild(ytBox);window.PelexYouTubePlayer.mount(ytBox)}
   }
