@@ -1367,7 +1367,7 @@ main{min-height:0;height:100%;overflow:hidden}
 #chat>.msg.me:not(.sys){background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;color:var(--ink)!important;border-radius:0!important;padding:8px 0!important}
 #chat>.msg.me .txtp{color:var(--ink)!important}
 </style>
-</head>
+<link rel="stylesheet" href="/spotlight-workspace.css?v=1">\n</head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sg"></div><svg viewBox="0 0 40 40"><polygon class="hx" pathLength="1" points="20,3 35,11.5 35,28.5 20,37 5,28.5 5,11.5"/><circle class="nd" style="animation-delay:0.25s" cx="20" cy="3" r="2.2" fill="#5ec3e6"/><circle class="nd" style="animation-delay:0.37s" cx="35" cy="11.5" r="2.2" fill="var(--btn,#0a89f4)"/><circle class="nd" style="animation-delay:0.49s" cx="35" cy="28.5" r="2.2" fill="var(--btn,#0a89f4)"/><circle class="nd" style="animation-delay:0.61s" cx="20" cy="37" r="2.2" fill="#5ec3e6"/><circle class="nd" style="animation-delay:0.73s" cx="5" cy="28.5" r="2.2" fill="var(--btn,#0a89f4)"/><circle class="nd" style="animation-delay:0.85s" cx="5" cy="11.5" r="2.2" fill="var(--btn,#0a89f4)"/><rect class="bd" x="11" y="11" width="18" height="18" rx="5" fill="var(--btn,#0a89f4)"/><text class="pl" x="20" y="25" text-anchor="middle" font-size="13" font-weight="800" font-family="Segoe UI,system-ui,Arial,sans-serif" fill="var(--btnink,#fff)">P</text></svg><div class="wm">PELEX</div><div class="tg">Your AI assistant</div><div class="sbar"><i></i></div></div>
 <script>
@@ -2096,12 +2096,33 @@ setTimeout(out,rm?500:4600);setTimeout(out,6500);sp.addEventListener('click',out
 <div class="row"><span>Delete my account</span><button class="btn alt" id="pvDelAcct">Delete</button></div>
 </div><div class="note" id="privNote" role="status"></div></div>
 </div></section>
-<section class="view" id="v-spotlight" hidden><div class="wrap">
-<h1>Spotlight</h1><div class="muted">The most watched recent videos for what you care about. Play them here, or open them on YouTube.</div>
-<div style="margin:16px 0"><button class="spot-open" id="spOpen" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Browse video sources</button></div>
-<h2 id="spTitle" style="margin-top:6px">Your picks</h2>
-<div class="spot-list" id="spList"></div>
-</div></section>
+<section class="view" id="v-spotlight" hidden>
+<div class="wrap px-spot-app">
+  <header class="px-spot-heading">
+    <div><div class="px-spot-kicker">PELEX · DISCOVER</div><h1>Spotlight</h1><p>Discover videos, ideas and creators from across the web.</p></div>
+    <button type="button" class="px-spot-saved-toggle" id="pxSpotSavedToggle" aria-expanded="false">♡ Saved videos</button>
+  </header>
+  <div class="px-spot-workspace">
+    <aside class="px-spot-sidebar" aria-label="Video sources">
+      <div class="px-spot-section-label">EXPLORE SOURCES</div>
+      <nav id="pxSpotSources" class="px-spot-source-list"><div class="px-spot-loading">Loading sources…</div></nav>
+    </aside>
+    <section class="px-spot-main" aria-label="Video discovery">
+      <div class="px-spot-feed-heading"><div><span class="px-spot-section-label">YOUR DISCOVERY FEED</span><h2 id="pxSpotFeedTitle">Recommended for you</h2><p id="pxSpotFeedSub">Fresh picks from connected platforms</p></div><span class="px-spot-live"><i></i> Live catalogue</span></div>
+      <div id="pxSpotSavedPanel" class="px-spot-saved-panel" hidden></div>
+      <div id="pxSpotResults" class="px-spot-results"><div class="px-spot-loading">Finding videos for you…</div></div>
+      <button type="button" id="pxSpotMore" class="px-spot-more" hidden>Load more videos</button>
+    </section>
+    <aside class="px-spot-search-panel" aria-label="Search videos">
+      <div class="px-spot-section-label">FIND SOMETHING</div>
+      <label class="px-spot-searchbox"><span aria-hidden="true">⌕</span><input id="pxSpotQuery" type="search" placeholder="Search videos, topics…" autocomplete="off"></label>
+      <button type="button" id="pxSpotSearch" class="px-spot-search-button">Search videos</button>
+      <p class="px-spot-search-hint">Search within your selected source, or search across all sources.</p>
+      <div class="px-spot-tip"><span>✦</span><div><b>Made for discovery</b><small>Explore recommendations or search for something specific.</small></div></div>
+    </aside>
+  </div>
+</div>
+</section>
 <div id="spSheet" hidden><div class="sheetCard"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>Choose an interest</b><button type="button" id="spClose" class="iconbtn" aria-label="Close">&#10005;</button></div><div id="spPick"></div></div></div>
 </main>
 </div>
@@ -2203,7 +2224,7 @@ function add(t,cls,img,retryFn){
     down.onclick=function(){recordResponseFeedback('down',down)};
     if(t.length>180){
       var esc=function(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
-      var docHtml=function(){return '<html><head><meta charset="utf-8"><title>Pelex</title><style>body{font-family:Arial,sans-serif;line-height:1.55;max-width:720px;margin:32px auto;padding:0 16px}pre{background:#f3f4f6;padding:10px;white-space:pre-wrap} /* PELEX LIGHT THEME: true white surfaces throughout; preserve navy dark theme. */ :root[data-theme="light"]{--bg:#ffffff!important;--panel:#ffffff!important;--card:#ffffff!important;--ink:#0b1b4a!important;--muted:#52617d!important;--line:#d9e0ec!important;--soft:#ffffff!important;color-scheme:light!important} :root[data-theme="light"] body,:root[data-theme="light"] main,:root[data-theme="light"] .card,:root[data-theme="light"] .dcard,:root[data-theme="light"] .panel,:root[data-theme="light"] section{background-color:#ffffff} :root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{background-color:#ffffff;color:#0b1b4a} :root[data-theme="dark"]{--bg:#0c1423!important;--panel:#121e31!important;--card:#121e31!important;--ink:#e8eef8!important;--muted:#a1aec2!important;--line:#26364d!important;--soft:#17263d!important;color-scheme:dark!important}  </style></head><body><div style="white-space:pre-wrap">'+esc(t)+'</div><p style="color:#888;font-size:12px;margin-top:30px">Made with Pelex</p></body></html>'};
+      var docHtml=function(){return '<html><head><meta charset="utf-8"><title>Pelex</title><style>body{font-family:Arial,sans-serif;line-height:1.55;max-width:720px;margin:32px auto;padding:0 16px}pre{background:#f3f4f6;padding:10px;white-space:pre-wrap} /* PELEX LIGHT THEME: true white surfaces throughout; preserve navy dark theme. */ :root[data-theme="light"]{--bg:#ffffff!important;--panel:#ffffff!important;--card:#ffffff!important;--ink:#0b1b4a!important;--muted:#52617d!important;--line:#d9e0ec!important;--soft:#ffffff!important;color-scheme:light!important} :root[data-theme="light"] body,:root[data-theme="light"] main,:root[data-theme="light"] .card,:root[data-theme="light"] .dcard,:root[data-theme="light"] .panel,:root[data-theme="light"] section{background-color:#ffffff} :root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{background-color:#ffffff;color:#0b1b4a} :root[data-theme="dark"]{--bg:#0c1423!important;--panel:#121e31!important;--card:#121e31!important;--ink:#e8eef8!important;--muted:#a1aec2!important;--line:#26364d!important;--soft:#17263d!important;color-scheme:dark!important}  </style></head><body><div style="white-space:pre-wrap">'+esc(t)+'</div><p style="color:#888;font-size:12px;margin-top:30px">Made with Pelex</p><script src="/spotlight-player.js"></script>\n<script src="/spotlight-workspace.js?v=1"></script>\n</body></html>'};
       var pdf=document.createElement('button');pdf.type='button';pdf.className='dl';pdf.textContent='PDF';pdf.setAttribute('aria-label','Save as PDF');
       pdf.onclick=function(){var w=window.open('','_blank');if(!w){add('Your browser blocked the PDF window. Allow pop-ups for this site and try again.','sys');return}w.document.write(docHtml());w.document.close();w.focus();setTimeout(function(){try{w.print()}catch(e){}},400)};
       var wd=document.createElement('button');wd.type='button';wd.className='dl';wd.textContent='Word';wd.setAttribute('aria-label','Save as Word document');
@@ -6038,47 +6059,8 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
 })();
 </script>
 
-<script src="/spotlight-player.js"></script>
-<script>
-/* SPOTLIGHT: recent, most-watched YouTube videos for the interests chosen at sign-up. Plays on Pelex; the link opens YouTube. */
-(function(){
- function $s(i){return document.getElementById(i)}
- function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
- function interests(){var pr=window.curUser&&window.curUser.user_metadata&&window.curUser.user_metadata.profile;return (pr&&pr.interests)||[]}
- function cardHtml(v){ return window.PelexYouTubePlayer.cardHtml(v); }
- async function findVideos(interest,mount,pageToken,append){
-  if(!mount)return;
-  if(!(window.sb&&window.curUser)){mount.innerHTML='<div class="ls-empty">Sign in to see videos picked for you.</div>';return}
-  if(!append)mount.innerHTML='<div class="ls-empty">Finding the most watched recent videos\u2026</div>';
-  try{
-   var out=await askPublicAgent('Find videos for: '+interest,Object.assign({},agentMeta(),{intent:'videos',interest:interest,pageToken:pageToken||'',__sid:'spot-'+Date.now()}));
-   var raw=String(out||'');
-   if(/unknown tool/i.test(raw))throw new Error('Spotlight is not on the server yet. Redeploy the Render backend with find_videos.js in its tools folder.');
-   var j;try{j=JSON.parse(raw.replace(/^```json\s*|\s*```$/g,'').trim())}catch(pe){throw new Error('Spotlight could not read the server reply. Redeploy the backend and try again.')}
-   if(!j.videos||!j.videos.length){mount.innerHTML='<div class="ls-empty">No recent videos under an hour found for this interest yet. Try another.</div>';return}
-   var old=mount.querySelector('.spot-more');if(old)old.remove();
-   if(!append)mount.innerHTML='';
-   mount.insertAdjacentHTML('beforeend',j.videos.map(cardHtml).join(''));
-   window.PelexYouTubePlayer.mount(mount);
-   if(j.nextPageToken){var mb=document.createElement('button');mb.type='button';mb.className='spot-open spot-more';mb.style.alignSelf='center';mb.textContent='Load more videos';mb.onclick=function(){mb.disabled=true;mb.textContent='Loading\u2026';findVideos(interest,mount,j.nextPageToken,true)};mount.appendChild(mb)}
-  }catch(e){mount.innerHTML='<div class="ls-empty">'+esc((e&&!e.backend&&e.message)?e.message:'Spotlight is not reachable right now.')+'</div>'}
- }
- window.pxFindVideos=findVideos;
- // sheet of interests
- function openSheet(){
-  var box=$s('spPick');box.innerHTML='';var list=interests();
-  if(!list.length){box.innerHTML='<div class="dnote">Finish your profile to get picks from your interests. Sign in, then complete the short onboarding.</div>'}
-  list.forEach(function(x){var b=document.createElement('button');b.type='button';b.className='sheetOpt';b.textContent=x;b.onclick=function(){$s('spSheet').hidden=true;$s('spTitle').textContent=x;findVideos(x,$s('spList'))};box.appendChild(b)});
-  $s('spSheet').hidden=false;
- }
- var _go=go;go=function(v,t){_go(v,t);if(v==='spotlight'){var l=$s('spList');if(l&&!l.innerHTML.trim())l.innerHTML='<div class="ls-empty">Tap \u201cPick an interest\u201d to start.</div>'}};
- window.addEventListener('load',function(){
-  var b=$s('spOpen');if(b)b.onclick=openSheet;
-  var c=$s('spClose');if(c)c.onclick=function(){$s('spSheet').hidden=true};
-  var sh=$s('spSheet');if(sh)sh.addEventListener('click',function(e){if(e.target===sh)sh.hidden=true});
- });
-})();
-</script>
+
+
 
 <script>window.addEventListener("load",function(){var b=document.getElementById("pnBtn");if(!b)return;b.onclick=function(){var f=(document.getElementById("pField")||{}).value||"";var L=document.getElementById("pnList");if(!f.trim()){L.innerHTML='<div class="ls-empty">Add your field in your pitch profile first.</div>';return}window.pxFindVideos&&window.pxFindVideos(f.trim(),L)}});</script>
 <script>
@@ -7218,69 +7200,7 @@ body::before{display:none!important;content:none!important}
 var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.getElementById('pelexNewChatGrip')){var grip=document.createElement('button');grip.id='pelexNewChatGrip';grip.type='button';grip.setAttribute('aria-label','Drag upward to start a new chat');grip.title='Drag up for a new chat';grip.innerHTML='<span aria-hidden="true"></span>';barwrap.insertBefore(grip,barwrap.firstChild);var startY=0,lastY=0,active=false,threshold=112;function reset(){active=false;grip.classList.remove('dragging','ready');grip.style.transform='';grip.style.filter=''}grip.addEventListener('pointerdown',function(e){if(e.button!==undefined&&e.button!==0)return;active=true;startY=e.clientY;lastY=startY;grip.classList.add('dragging');try{grip.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault()});grip.addEventListener('pointermove',function(e){if(!active)return;lastY=e.clientY;var dy=lastY-startY,up=Math.max(0,-dy),progress=Math.min(1,up/threshold);grip.style.transform='translateY('+Math.max(-76,Math.min(12,dy*.42))+'px) scale('+(1+progress*.08)+')';grip.style.filter='drop-shadow(0 '+(2+progress*9)+'px '+(4+progress*12)+'px rgba(20,43,82,'+(.08+progress*.18)+'))';grip.classList.toggle('ready',up>=threshold);e.preventDefault()});function finish(e){if(!active)return;var shouldOpen=startY-lastY>=threshold;reset();if(shouldOpen&&typeof window.newChat==='function')window.newChat();if(e&&e.cancelable)e.preventDefault()}grip.addEventListener('pointerup',finish);grip.addEventListener('pointercancel',reset);grip.addEventListener('lostpointercapture',function(){if(active)reset()});grip.addEventListener('click',function(e){e.preventDefault();e.stopPropagation()})}})();
 </script>
 
-<script>
-(function(){
- 'use strict';
- var $=function(id){return document.getElementById(id)};
- function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
- function parse(out){return JSON.parse(String(out||'').replace(/^\x60\x60\x60json\s*|\s*\x60\x60\x60$/g,'').trim())}
- function call(action,provider,query,pageToken){
-  return askPublicAgent(action==='providers'?'List the video sources available in Spotlight':'Search '+provider+' videos for '+query,
-   Object.assign({},agentMeta(),{intent:'spotlight_catalog',action:action,provider:provider||'',query:query||'',pageToken:pageToken||'',__sid:'spot-catalog-'+Date.now()}));
- }
- function empty(text){var l=$('spList');if(l)l.innerHTML='<div class="ls-empty">'+esc(text)+'</div>'}
- function loadProviders(){
-  if(!(window.sb&&window.curUser)){empty('Sign in to browse video sources in Spotlight.');return}
-  empty('Checking available video sources...');
-  call('providers').then(function(out){var j=parse(out),list=j.providers||[],l=$('spList');
-   if(!list.length){empty('No video sources are connected and responding yet. Add provider credentials and try again.');return}
-   var brand={youtube:{name:'YouTube',slug:'youtube',color:'#FF0033',hex:'FF0033',note:'Videos from creators worldwide'},vimeo:{name:'Vimeo',slug:'vimeo',color:'#17D5FF',hex:'17D5FF',note:'Films, stories and creative work'},pexels:{name:'Pexels',slug:'pexels',color:'#05A081',hex:'05A081',note:'Free stock videos and footage'},pixabay:{name:'Pixabay',slug:'pixabay',color:'#2EC66D',hex:'2EC66D',note:'Free creative videos and media'},internet_archive:{name:'Internet Archive',slug:'internetarchive',color:'#555555',hex:'555555',note:'A library of films and moving images'},peertube:{name:'PeerTube',slug:'peertube',color:'#F1680D',hex:'F1680D',note:'Videos across the federated network'}};
-   l.innerHTML='<div class="px-source-grid">'+list.map(function(p){var b=brand[p.id]||{name:p.name,slug:'',color:'#64748b',hex:'64748b',note:'Browse videos on this source'};var logo=b.slug?'https://cdn.simpleicons.org/'+b.slug+'/'+b.hex:'';return '<button type="button" class="px-source-card px-brand-'+esc(p.id)+'" data-provider="'+esc(p.id)+'" style="--px-brand:'+b.color+'"><span class="px-brand-mark">'+(logo?'<img src="'+logo+'" alt="'+esc(b.name)+' logo" loading="eager" referrerpolicy="no-referrer">':'<b>'+esc(b.name.charAt(0))+'</b>')+'</span><span class="px-brand-copy"><strong>'+esc(b.name)+'</strong><small>'+esc(b.note)+'</small><em>Explore source <span aria-hidden="true">↗</span></em></span><span class="px-brand-glow" aria-hidden="true"></span></button>'}).join('')+'</div>';
-   l.querySelectorAll('[data-provider]').forEach(function(b){b.onclick=function(){workspace(b.getAttribute('data-provider'))}});
-  }).catch(function(){empty('Spotlight could not check video sources right now. Please try again.')});
- }
- function workspace(provider){
-  var l=$('spList'),title=$('spTitle');if(!l)return;
-  if(title)title.textContent=provider.replace(/_/g,' ');
-  l.innerHTML='<button type="button" class="px-spot-back">All video sources</button><div class="px-spot-search"><input type="search" id="pxSpotQuery" placeholder="Search videos" aria-label="Search videos"><button type="button" id="pxSpotSearch">Search</button></div><div id="pxSpotResults" class="spot-list"></div>';
-  l.querySelector('.px-spot-back').onclick=function(){if(title)title.textContent='Your picks';loadProviders()};
-  var input=$('pxSpotQuery'),results=$('pxSpotResults'),profile=window.curUser&&window.curUser.user_metadata&&window.curUser.user_metadata.profile;
-  var chosen=profile&&Array.isArray(profile.interests)&&profile.interests[0]||'',next=null,busy=false;
-  if(chosen)input.value=chosen;
-  function search(token,append){
-   var q=input.value.trim();if(q.length<2){results.innerHTML='<div class="ls-empty">Enter at least two characters to search.</div>';return}
-   if(busy)return;busy=true;
-   if(!append)results.innerHTML='<div class="ls-empty">Searching videos...</div>';
-   call('search',provider,q,token).then(function(out){
-    var j=parse(out),vids=j.videos||[];if(!append)results.innerHTML='';
-    if(!vids.length&&!append){results.innerHTML='<div class="ls-empty">No videos found. Try another search.</div>';return}
-    vids.forEach(function(v){
-     if(provider==='youtube'&&window.PelexYouTubePlayer){results.insertAdjacentHTML('beforeend',window.PelexYouTubePlayer.cardHtml(v));return}
-     var media='';
-     if((provider==='pexels'||provider==='pixabay')&&v.embedUrl&&/^https:\/\//i.test(v.embedUrl))
-      media='<div class="px-provider-media"><video controls playsinline preload="metadata" src="'+esc(v.embedUrl)+'"></video></div>';
-     else if(v.embedUrl&&/^https:\/\//i.test(v.embedUrl))
-      media='<div class="px-provider-media"><iframe src="'+esc(v.embedUrl)+'" title="'+esc(v.title)+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
-     else media='<div class="px-provider-media" style="display:grid;place-items:center;color:#fff">Preview on original website</div>';
-     var link=v.url&&/^https:\/\//i.test(v.url)?'<a href="'+esc(v.url)+'" target="_blank" rel="noopener noreferrer">Watch on '+esc(provider.replace(/_/g,' '))+'</a>':'';
-     var card='<article class="px-provider-card">'+media+'<div class="spot-meta"><b>'+esc(v.title)+'</b><span>'+esc(v.channel||provider)+' · '+esc(v.duration||'')+'</span>'+link+'</div></article>';
-     results.insertAdjacentHTML('beforeend',card);
-    });
-    next=j.nextPageToken||null;var old=results.querySelector('.px-spot-more');if(old)old.remove();
-    if(next){var more=document.createElement('button');more.type='button';more.className='spot-open px-spot-more';more.textContent='Load more videos';more.onclick=function(){more.disabled=true;more.textContent='Loading...';search(next,true)};results.appendChild(more)}
-    if(provider==='youtube'&&window.PelexYouTubePlayer)window.PelexYouTubePlayer.mount(results);
-   }).catch(function(){if(!append)results.innerHTML='<div class="ls-empty">This source is temporarily unavailable. Try again shortly.</div>'}).finally(function(){busy=false});
-  }
-  $('pxSpotSearch').onclick=function(){search(null,false)};
-  input.addEventListener('keydown',function(e){if(e.key==='Enter')search(null,false)});
-  if(chosen)search(null,false);
- }
- var oldGo=window.go;
- if(typeof oldGo==='function')window.go=function(v,t){oldGo(v,t);if(v==='spotlight')loadProviders()};
- window.addEventListener('load',function(){var b=$('spOpen');if(b)b.onclick=loadProviders});
- window.pxLoadSpotlightProviders=loadProviders;
-})();
-</script>
+
 
 </body>
 </html>
