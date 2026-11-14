@@ -2236,7 +2236,95 @@ function add(t,cls,img,retryFn){
     down.onclick=function(){recordResponseFeedback('down',down)};
     if(t.length>180){
       var esc=function(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
-      var docHtml=function(){return '<html><head><meta charset="utf-8"><title>Pelex</title><style>body{font-family:Arial,sans-serif;line-height:1.55;max-width:720px;margin:32px auto;padding:0 16px}pre{background:#f3f4f6;padding:10px;white-space:pre-wrap} /* PELEX LIGHT THEME: true white surfaces throughout; preserve navy dark theme. */ :root[data-theme="light"]{--bg:#ffffff!important;--panel:#ffffff!important;--card:#ffffff!important;--ink:#0b1b4a!important;--muted:#52617d!important;--line:#d9e0ec!important;--soft:#ffffff!important;color-scheme:light!important} :root[data-theme="light"] body,:root[data-theme="light"] main,:root[data-theme="light"] .card,:root[data-theme="light"] .dcard,:root[data-theme="light"] .panel,:root[data-theme="light"] section{background-color:#ffffff} :root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{background-color:#ffffff;color:#0b1b4a} :root[data-theme="dark"]{--bg:#0c1423!important;--panel:#121e31!important;--card:#121e31!important;--ink:#e8eef8!important;--muted:#a1aec2!important;--line:#26364d!important;--soft:#17263d!important;color-scheme:dark!important}  </style></head><body><div style="white-space:pre-wrap">'+esc(t)+'</div><p style="color:#888;font-size:12px;margin-top:30px">Made with Pelex</p></body></html>'};
+      var docHtml=function(){return '<html><head><meta charset="utf-8"><title>Pelex</title><style>body{font-family:Arial,sans-serif;line-height:1.55;max-width:720px;margin:32px auto;padding:0 16px}pre{background:#f3f4f6;padding:10px;white-space:pre-wrap} /* PELEX LIGHT THEME: true white surfaces throughout; preserve navy dark theme. */ :root[data-theme="light"]{--bg:#ffffff!important;--panel:#ffffff!important;--card:#ffffff!important;--ink:#0b1b4a!important;--muted:#52617d!important;--line:#d9e0ec!important;--soft:#ffffff!important;color-scheme:light!important} :root[data-theme="light"] body,:root[data-theme="light"] main,:root[data-theme="light"] .card,:root[data-theme="light"] .dcard,:root[data-theme="light"] .panel,:root[data-theme="light"] section{background-color:#ffffff} :root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{background-color:#ffffff;color:#0b1b4a} :root[data-theme="dark"]{--bg:#0c1423!important;--panel:#121e31!important;--card:#121e31!important;--ink:#e8eef8!important;--muted:#a1aec2!important;--line:#26364d!important;--soft:#17263d!important;color-scheme:dark!important}  </style></head><body><div style="white-space:pre-wrap">'+esc(t)+'</div><p style="color:#888;font-size:12px;margin-top:30px">Made with Pelex</p>
+<style id="px-spotlight-player-tools">
+.px-spot-actions{display:flex;gap:8px;flex-wrap:wrap;padding:9px 12px;border-top:1px solid var(--line);background:var(--panel)}
+.px-spot-actions button,.px-mini-actions button{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer}
+.px-spot-actions button:disabled{opacity:.4;cursor:not-allowed}
+#pxSpotMini{position:fixed;right:18px;bottom:18px;z-index:9999;width:min(390px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 48px rgba(0,0,0,.25);overflow:hidden}
+#pxSpotMini[hidden]{display:none}
+#pxSpotMiniHead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;font-size:12px;font-weight:750}
+.px-mini-actions{display:flex;gap:6px}
+#pxSpotMiniMedia{background:#000;aspect-ratio:16/9;display:grid;place-items:center}
+#pxSpotMiniMedia video,#pxSpotMiniMedia iframe,#pxSpotMiniMedia .px-yt-shell{width:100%;height:100%;border:0}
+#pxSpotMiniMedia .px-yt-stage{height:100%;aspect-ratio:16/9}
+#pxSpotMiniMedia .px-yt-host,#pxSpotMiniMedia .px-yt-host iframe{width:100%;height:100%}
+#pxSpotMiniTitle{padding:8px 11px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pxSpotSavedPanel{margin:14px 0;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+#pxSpotSavedPanel[hidden]{display:none}
+.px-spot-saved-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.px-spot-saved-row:last-child{border-bottom:0}
+@media(max-width:600px){#pxSpotMini{right:8px;bottom:calc(8px + env(safe-area-inset-bottom));width:min(340px,calc(100vw - 16px))}}
+</style>
+<script id="px-spotlight-persistence">
+(function(){
+ 'use strict';
+ var sb=window.sb, user=window.curUser, mini, mediaBox, titleBox, savedPanel;
+ function ready(){return !!(window.sb&&window.curUser&&window.curUser.id)}
+ function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+ function ensureMini(){
+  if(mini)return;
+  mini=document.createElement('section');mini.id='pxSpotMini';mini.hidden=true;
+  mini.innerHTML='<div id="pxSpotMiniHead"><span>Spotlight player</span><div class="px-mini-actions"><button type="button" data-mini="return">Return</button><button type="button" data-mini="close" aria-label="Close player">Close</button></div></div><div id="pxSpotMiniMedia"></div><div id="pxSpotMiniTitle"></div>';
+  document.body.appendChild(mini);mediaBox=mini.querySelector('#pxSpotMiniMedia');titleBox=mini.querySelector('#pxSpotMiniTitle');
+  mini.addEventListener('click',function(e){var b=e.target.closest('[data-mini]');if(!b)return;if(b.dataset.mini==='close'){mediaBox.innerHTML='';mini.hidden=true}else if(b.dataset.mini==='return'){var v=document.getElementById('v-spotlight');if(typeof window.go==='function')window.go('spotlight');mini.hidden=true}});
+ }
+ function getMeta(card){
+  var shell=card.querySelector('.px-yt-shell'),video=card.querySelector('video'),frame=card.querySelector('iframe');
+  var link=card.querySelector('.spot-meta a,.px-yt-meta a');var page=link&&link.href||'';
+  var source=shell?'youtube':(/vimeo.com/i.test(page)?'vimeo':/pexels.com/i.test(page)?'pexels':/pixabay.com/i.test(page)?'pixabay':'');
+  var ref=shell&&shell.dataset.videoId||page;
+  var title=(card.querySelector('.spot-meta b,.px-yt-meta b')||{}).textContent||'Video';
+  var channel=(card.querySelector('.spot-meta span,.px-yt-meta span')||{}).textContent||'';
+  var thumb=card.querySelector('video')?.poster||null;
+  return {source:source,ref:ref,title:title.trim(),channel:channel.trim(),page:page||ref,thumb:thumb,media: shell||video||frame};
+ }
+ function decorate(){
+  var root=document.getElementById('pxSpotResults');if(!root)return;
+  root.querySelectorAll('.spot-card,.px-provider-card').forEach(function(card){
+   if(card.querySelector('.px-spot-actions'))return;
+   var m=getMeta(card),actions=document.createElement('div');actions.className='px-spot-actions';
+   var save=document.createElement('button');save.type='button';save.textContent='☆ Save video';save.dataset.spAction='save';
+   if(!m.source||!m.ref||!m.page||!['youtube','vimeo','pexels','pixabay'].includes(m.source)){save.disabled=true;save.title='Saving is not available for this source yet'}
+   var play=document.createElement('button');play.type='button';play.textContent='▣ Keep playing';play.dataset.spAction='float';
+   actions.append(save,play);card.appendChild(actions);
+  });
+ }
+ async function saveVideo(card,button){
+  if(!ready()){button.textContent='Sign in to save';return}
+  var m=getMeta(card);if(!m.source||!m.ref||!m.page)return;
+  button.disabled=true;button.textContent='Saving…';
+  try{
+   var existing=await window.sb.from('spotlight_saved').select('id').eq('owner_id',window.curUser.id).eq('source',m.source).eq('video_ref',m.ref).limit(1);
+   if(existing.error)throw existing.error;
+   if(existing.data&&existing.data.length){button.textContent='✓ Saved';return}
+   var r=await window.sb.from('spotlight_saved').insert({owner_id:window.curUser.id,source:m.source,video_ref:m.ref,title:m.title,thumb_url:m.thumb,channel:m.channel,page_url:m.page});
+   if(r.error)throw r.error;button.textContent='✓ Saved';
+  }catch(e){button.textContent='Could not save';button.title='Please try again';}
+  finally{button.disabled=false}
+ }
+ function floatVideo(card){
+  var m=getMeta(card);if(!m.media)return;
+  ensureMini();mediaBox.innerHTML='';mediaBox.appendChild(m.media);titleBox.textContent=m.title;mini.hidden=false;
+  var close=document.createElement('button');close.type='button';close.textContent='Picture in Picture';close.style.cssText='position:absolute;left:-9999px';mini.appendChild(close);
+  var video=mediaBox.querySelector('video');
+  if(video){video.setAttribute('playsinline','');video.setAttribute('controls','');video.addEventListener('loadedmetadata',function(){}, {once:true});}
+  if(m.media.matches&&m.media.matches('.px-yt-shell')){var frame=m.media.querySelector('iframe');if(frame)frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture; encrypted-media')}
+ }
+ document.addEventListener('click',function(e){
+  var action=e.target.closest('[data-sp-action]');if(!action)return;
+  var card=action.closest('.spot-card,.px-provider-card');if(!card)return;
+  if(action.dataset.spAction==='save')saveVideo(card,action);
+  if(action.dataset.spAction==='float')floatVideo(card);
+ });
+ var observer=new MutationObserver(function(){decorate()});
+ function start(){var root=document.getElementById('pxSpotResults');if(root)observer.observe(root,{childList:true,subtree:true});decorate()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+ window.addEventListener('beforeunload',function(){observer.disconnect()});
+})();
+</script>
+
+</body></html>'};
       var pdf=document.createElement('button');pdf.type='button';pdf.className='dl';pdf.textContent='PDF';pdf.setAttribute('aria-label','Save as PDF');
       pdf.onclick=function(){var w=window.open('','_blank');if(!w){add('Your browser blocked the PDF window. Allow pop-ups for this site and try again.','sys');return}w.document.write(docHtml());w.document.close();w.focus();setTimeout(function(){try{w.print()}catch(e){}},400)};
       var wd=document.createElement('button');wd.type='button';wd.className='dl';wd.textContent='Word';wd.setAttribute('aria-label','Save as Word document');
