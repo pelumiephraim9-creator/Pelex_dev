@@ -1221,6 +1221,22 @@ main{min-height:0;height:100%;overflow:hidden}
 .spot-card:hover{transform:translateY(-2px);box-shadow:0 24px 40px -22px rgba(11,27,74,.6)}
 .spot-embed{position:relative;padding-top:56.25%;background:#000}
 .spot-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.px-yt-shell{background:#05070b;color:#fff}
+.px-yt-stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden}
+.px-yt-host,.px-yt-host iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.px-yt-gesture{position:absolute;top:0;bottom:0;width:34%;z-index:3;touch-action:manipulation}
+.px-yt-left{left:0}.px-yt-right{right:0}
+.px-yt-toast{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 16px;border-radius:24px;background:rgba(0,0,0,.78);font-weight:700;opacity:0;pointer-events:none;transition:opacity .15s}
+.px-yt-toast.is-visible{opacity:1}
+.px-yt-controls{padding:10px 12px;background:#10141d}
+.px-yt-main{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.px-yt-controls button,.px-yt-speed{border:1px solid rgba(255,255,255,.22);border-radius:8px;background:#202938;color:#fff;padding:7px 9px;font:inherit;font-size:12px;cursor:pointer}
+.px-yt-current,.px-yt-duration{font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.px-yt-range{flex:1;min-width:80px;accent-color:#6ea8ff;cursor:pointer}
+.px-yt-note{margin-top:6px;color:#aab5c8;font-size:10px}
+.px-yt-fallback{position:absolute;inset:0;display:grid;place-items:center;padding:20px;text-align:center;color:#fff;background:#10141d}
+@media(max-width:520px){.px-yt-controls{padding:8px}.px-yt-main{gap:5px}.px-yt-controls button,.px-yt-speed{padding:7px;font-size:11px}}
+
 .spot-meta{display:flex;flex-direction:column;gap:4px;padding:12px 14px 14px}
 .spot-meta b{font-size:15px;line-height:1.35}
 .spot-meta span{font-size:12px;color:var(--muted)}
@@ -5954,17 +5970,14 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
 })();
 </script>
 
+<script src="/spotlight-player.js"></script>
 <script>
 /* SPOTLIGHT: recent, most-watched YouTube videos for the interests chosen at sign-up. Plays on Pelex; the link opens YouTube. */
 (function(){
  function $s(i){return document.getElementById(i)}
  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
  function interests(){var pr=window.curUser&&window.curUser.user_metadata&&window.curUser.user_metadata.profile;return (pr&&pr.interests)||[]}
- function cardHtml(v){
-  return '<article class="spot-card"><div class="spot-embed"><iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(v.id)+'?rel=0" title="'+esc(v.title)+'" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>'+
-   '<div class="spot-meta"><b>'+esc(v.title)+'</b><span>'+esc(v.channel)+' \u00b7 '+esc(v.views)+' views \u00b7 '+esc(v.length)+' \u00b7 '+esc(v.published)+'</span>'+
-   '<a href="https://www.youtube.com/watch?v='+encodeURIComponent(v.id)+'" target="_blank" rel="noopener">Open on YouTube \u2197</a></div></article>';
- }
+ function cardHtml(v){ return window.PelexYouTubePlayer.cardHtml(v); }
  async function findVideos(interest,mount,pageToken,append){
   if(!mount)return;
   if(!(window.sb&&window.curUser)){mount.innerHTML='<div class="ls-empty">Sign in to see videos picked for you.</div>';return}
@@ -5978,6 +5991,7 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
    var old=mount.querySelector('.spot-more');if(old)old.remove();
    if(!append)mount.innerHTML='';
    mount.insertAdjacentHTML('beforeend',j.videos.map(cardHtml).join(''));
+   window.PelexYouTubePlayer.mount(mount);
    if(j.nextPageToken){var mb=document.createElement('button');mb.type='button';mb.className='spot-open spot-more';mb.style.alignSelf='center';mb.textContent='Load more videos';mb.onclick=function(){mb.disabled=true;mb.textContent='Loading\u2026';findVideos(interest,mount,j.nextPageToken,true)};mount.appendChild(mb)}
   }catch(e){mount.innerHTML='<div class="ls-empty">'+esc((e&&!e.backend&&e.message)?e.message:'Spotlight is not reachable right now.')+'</div>'}
  }
