@@ -2259,25 +2259,61 @@ function add(t,cls,img,retryFn){
 <script id="px-spotlight-persistence">
 (function(){
  'use strict';
- var sb=window.sb, user=window.curUser, mini, mediaBox, titleBox, savedPanel;
+ var mini=null,mediaBox=null,titleBox=null,returnPlaceholder=null,returnNode=null;
  function ready(){return !!(window.sb&&window.curUser&&window.curUser.id)}
- function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
  function ensureMini(){
   if(mini)return;
   mini=document.createElement('section');mini.id='pxSpotMini';mini.hidden=true;
-  mini.innerHTML='<div id="pxSpotMiniHead"><span>Spotlight player</span><div class="px-mini-actions"><button type="button" data-mini="return">Return</button><button type="button" data-mini="close" aria-label="Close player">Close</button></div></div><div id="pxSpotMiniMedia"></div><div id="pxSpotMiniTitle"></div>';
+  mini.innerHTML='<div id="pxSpotMiniHead"><span>Spotlight player</span><div class="px-mini-actions"><button type="button" data-mini="return">Return</button><button type="button" data-mini="close">Close</button></div></div><div id="pxSpotMiniMedia"></div><div id="pxSpotMiniTitle"></div><div class="px-mini-actions" style="padding:0 10px 10px"><button type="button" data-mini="pip">Picture in Picture</button><button type="button" data-mini="save">☆ Save video</button></div>';
   document.body.appendChild(mini);mediaBox=mini.querySelector('#pxSpotMiniMedia');titleBox=mini.querySelector('#pxSpotMiniTitle');
-  mini.addEventListener('click',function(e){var b=e.target.closest('[data-mini]');if(!b)return;if(b.dataset.mini==='close'){mediaBox.innerHTML='';mini.hidden=true}else if(b.dataset.mini==='return'){var v=document.getElementById('v-spotlight');if(typeof window.go==='function')window.go('spotlight');mini.hidden=true}});
+  mini.addEventListener('click',function(e){
+   var b=e.target.closest('[data-mini]');if(!b)return;
+   if(b.dataset.mini==='close'){restoreMedia();mini.hidden=true}
+   if(b.dataset.mini==='return'){restoreMedia();mini.hidden=true;if(typeof window.go==='function')window.go('spotlight')}
+   if(b.dataset.mini==='pip')requestPip(b);
+   if(b.dataset.mini==='save'&&returnNode){var card=returnNode.closest('.spot-card,.px-provider-card');if(card)saveVideo(card,b)}
+  });
  }
  function getMeta(card){
   var shell=card.querySelector('.px-yt-shell'),video=card.querySelector('video'),frame=card.querySelector('iframe');
   var link=card.querySelector('.spot-meta a,.px-yt-meta a');var page=link&&link.href||'';
-  var source=shell?'youtube':(/vimeo.com/i.test(page)?'vimeo':/pexels.com/i.test(page)?'pexels':/pixabay.com/i.test(page)?'pixabay':'');
+  var source=shell?'youtube':(/vimeo\.com/i.test(page)?'vimeo':/pexels\.com/i.test(page)?'pexels':/pixabay\.com/i.test(page)?'pixabay':'');
   var ref=shell&&shell.dataset.videoId||page;
   var title=(card.querySelector('.spot-meta b,.px-yt-meta b')||{}).textContent||'Video';
   var channel=(card.querySelector('.spot-meta span,.px-yt-meta span')||{}).textContent||'';
-  var thumb=card.querySelector('video')?.poster||null;
-  return {source:source,ref:ref,title:title.trim(),channel:channel.trim(),page:page||ref,thumb:thumb,media: shell||video||frame};
+  return {source:source,ref:ref,title:title.trim(),channel:channel.trim(),page:page||ref,media:shell||video||frame};
+ }
+ async function saveVideo(card,button){
+  if(!ready()){button.textContent='Sign in to save';return}
+  var m=getMeta(card);if(!m.source||!m.ref||!m.page)return;
+  button.disabled=true;button.textContent='Saving…';
+  try{
+   var existing=await window.sb.from('spotlight_saved').select('id').eq('owner_id',window.curUser.id).eq('source',m.source).eq('video_ref',m.ref).limit(1);
+   if(existing.error)throw existing.error;
+   if(existing.data&&existing.data.length){button.textContent='✓ Saved';return}
+   var r=await window.sb.from('spotlight_saved').insert({owner_id:window.curUser.id,source:m.source,video_ref:m.ref,title:m.title,channel:m.channel,page_url:m.page});
+   if(r.error)throw r.error;button.textContent='✓ Saved';
+  }catch(e){button.textContent='Could not save';}
+  finally{button.disabled=false}
+ }
+ function requestPip(button){
+  var video=mediaBox&&mediaBox.querySelector('video');
+  if(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture){video.requestPictureInPicture().catch(function(){button.textContent='PiP unavailable'});return}
+  var frame=mediaBox&&mediaBox.querySelector('iframe');
+  if(frame){button.textContent='Use the player’s PiP control';return}
+  button.textContent='PiP not supported here';
+ }
+ function restoreMedia(){
+  if(returnPlaceholder&&returnPlaceholder.parentNode&&returnNode){returnPlaceholder.parentNode.insertBefore(returnNode,returnPlaceholder);returnPlaceholder.remove()}
+  returnPlaceholder=null;returnNode=null;if(mediaBox)mediaBox.innerHTML='';
+ }
+ function floatVideo(card){
+  var m=getMeta(card);if(!m.media)return;
+  ensureMini();restoreMedia();
+  returnPlaceholder=document.createComment('Spotlight player location');m.media.parentNode.insertBefore(returnPlaceholder,m.media);
+  returnNode=m.media;mediaBox.appendChild(returnNode);titleBox.textContent=m.title;mini.hidden=false;
+  var frame=mediaBox.querySelector('iframe');if(frame)frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture; encrypted-media');
+  var video=mediaBox.querySelector('video');if(video){video.setAttribute('playsinline','');video.setAttribute('controls','')}
  }
  function decorate(){
   var root=document.getElementById('pxSpotResults');if(!root)return;
@@ -2290,37 +2326,23 @@ function add(t,cls,img,retryFn){
    actions.append(save,play);card.appendChild(actions);
   });
  }
- async function saveVideo(card,button){
-  if(!ready()){button.textContent='Sign in to save';return}
-  var m=getMeta(card);if(!m.source||!m.ref||!m.page)return;
-  button.disabled=true;button.textContent='Saving…';
-  try{
-   var existing=await window.sb.from('spotlight_saved').select('id').eq('owner_id',window.curUser.id).eq('source',m.source).eq('video_ref',m.ref).limit(1);
-   if(existing.error)throw existing.error;
-   if(existing.data&&existing.data.length){button.textContent='✓ Saved';return}
-   var r=await window.sb.from('spotlight_saved').insert({owner_id:window.curUser.id,source:m.source,video_ref:m.ref,title:m.title,thumb_url:m.thumb,channel:m.channel,page_url:m.page});
-   if(r.error)throw r.error;button.textContent='✓ Saved';
-  }catch(e){button.textContent='Could not save';button.title='Please try again';}
-  finally{button.disabled=false}
+ async function showSaved(){
+  var root=document.getElementById('pxSpotSavedPanel');if(!root)return;
+  if(!ready()){root.innerHTML='<p>Sign in to view saved videos.</p>';root.hidden=false;return}
+  root.hidden=false;root.innerHTML='<b>Saved videos</b><p class="muted">Loading your saved videos…</p>';
+  var r=await window.sb.from('spotlight_saved').select('id,source,video_ref,title,channel,page_url,saved_at').eq('owner_id',window.curUser.id).order('saved_at',{ascending:false}).limit(100);
+  if(r.error){root.innerHTML='<b>Saved videos</b><p>Could not load saved videos. Please try again.</p>';return}
+  var rows=r.data||[];root.innerHTML='<b>Saved videos</b>'+(rows.length?rows.map(function(x){return '<div class="px-spot-saved-row"><div><b>'+esc(x.title||'Saved video')+'</b><div class="muted">'+esc(x.channel||x.source)+'</div><a href="'+esc(x.page_url)+'" target="_blank" rel="noopener noreferrer">Watch video</a></div><button type="button" data-remove-saved="'+x.id+'">Remove</button></div>'}).join(''):'<p class="muted">You have not saved any videos yet.</p>');
  }
- function floatVideo(card){
-  var m=getMeta(card);if(!m.media)return;
-  ensureMini();mediaBox.innerHTML='';mediaBox.appendChild(m.media);titleBox.textContent=m.title;mini.hidden=false;
-  var close=document.createElement('button');close.type='button';close.textContent='Picture in Picture';close.style.cssText='position:absolute;left:-9999px';mini.appendChild(close);
-  var video=mediaBox.querySelector('video');
-  if(video){video.setAttribute('playsinline','');video.setAttribute('controls','');video.addEventListener('loadedmetadata',function(){}, {once:true});}
-  if(m.media.matches&&m.media.matches('.px-yt-shell')){var frame=m.media.querySelector('iframe');if(frame)frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture; encrypted-media')}
- }
+ function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
  document.addEventListener('click',function(e){
-  var action=e.target.closest('[data-sp-action]');if(!action)return;
-  var card=action.closest('.spot-card,.px-provider-card');if(!card)return;
-  if(action.dataset.spAction==='save')saveVideo(card,action);
-  if(action.dataset.spAction==='float')floatVideo(card);
+  var a=e.target.closest('[data-sp-action]');if(a){var card=a.closest('.spot-card,.px-provider-card');if(!card)return;if(a.dataset.spAction==='save')saveVideo(card,a);if(a.dataset.spAction==='float')floatVideo(card);return}
+  if(e.target.closest('#pxSpotSavedToggle'))showSaved();
+  var rm=e.target.closest('[data-remove-saved]');if(rm&&ready()){window.sb.from('spotlight_saved').delete().eq('id',Number(rm.dataset.removeSaved)).eq('owner_id',window.curUser.id).then(function(r){if(!r.error)showSaved()})}
  });
- var observer=new MutationObserver(function(){decorate()});
+ var observer=new MutationObserver(decorate);
  function start(){var root=document.getElementById('pxSpotResults');if(root)observer.observe(root,{childList:true,subtree:true});decorate()}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
- window.addEventListener('beforeunload',function(){observer.disconnect()});
 })();
 </script>
 
@@ -7354,7 +7376,7 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
   var l=$('spList'),title=$('spTitle');if(!l)return;
   if(!(window.sb&&window.curUser)){empty('Sign in to explore videos in Spotlight.');return}
   if(title)title.textContent='Discover videos';
-  l.innerHTML='<div class="px-spot-layout"><aside class="px-spot-sources"><div class="px-spot-label">SOURCES</div><div id="pxSpotSources" class="px-spot-source-list"><div class="ls-empty">Loading sources…</div></div></aside><section class="px-spot-feed"><div class="px-spot-feedhead"><div><div class="px-spot-eyebrow">SPOTLIGHT DISCOVERY</div><h3 id="pxSpotFeedTitle">Recommended for you</h3><p id="pxSpotFeedSub">Fresh picks from connected video platforms</p></div><span class="px-spot-live">● Live catalogue</span></div><div id="pxSpotResults" class="px-spot-results"><div class="ls-empty">Finding videos for you…</div></div></section><aside class="px-spot-searchpanel"><div class="px-spot-label">FIND SOMETHING</div><label class="px-spot-searchbox"><span aria-hidden="true">⌕</span><input type="search" id="pxSpotQuery" placeholder="Search videos, topics…" aria-label="Search videos"></label><button type="button" id="pxSpotSearch" class="px-spot-searchbtn">Search videos</button><div class="px-spot-searchhint">Search across the selected source. Choose a source on the left to filter your feed.</div></aside></div>';
+  l.innerHTML='<div class="px-spot-layout"><aside class="px-spot-sources"><div class="px-spot-label">SOURCES</div><div id="pxSpotSources" class="px-spot-source-list"><div class="ls-empty">Loading sources…</div></div></aside><section class="px-spot-feed"><div class="px-spot-feedhead"><div><div class="px-spot-eyebrow">SPOTLIGHT DISCOVERY</div><h3 id="pxSpotFeedTitle">Recommended for you</h3><p id="pxSpotFeedSub">Fresh picks from connected video platforms</p></div><span class="px-spot-live">● Live catalogue</span></div><div style="display:flex;justify-content:flex-end;margin:-5px 0 12px"><button type="button" id="pxSpotSavedToggle" class="px-spot-more" style="grid-column:auto">Saved videos</button></div><section id="pxSpotSavedPanel" hidden></section><div id="pxSpotResults" class="px-spot-results"><div class="ls-empty">Finding videos for you…</div></div></section><aside class="px-spot-searchpanel"><div class="px-spot-label">FIND SOMETHING</div><label class="px-spot-searchbox"><span aria-hidden="true">⌕</span><input type="search" id="pxSpotQuery" placeholder="Search videos, topics…" aria-label="Search videos"></label><button type="button" id="pxSpotSearch" class="px-spot-searchbtn">Search videos</button><div class="px-spot-searchhint">Search across the selected source. Choose a source on the left to filter your feed.</div></aside></div>';
   var sources=$('pxSpotSources'),results=$('pxSpotResults'),input=$('pxSpotQuery'),feedTitle=$('pxSpotFeedTitle'),feedSub=$('pxSpotFeedSub');
   var brand={youtube:{name:'YouTube',slug:'youtube',color:'#FF0000',hex:'FF0000'},vimeo:{name:'Vimeo',slug:'vimeo',color:'#1AB7EA',hex:'1AB7EA'},pexels:{name:'Pexels',slug:'pexels',color:'#05A081',hex:'05A081'},pixabay:{name:'Pixabay',slug:'pixabay',color:'#2EC66D',hex:'2EC66D'},internet_archive:{name:'Internet Archive',slug:'internetarchive',color:'#555555',hex:'555555'},peertube:{name:'PeerTube',slug:'peertube',color:'#F1680D',hex:'F1680D'}};
   var active='',nextPages={},busy=false,seed='';
