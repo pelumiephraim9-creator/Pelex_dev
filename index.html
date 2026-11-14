@@ -1235,6 +1235,35 @@ main{min-height:0;height:100%;overflow:hidden}
 .px-provider-card .spot-meta a{display:inline-block}
 
 /* Spotlight provider and video cards: clearer, larger touch targets */
+/* Refined branded source cards and a clean media-player frame */
+.px-source-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:18px;margin:20px 0}
+.px-source-card{position:relative;isolation:isolate;display:flex;align-items:center;gap:18px;width:100%;min-height:154px;padding:22px 20px;overflow:hidden;text-align:left;border:1px solid rgba(100,116,139,.18);border-radius:22px;background:linear-gradient(145deg,#fff 0%,#f8fafc 68%,color-mix(in srgb,var(--px-brand) 8%,#fff) 100%);color:#172033;box-shadow:0 14px 34px -24px rgba(15,23,42,.55),inset 0 1px 0 rgba(255,255,255,.95);cursor:pointer;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.px-source-card:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--px-brand);opacity:.9}
+.px-source-card:hover,.px-source-card:focus-visible{transform:translateY(-4px);border-color:color-mix(in srgb,var(--px-brand) 44%,#cbd5e1);box-shadow:0 22px 42px -24px color-mix(in srgb,var(--px-brand) 34%,transparent),0 0 0 3px color-mix(in srgb,var(--px-brand) 12%,transparent);outline:none}
+.px-brand-mark{position:relative;z-index:1;display:grid;place-items:center;flex:0 0 76px;width:76px;height:76px;border-radius:20px;background:linear-gradient(145deg,#fff 0%,color-mix(in srgb,var(--px-brand) 11%,#fff) 100%);border:1px solid color-mix(in srgb,var(--px-brand) 20%,#e2e8f0);box-shadow:0 9px 22px -15px color-mix(in srgb,var(--px-brand) 55%,transparent),inset 0 1px 0 #fff}
+.px-brand-mark img{display:block;width:48px;height:48px;object-fit:contain}
+.px-brand-mark b{font-size:30px;font-weight:800;color:var(--px-brand)}
+.px-brand-copy{position:relative;z-index:1;display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:5px}
+.px-brand-copy strong{font-size:19px;line-height:1.2;font-weight:800;letter-spacing:-.025em;color:#111827}
+.px-brand-copy small{font-size:12px;line-height:1.45;font-weight:500;color:#64748b}
+.px-brand-copy em{margin-top:6px;font-size:12px;font-style:normal;font-weight:750;letter-spacing:.01em;color:var(--px-brand)}
+.px-brand-glow{position:absolute;z-index:0;width:150px;height:150px;right:-65px;bottom:-95px;border-radius:50%;background:var(--px-brand);opacity:.09;filter:blur(3px);pointer-events:none}
+:root[data-theme="dark"] .px-source-card{background:linear-gradient(145deg,#172033 0%,#111827 72%,color-mix(in srgb,var(--px-brand) 13%,#111827) 100%);border-color:rgba(148,163,184,.2);color:#f8fafc;box-shadow:0 16px 36px -24px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.05)}
+:root[data-theme="dark"] .px-brand-mark{background:linear-gradient(145deg,#fff 0%,#f1f5f9 100%);border-color:rgba(255,255,255,.18)}
+:root[data-theme="dark"] .px-brand-copy strong{color:#f8fafc}
+:root[data-theme="dark"] .px-brand-copy small{color:#b6c2d3}
+.px-yt-shell{overflow:hidden;border-radius:18px;background:#080b12;color:#fff;box-shadow:0 18px 42px -26px rgba(15,23,42,.7)}
+.px-yt-stage{position:relative;width:100%;aspect-ratio:16/9;background:#05070b;overflow:hidden}
+.px-yt-host,.px-yt-host iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.px-yt-fallback{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:#fff;background:#101827}
+.px-yt-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:17px 19px;background:linear-gradient(180deg,#111827,#0b1220)}
+.px-yt-meta-main{min-width:0}
+.px-yt-meta b{display:block;font-size:16px;line-height:1.4;font-weight:750;color:#f8fafc}
+.px-yt-meta span{display:block;margin-top:5px;font-size:12px;line-height:1.45;color:#aab7c9}
+.px-yt-meta a{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid rgba(255,255,255,.16);border-radius:10px;background:rgba(255,255,255,.07);color:#f8fafc;text-decoration:none;font-size:12px;font-weight:700}
+.px-yt-meta a:hover{background:rgba(255,255,255,.13)}
+@media(max-width:600px){.px-source-grid{grid-template-columns:minmax(0,1fr);gap:13px}.px-source-card{min-height:126px;padding:17px;gap:15px;border-radius:18px}.px-brand-mark{flex-basis:64px;width:64px;height:64px;border-radius:17px}.px-brand-mark img{width:42px;height:42px}.px-brand-copy strong{font-size:17px}.px-yt-meta{flex-direction:column;padding:14px}.px-yt-meta a{align-self:flex-start}}
+
 .px-source-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:18px;margin:18px 0}
 .px-source-card{min-height:148px;padding:22px;border:2px solid var(--line);border-radius:20px;box-shadow:0 12px 28px -18px rgba(11,27,74,.42)}
 .px-source-card strong{font-size:19px;line-height:1.35;font-weight:800;letter-spacing:.01em;margin-bottom:10px}
@@ -7205,7 +7234,8 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
   empty('Checking available video sources...');
   call('providers').then(function(out){var j=parse(out),list=j.providers||[],l=$('spList');
    if(!list.length){empty('No video sources are connected and responding yet. Add provider credentials and try again.');return}
-   l.innerHTML='<div class="px-source-grid">'+list.map(function(p){return '<button type="button" class="px-source-card" data-provider="'+esc(p.id)+'"><strong>'+esc(p.name)+'</strong><span>Browse videos on this source</span></button>'}).join('')+'</div>';
+   var brand={youtube:{name:'YouTube',slug:'youtube',color:'#FF0033',hex:'FF0033',note:'Videos from creators worldwide'},vimeo:{name:'Vimeo',slug:'vimeo',color:'#17D5FF',hex:'17D5FF',note:'Films, stories and creative work'},pexels:{name:'Pexels',slug:'pexels',color:'#05A081',hex:'05A081',note:'Free stock videos and footage'},pixabay:{name:'Pixabay',slug:'pixabay',color:'#2EC66D',hex:'2EC66D',note:'Free creative videos and media'},internet_archive:{name:'Internet Archive',slug:'internetarchive',color:'#555555',hex:'555555',note:'A library of films and moving images'},peertube:{name:'PeerTube',slug:'peertube',color:'#F1680D',hex:'F1680D',note:'Videos across the federated network'}};
+   l.innerHTML='<div class="px-source-grid">'+list.map(function(p){var b=brand[p.id]||{name:p.name,slug:'',color:'#64748b',hex:'64748b',note:'Browse videos on this source'};var logo=b.slug?'https://cdn.simpleicons.org/'+b.slug+'/'+b.hex:'';return '<button type="button" class="px-source-card px-brand-'+esc(p.id)+'" data-provider="'+esc(p.id)+'" style="--px-brand:'+b.color+'"><span class="px-brand-mark">'+(logo?'<img src="'+logo+'" alt="'+esc(b.name)+' logo" loading="eager" referrerpolicy="no-referrer">':'<b>'+esc(b.name.charAt(0))+'</b>')+'</span><span class="px-brand-copy"><strong>'+esc(b.name)+'</strong><small>'+esc(b.note)+'</small><em>Explore source <span aria-hidden="true">↗</span></em></span><span class="px-brand-glow" aria-hidden="true"></span></button>'}).join('')+'</div>';
    l.querySelectorAll('[data-provider]').forEach(function(b){b.onclick=function(){workspace(b.getAttribute('data-provider'))}});
   }).catch(function(){empty('Spotlight could not check video sources right now. Please try again.')});
  }
