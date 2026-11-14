@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var sequence = 0, apiPromise = null, timers = new WeakMap();
+  var sequence = 0, apiPromise = null;
 
   function loadApi() {
     if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
@@ -57,7 +57,7 @@
     var host = shell.querySelector('.px-yt-host'), videoId = shell.getAttribute('data-video-id');
     if (!host || !videoId) return;
     shell.dataset.pxPlayerReady = '1';
-    var player, range = shell.querySelector('.px-yt-range'), current = shell.querySelector('.px-yt-current');
+    var player, ticker = null, range = shell.querySelector('.px-yt-range'), current = shell.querySelector('.px-yt-current');
     var duration = shell.querySelector('.px-yt-duration'), play = shell.querySelector('.px-yt-play');
     var speed = shell.querySelector('.px-yt-speed'), volume = shell.querySelector('.px-yt-volume'), toast = shell.querySelector('.px-yt-toast');
     var lastTap = { left: 0, right: 0 }, toastTimer;
@@ -91,10 +91,13 @@
             speed.innerHTML = rates.map(function (r) { return '<option value="' + r + '"' + (r === 1 ? ' selected' : '') + '>' + r + '×</option>'; }).join('');
           } catch (_) { speed.innerHTML = '<option value="1">1×</option>'; }
           sync();
-          if (timers.has(shell)) clearInterval(timers.get(shell));
-          timers.set(shell, setInterval(sync, 500));
         },
-        onStateChange: sync,
+        onStateChange: function () {
+          sync();
+          if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+            if (!ticker) ticker = setInterval(sync, 1000);
+          } else { clearInterval(ticker); ticker = null; }
+        },
         onError: function () { notify('This video cannot be played here.'); }
       }
     });
