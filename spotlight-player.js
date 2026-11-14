@@ -48,7 +48,7 @@
       '<label class="px-yt-volume-label">Volume <input class="px-yt-volume" type="range" min="0" max="100" value="100" aria-label="Volume"></label>' +
       '<button type="button" class="px-yt-full" aria-label="Fullscreen">Full screen</button></div>' +
       '<div class="px-yt-note">Double-tap either side to skip 10 seconds</div></div></div>' +
-      '<div class="spot-meta"><b>' + safeText(v.title) + '</b><span>' + safeText(v.channel) + ' · ' + safeText(v.views) + ' views · ' + safeText(v.length) + ' · ' + safeText(v.published) + '</span>' +
+      '<div class="spot-meta"><b>' + safeText(v.title || 'YouTube video') + '</b><span>' + safeText([v.channel, v.views ? v.views + ' views' : '', v.length, v.published].filter(Boolean).join(' · ')) + '</span>' +
       '<a href="https://www.youtube.com/watch?v=' + encodeURIComponent(v.id) + '" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a></div></article>';
   }
 
