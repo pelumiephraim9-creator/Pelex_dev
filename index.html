@@ -7295,7 +7295,7 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
     if(!total&&!append)results.innerHTML='<div class="ls-empty">No videos are available right now. Try another topic or source.</div>';
     if(window.PelexYouTubePlayer)window.PelexYouTubePlayer.mount(results);
     var more=results.querySelector('.px-spot-more');if(more)more.remove();
-    if(next){var btn=document.createElement('button');btn.className='px-spot-more';btn.type='button';btn.textContent='Load more videos';btn.onclick=function(){if(!next)return;var n=next;next=null;fetchFeed(n.query,n.token,true)};results.appendChild(btn)}
+    if(Object.keys(nextPages).length){var btn=document.createElement('button');btn.className='px-spot-more';btn.type='button';btn.textContent='Load more videos';btn.onclick=function(){fetchFeed(q,null,true)};results.appendChild(btn)}
    }).finally(function(){busy=false});
   }
   $('pxSpotSearch').onclick=function(){var q=input.value.trim();if(q.length<2){results.innerHTML='<div class="ls-empty">Enter at least two characters to search.</div>';return}nextPages={};fetchFeed(q,null,false)};
