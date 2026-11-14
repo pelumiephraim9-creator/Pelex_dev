@@ -2378,7 +2378,7 @@ function add(t,cls,img,retryFn){
  function getMeta(card){
   var yt=card.querySelector('.px-yt-shell'),v=card.querySelector('video'),frame=card.querySelector('iframe');
   var a=card.querySelector('.spot-meta a,.px-yt-meta a'),page=a&&a.href||'';
-  var source=yt?'youtube':(/vimeo\.com/i.test(page)?'vimeo':/pexels\.com/i.test(page)?'pexels':/pixabay\.com/i.test(page)?'pixabay':'');
+  var source=yt?'youtube':card.getAttribute('data-provider')||(/vimeo\.com/i.test(page)?'vimeo':/pexels\.com/i.test(page)?'pexels':/pixabay\.com/i.test(page)?'pixabay':'');
   var ref=yt&&yt.getAttribute('data-video-id')||page;
   var title=(card.querySelector('.spot-meta b,.px-yt-meta b')||{}).textContent||'Video';
   var channel=(card.querySelector('.spot-meta span,.px-yt-meta span')||{}).textContent||'';
@@ -2453,13 +2453,10 @@ function add(t,cls,img,retryFn){
   var remove=e.target.closest('[data-remove-saved]');if(remove){var db=client();if(!db)return;remove.disabled=true;db.from('spotlight_saved').delete().eq('id',remove.dataset.removeSaved).eq('owner_id',window.curUser.id).then(function(r){if(r.error){remove.disabled=false;remove.textContent='Retry'}else loadSaved()});}
  });
  function start(){
-  var root=document.getElementById('pxSpotResults');
-  if(root){observer=new MutationObserver(decorate);observer.observe(root,{childList:true,subtree:true});decorate()}
-  var panel=ensureSavedPanel();
-  if(panel){
-   var head=document.querySelector('.px-spot-feedhead');
-   if(head&&!head.querySelector('[data-open-saved]')){var b=document.createElement('button');b.type='button';b.dataset.openSaved='1';b.className='px-spot-more';b.textContent='Saved videos';b.style.marginLeft='auto';b.onclick=function(){panel.hidden=!panel.hidden;if(!panel.hidden)loadSaved()};head.appendChild(b)}
-  }
+  var host=document.getElementById('spList')||document.body;
+  observer=new MutationObserver(function(){decorate();var panel=ensureSavedPanel();var head=document.querySelector('.px-spot-feedhead');if(panel&&head&&!head.querySelector('[data-open-saved]')){var b=document.createElement('button');b.type='button';b.dataset.openSaved='1';b.className='px-spot-more';b.textContent='Saved videos';b.style.marginLeft='auto';b.onclick=function(){panel.hidden=!panel.hidden;if(!panel.hidden)loadSaved()};head.appendChild(b)}});
+  observer.observe(host,{childList:true,subtree:true});decorate();
+  var panel=ensureSavedPanel();var head=document.querySelector('.px-spot-feedhead');if(panel&&head&&!head.querySelector('[data-open-saved]')){var b=document.createElement('button');b.type='button';b.dataset.openSaved='1';b.className='px-spot-more';b.textContent='Saved videos';b.style.marginLeft='auto';b.onclick=function(){panel.hidden=!panel.hidden;if(!panel.hidden)loadSaved()};head.appendChild(b)}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
@@ -7514,7 +7511,7 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
    else if(v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<div class="px-provider-media"><iframe src="'+esc(v.embedUrl)+'" title="'+esc(v.title)+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
    else media='<div class="px-provider-media px-no-preview"><span>▶</span><small>Open video on source</small></div>';
    var href=v.url&&/^https:\/\//i.test(v.url)?v.url:'#';
-   return '<article class="px-provider-card">'+media+'<div class="spot-meta"><b>'+esc(v.title)+'</b><span>'+esc(v.channel||provider)+' · '+esc(v.duration||'')+'</span><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">Watch on '+esc((brand[provider]||{name:provider}).name)+'</a></div></article>';
+   return '<article class="px-provider-card" data-provider="'+esc(provider)+'">'+media+'<div class="spot-meta"><b>'+esc(v.title)+'</b><span>'+esc(v.channel||provider)+' · '+esc(v.duration||'')+'</span><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">Watch on '+esc((brand[provider]||{name:provider}).name)+'</a></div></article>';
   }
   function fetchFeed(q,token,append){
    if(busy)return;busy=true;if(!append){nextPages={};results.innerHTML='<div class="ls-empty">Loading videos…</div>'}
