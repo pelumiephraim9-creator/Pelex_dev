@@ -1219,6 +1219,20 @@ main{min-height:0;height:100%;overflow:hidden}
 .spot-list{display:flex;flex-direction:column;gap:14px;margin-top:12px}
 .spot-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(150deg,var(--panel),var(--soft));box-shadow:0 18px 34px -22px rgba(11,27,74,.5);transition:transform .3s,box-shadow .3s}
 .spot-card:hover{transform:translateY(-2px);box-shadow:0 24px 40px -22px rgba(11,27,74,.6)}
+.px-source-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:14px 0}
+.px-source-card{appearance:none;text-align:left;min-height:112px;padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,var(--panel),var(--soft));box-shadow:0 16px 32px -22px rgba(11,27,74,.55);color:var(--ink);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.px-source-card:hover{transform:translateY(-3px);box-shadow:0 22px 36px -22px rgba(11,27,74,.65)}
+.px-source-card strong{display:block;font-size:16px;text-transform:capitalize;margin-bottom:7px}
+.px-source-card span{font-size:12px;color:var(--muted)}
+.px-spot-search{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.px-spot-search input{flex:1;min-width:150px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);font:inherit}
+.px-spot-search button,.px-spot-back{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.px-provider-media{position:relative;aspect-ratio:16/9;background:#000}
+.px-provider-media iframe,.px-provider-media video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.px-provider-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:0 18px 34px -22px rgba(11,27,74,.5);margin-bottom:14px}
+.px-provider-card .spot-meta{padding:12px 14px}
+.px-provider-card .spot-meta a{display:inline-block}
+
 .spot-embed{position:relative;padding-top:56.25%;background:#000}
 .spot-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .px-yt-shell{background:#05070b;color:#fff}
@@ -2036,7 +2050,7 @@ setTimeout(out,rm?500:4600);setTimeout(out,6500);sp.addEventListener('click',out
 </div></section>
 <section class="view" id="v-spotlight" hidden><div class="wrap">
 <h1>Spotlight</h1><div class="muted">The most watched recent videos for what you care about. Play them here, or open them on YouTube.</div>
-<div style="margin:16px 0"><button class="spot-open" id="spOpen" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Pick an interest</button></div>
+<div style="margin:16px 0"><button class="spot-open" id="spOpen" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Browse video sources</button></div>
 <h2 id="spTitle" style="margin-top:6px">Your picks</h2>
 <div class="spot-list" id="spList"></div>
 </div></section>
@@ -7149,5 +7163,68 @@ body::before{display:none!important;content:none!important}
 (function(){var root=document.documentElement,meta=document.querySelector('meta[name="theme-color"]');function syncThemeColor(){if(meta)meta.setAttribute('content',root.getAttribute('data-theme')==='dark'?'#0C1423':'#FFFFFF')}syncThemeColor();try{new MutationObserver(syncThemeColor).observe(root,{attributes:true,attributeFilter:['data-theme']})}catch(e){}
 var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.getElementById('pelexNewChatGrip')){var grip=document.createElement('button');grip.id='pelexNewChatGrip';grip.type='button';grip.setAttribute('aria-label','Drag upward to start a new chat');grip.title='Drag up for a new chat';grip.innerHTML='<span aria-hidden="true"></span>';barwrap.insertBefore(grip,barwrap.firstChild);var startY=0,lastY=0,active=false,threshold=112;function reset(){active=false;grip.classList.remove('dragging','ready');grip.style.transform='';grip.style.filter=''}grip.addEventListener('pointerdown',function(e){if(e.button!==undefined&&e.button!==0)return;active=true;startY=e.clientY;lastY=startY;grip.classList.add('dragging');try{grip.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault()});grip.addEventListener('pointermove',function(e){if(!active)return;lastY=e.clientY;var dy=lastY-startY,up=Math.max(0,-dy),progress=Math.min(1,up/threshold);grip.style.transform='translateY('+Math.max(-76,Math.min(12,dy*.42))+'px) scale('+(1+progress*.08)+')';grip.style.filter='drop-shadow(0 '+(2+progress*9)+'px '+(4+progress*12)+'px rgba(20,43,82,'+(.08+progress*.18)+'))';grip.classList.toggle('ready',up>=threshold);e.preventDefault()});function finish(e){if(!active)return;var shouldOpen=startY-lastY>=threshold;reset();if(shouldOpen&&typeof window.newChat==='function')window.newChat();if(e&&e.cancelable)e.preventDefault()}grip.addEventListener('pointerup',finish);grip.addEventListener('pointercancel',reset);grip.addEventListener('lostpointercapture',function(){if(active)reset()});grip.addEventListener('click',function(e){e.preventDefault();e.stopPropagation()})}})();
 </script>
+
+<script>
+(function(){
+ 'use strict';
+ var $=function(id){return document.getElementById(id)};
+ function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+ function parse(out){return JSON.parse(String(out||'').replace(/^\x60\x60\x60json\s*|\s*\x60\x60\x60$/g,'').trim())}
+ function call(action,provider,query,pageToken){
+  return askPublicAgent(action==='providers'?'List the video sources available in Spotlight':'Search '+provider+' videos for '+query,
+   Object.assign({},agentMeta(),{intent:'spotlight_catalog',action:action,provider:provider||'',query:query||'',pageToken:pageToken||'',__sid:'spot-catalog-'+Date.now()}));
+ }
+ function empty(text){var l=$('spList');if(l)l.innerHTML='<div class="ls-empty">'+esc(text)+'</div>'}
+ function loadProviders(){
+  empty('Checking available video sources...');
+  call('providers').then(function(out){var j=parse(out),list=j.providers||[],l=$('spList');
+   if(!list.length){empty('No video sources are connected and responding yet. Add provider credentials and try again.');return}
+   l.innerHTML='<div class="px-source-grid">'+list.map(function(p){return '<button type="button" class="px-source-card" data-provider="'+esc(p.id)+'"><strong>'+esc(p.name)+'</strong><span>Browse videos on this source</span></button>'}).join('')+'</div>';
+   l.querySelectorAll('[data-provider]').forEach(function(b){b.onclick=function(){workspace(b.getAttribute('data-provider'))}});
+  }).catch(function(){empty('Spotlight could not check video sources right now. Please try again.')});
+ }
+ function workspace(provider){
+  var l=$('spList'),title=$('spTitle');if(!l)return;
+  if(title)title.textContent=provider.replace(/_/g,' ');
+  l.innerHTML='<button type="button" class="px-spot-back">All video sources</button><div class="px-spot-search"><input type="search" id="pxSpotQuery" placeholder="Search videos" aria-label="Search videos"><button type="button" id="pxSpotSearch">Search</button></div><div id="pxSpotResults" class="spot-list"></div>';
+  l.querySelector('.px-spot-back').onclick=function(){if(title)title.textContent='Your picks';loadProviders()};
+  var input=$('pxSpotQuery'),results=$('pxSpotResults'),profile=window.curUser&&window.curUser.user_metadata&&window.curUser.user_metadata.profile;
+  var chosen=profile&&Array.isArray(profile.interests)&&profile.interests[0]||'',next=null,busy=false;
+  if(chosen)input.value=chosen;
+  function search(token,append){
+   var q=input.value.trim();if(q.length<2){results.innerHTML='<div class="ls-empty">Enter at least two characters to search.</div>';return}
+   if(busy)return;busy=true;
+   if(!append)results.innerHTML='<div class="ls-empty">Searching videos...</div>';
+   call('search',provider,q,token).then(function(out){
+    var j=parse(out),vids=j.videos||[];if(!append)results.innerHTML='';
+    if(!vids.length&&!append){results.innerHTML='<div class="ls-empty">No videos found. Try another search.</div>';return}
+    vids.forEach(function(v){
+     if(provider==='youtube'&&window.PelexYouTubePlayer){results.insertAdjacentHTML('beforeend',window.PelexYouTubePlayer.cardHtml(v));return}
+     var media='';
+     if((provider==='pexels'||provider==='pixabay')&&v.embedUrl&&/^https:\/\//i.test(v.embedUrl))
+      media='<div class="px-provider-media"><video controls playsinline preload="metadata" src="'+esc(v.embedUrl)+'"></video></div>';
+     else if(v.embedUrl&&/^https:\/\//i.test(v.embedUrl))
+      media='<div class="px-provider-media"><iframe src="'+esc(v.embedUrl)+'" title="'+esc(v.title)+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
+     else media='<div class="px-provider-media" style="display:grid;place-items:center;color:#fff">Preview on original website</div>';
+     var link=v.url&&/^https:\/\//i.test(v.url)?'<a href="'+esc(v.url)+'" target="_blank" rel="noopener noreferrer">Watch on '+esc(provider.replace(/_/g,' '))+'</a>':'';
+     var card='<article class="px-provider-card">'+media+'<div class="spot-meta"><b>'+esc(v.title)+'</b><span>'+esc(v.channel||provider)+' · '+esc(v.duration||'')+'</span>'+link+'</div></article>';
+     results.insertAdjacentHTML('beforeend',card);
+    });
+    next=j.nextPageToken||null;var old=results.querySelector('.px-spot-more');if(old)old.remove();
+    if(next){var more=document.createElement('button');more.type='button';more.className='spot-open px-spot-more';more.textContent='Load more videos';more.onclick=function(){more.disabled=true;more.textContent='Loading...';search(next,true)};results.appendChild(more)}
+    if(provider==='youtube'&&window.PelexYouTubePlayer)window.PelexYouTubePlayer.mount(results);
+   }).catch(function(){if(!append)results.innerHTML='<div class="ls-empty">This source is temporarily unavailable. Try again shortly.</div>'}).finally(function(){busy=false});
+  }
+  $('pxSpotSearch').onclick=function(){search(null,false)};
+  input.addEventListener('keydown',function(e){if(e.key==='Enter')search(null,false)});
+  if(chosen)search(null,false);
+ }
+ var oldGo=window.go;
+ if(typeof oldGo==='function')window.go=function(v,t){oldGo(v,t);if(v==='spotlight')loadProviders()};
+ window.addEventListener('load',function(){var b=$('spOpen');if(b)b.onclick=loadProviders});
+ window.pxLoadSpotlightProviders=loadProviders;
+})();
+</script>
+
 </body>
 </html>
