@@ -1366,6 +1366,40 @@ main{min-height:0;height:100%;overflow:hidden}
 #chat>.msg:not(.sys){background:transparent!important;background-image:none!important;border:0!important;border-color:transparent!important;box-shadow:none!important;color:var(--ink)!important;border-radius:0!important;padding:8px 0!important}
 #chat>.msg.me:not(.sys){background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;color:var(--ink)!important;border-radius:0!important;padding:8px 0!important}
 #chat>.msg.me .txtp{color:var(--ink)!important}
+
+/* Spotlight responsive discovery workspace */
+.px-spot-layout{display:grid;grid-template-columns:218px minmax(0,1fr) 250px;gap:22px;align-items:start;margin-top:20px}
+.px-spot-sources,.px-spot-searchpanel{position:sticky;top:18px;border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:15px;min-width:0}
+.px-spot-label,.px-spot-eyebrow{font-size:10px;letter-spacing:.14em;font-weight:850;color:var(--muted);margin:0 0 12px}
+.px-spot-source-list{display:grid;gap:7px}
+.px-spot-source{display:flex;align-items:center;gap:11px;width:100%;min-height:54px;padding:8px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--ink);text-align:left;cursor:pointer}
+.px-spot-source:hover,.px-spot-source.active{background:var(--soft);border-color:var(--line)}
+.px-spot-source.active{box-shadow:inset 3px 0 var(--accent,#2563eb)}
+.px-spot-sourceicon{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--px-brand,#2563eb) 12%,var(--panel));color:var(--px-brand,#2563eb);font-weight:900}
+.px-spot-sourceicon img{width:21px;height:21px;object-fit:contain}
+.px-spot-source b,.px-spot-source small{display:block}.px-spot-source b{font-size:13px}.px-spot-source small{font-size:11px;color:var(--muted);margin-top:3px}
+.px-spot-feed{min-width:0}
+.px-spot-feedhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:3px 0 16px}
+.px-spot-feedhead h3{font-size:22px;line-height:1.2;margin:0 0 5px;color:var(--ink)}
+.px-spot-feedhead p{font-size:12px;color:var(--muted);margin:0}
+.px-spot-live{font-size:10px;color:#16845b;white-space:nowrap;border:1px solid #b7e4d0;border-radius:30px;padding:6px 9px;background:#effbf5}
+.px-spot-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.px-spot-results .px-provider-card{min-width:0;margin:0;border-radius:15px;box-shadow:0 8px 22px -18px rgba(0,0,0,.35)}
+.px-spot-results .px-yt-shell,.px-spot-results .px-provider-media{width:100%;aspect-ratio:16/9}
+.px-spot-results .spot-meta{padding:12px 13px;display:grid;gap:6px}
+.px-spot-results .spot-meta b{font-size:14px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.px-spot-results .spot-meta span{font-size:11px;color:var(--muted)}
+.px-spot-results .spot-meta a{font-size:12px;font-weight:700}
+.px-spot-searchbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:0 11px;background:var(--bg);color:var(--muted)}
+.px-spot-searchbox span{font-size:22px}.px-spot-searchbox input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);padding:12px 0;font:inherit;font-size:13px}
+.px-spot-searchbtn{width:100%;margin-top:9px;padding:11px;border:0;border-radius:11px;background:#2563eb;color:white;font-weight:750;cursor:pointer}
+.px-spot-searchhint{font-size:11px;line-height:1.5;color:var(--muted);margin-top:12px}
+.px-spot-more{grid-column:1/-1;justify-self:center;padding:11px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);font-weight:750;cursor:pointer}
+.px-no-preview{display:grid;place-items:center;gap:6px;color:#fff;background:#111827}.px-no-preview span{font-size:28px}.px-no-preview small{font-size:11px}
+@media(max-width:1120px){.px-spot-layout{grid-template-columns:190px minmax(0,1fr)}.px-spot-searchpanel{grid-column:2;position:static;grid-row:1}.px-spot-feed{grid-column:2;grid-row:2}.px-spot-sources{grid-column:1;grid-row:1 / span 2}}
+@media(max-width:720px){.px-spot-layout{display:flex;flex-direction:column;gap:13px;margin-top:14px}.px-spot-searchpanel{order:0;width:100%;position:static;padding:12px}.px-spot-searchpanel .px-spot-label{margin-bottom:8px}.px-spot-searchbtn{margin-top:7px}.px-spot-sources{order:1;width:100%;position:static;padding:11px}.px-spot-source-list{display:flex;overflow-x:auto;gap:7px;padding-bottom:3px;scrollbar-width:thin}.px-spot-source{flex:0 0 auto;width:auto;min-height:44px;padding:6px 9px}.px-spot-sourceicon{width:29px;height:29px;flex-basis:29px}.px-spot-source small{display:none}.px-spot-feed{order:2;width:100%}.px-spot-feedhead{margin:4px 0 12px}.px-spot-feedhead h3{font-size:19px}.px-spot-results{grid-template-columns:minmax(0,1fr);gap:13px}.px-spot-results .spot-meta b{font-size:14px}.px-spot-live{font-size:9px}}
+@media(min-width:721px) and (max-width:980px){.px-spot-results{grid-template-columns:minmax(0,1fr)}}
+
 </style>
 </head>
 <body>
@@ -2098,8 +2132,7 @@ setTimeout(out,rm?500:4600);setTimeout(out,6500);sp.addEventListener('click',out
 </div></section>
 <section class="view" id="v-spotlight" hidden><div class="wrap">
 <h1>Spotlight</h1><div class="muted">The most watched recent videos for what you care about. Play them here, or open them on YouTube.</div>
-<div style="margin:16px 0"><button class="spot-open" id="spOpen" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Browse video sources</button></div>
-<h2 id="spTitle" style="margin-top:6px">Your picks</h2>
+<h2 id="spTitle" style="margin-top:6px">Discover videos</h2>
 <div class="spot-list" id="spList"></div>
 </div></section>
 <div id="spSheet" hidden><div class="sheetCard"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>Choose an interest</b><button type="button" id="spClose" class="iconbtn" aria-label="Close">&#10005;</button></div><div id="spPick"></div></div></div>
@@ -2203,7 +2236,233 @@ function add(t,cls,img,retryFn){
     down.onclick=function(){recordResponseFeedback('down',down)};
     if(t.length>180){
       var esc=function(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
-      var docHtml=function(){return '<html><head><meta charset="utf-8"><title>Pelex</title><style>body{font-family:Arial,sans-serif;line-height:1.55;max-width:720px;margin:32px auto;padding:0 16px}pre{background:#f3f4f6;padding:10px;white-space:pre-wrap} /* PELEX LIGHT THEME: true white surfaces throughout; preserve navy dark theme. */ :root[data-theme="light"]{--bg:#ffffff!important;--panel:#ffffff!important;--card:#ffffff!important;--ink:#0b1b4a!important;--muted:#52617d!important;--line:#d9e0ec!important;--soft:#ffffff!important;color-scheme:light!important} :root[data-theme="light"] body,:root[data-theme="light"] main,:root[data-theme="light"] .card,:root[data-theme="light"] .dcard,:root[data-theme="light"] .panel,:root[data-theme="light"] section{background-color:#ffffff} :root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{background-color:#ffffff;color:#0b1b4a} :root[data-theme="dark"]{--bg:#0c1423!important;--panel:#121e31!important;--card:#121e31!important;--ink:#e8eef8!important;--muted:#a1aec2!important;--line:#26364d!important;--soft:#17263d!important;color-scheme:dark!important}  </style></head><body><div style="white-space:pre-wrap">'+esc(t)+'</div><p style="color:#888;font-size:12px;margin-top:30px">Made with Pelex</p></body></html>'};
+      var docHtml=function(){return '<html><head><meta charset="utf-8"><title>Pelex</title><style>body{font-family:Arial,sans-serif;line-height:1.55;max-width:720px;margin:32px auto;padding:0 16px}pre{background:#f3f4f6;padding:10px;white-space:pre-wrap} /* PELEX LIGHT THEME: true white surfaces throughout; preserve navy dark theme. */ :root[data-theme="light"]{--bg:#ffffff!important;--panel:#ffffff!important;--card:#ffffff!important;--ink:#0b1b4a!important;--muted:#52617d!important;--line:#d9e0ec!important;--soft:#ffffff!important;color-scheme:light!important} :root[data-theme="light"] body,:root[data-theme="light"] main,:root[data-theme="light"] .card,:root[data-theme="light"] .dcard,:root[data-theme="light"] .panel,:root[data-theme="light"] section{background-color:#ffffff} :root[data-theme="light"] input,:root[data-theme="light"] select,:root[data-theme="light"] textarea{background-color:#ffffff;color:#0b1b4a} :root[data-theme="dark"]{--bg:#0c1423!important;--panel:#121e31!important;--card:#121e31!important;--ink:#e8eef8!important;--muted:#a1aec2!important;--line:#26364d!important;--soft:#17263d!important;color-scheme:dark!important}  </style></head><body><div style="white-space:pre-wrap">'+esc(t)+'</div><p style="color:#888;font-size:12px;margin-top:30px">Made with Pelex</p>
+<style id="px-spotlight-player-tools">
+.px-spot-actions{display:flex;gap:8px;flex-wrap:wrap;padding:9px 12px;border-top:1px solid var(--line);background:var(--panel)}
+.px-spot-actions button,.px-mini-actions button{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer}
+.px-spot-actions button:disabled{opacity:.4;cursor:not-allowed}
+#pxSpotMini{position:fixed;right:18px;bottom:18px;z-index:9999;width:min(390px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 48px rgba(0,0,0,.25);overflow:hidden}
+#pxSpotMini[hidden]{display:none}
+#pxSpotMiniHead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;font-size:12px;font-weight:750}
+.px-mini-actions{display:flex;gap:6px}
+#pxSpotMiniMedia{background:#000;aspect-ratio:16/9;display:grid;place-items:center}
+#pxSpotMiniMedia video,#pxSpotMiniMedia iframe,#pxSpotMiniMedia .px-yt-shell{width:100%;height:100%;border:0}
+#pxSpotMiniMedia .px-yt-stage{height:100%;aspect-ratio:16/9}
+#pxSpotMiniMedia .px-yt-host,#pxSpotMiniMedia .px-yt-host iframe{width:100%;height:100%}
+#pxSpotMiniTitle{padding:8px 11px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pxSpotSavedPanel{margin:14px 0;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+#pxSpotSavedPanel[hidden]{display:none}
+.px-spot-saved-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.px-spot-saved-row:last-child{border-bottom:0}
+@media(max-width:600px){#pxSpotMini{right:8px;bottom:calc(8px + env(safe-area-inset-bottom));width:min(340px,calc(100vw - 16px))}}
+</style>
+<script id="px-spotlight-persistence">
+(function(){
+ 'use strict';
+ var mini=null,mediaBox=null,titleBox=null,returnPlaceholder=null,returnNode=null;
+ function ready(){return !!(window.sb&&window.curUser&&window.curUser.id)}
+ function ensureMini(){
+  if(mini)return;
+  mini=document.createElement('section');mini.id='pxSpotMini';mini.hidden=true;
+  mini.innerHTML='<div id="pxSpotMiniHead"><span>Spotlight player</span><div class="px-mini-actions"><button type="button" data-mini="return">Return</button><button type="button" data-mini="close">Close</button></div></div><div id="pxSpotMiniMedia"></div><div id="pxSpotMiniTitle"></div><div class="px-mini-actions" style="padding:0 10px 10px"><button type="button" data-mini="pip">Picture in Picture</button><button type="button" data-mini="save">☆ Save video</button></div>';
+  document.body.appendChild(mini);mediaBox=mini.querySelector('#pxSpotMiniMedia');titleBox=mini.querySelector('#pxSpotMiniTitle');
+  mini.addEventListener('click',function(e){
+   var b=e.target.closest('[data-mini]');if(!b)return;
+   if(b.dataset.mini==='close'){restoreMedia();mini.hidden=true}
+   if(b.dataset.mini==='return'){restoreMedia();mini.hidden=true;if(typeof window.go==='function')window.go('spotlight')}
+   if(b.dataset.mini==='pip')requestPip(b);
+   if(b.dataset.mini==='save'&&returnNode){var card=returnNode.closest('.spot-card,.px-provider-card');if(card)saveVideo(card,b)}
+  });
+ }
+ function getMeta(card){
+  var shell=card.querySelector('.px-yt-shell'),video=card.querySelector('video'),frame=card.querySelector('iframe');
+  var link=card.querySelector('.spot-meta a,.px-yt-meta a');var page=link&&link.href||'';
+  var source=shell?'youtube':(/vimeo\.com/i.test(page)?'vimeo':/pexels\.com/i.test(page)?'pexels':/pixabay\.com/i.test(page)?'pixabay':'');
+  var ref=shell&&shell.dataset.videoId||page;
+  var title=(card.querySelector('.spot-meta b,.px-yt-meta b')||{}).textContent||'Video';
+  var channel=(card.querySelector('.spot-meta span,.px-yt-meta span')||{}).textContent||'';
+  return {source:source,ref:ref,title:title.trim(),channel:channel.trim(),page:page||ref,media:shell||video||frame};
+ }
+ async function saveVideo(card,button){
+  if(!ready()){button.textContent='Sign in to save';return}
+  var m=getMeta(card);if(!m.source||!m.ref||!m.page)return;
+  button.disabled=true;button.textContent='Saving…';
+  try{
+   var existing=await window.sb.from('spotlight_saved').select('id').eq('owner_id',window.curUser.id).eq('source',m.source).eq('video_ref',m.ref).limit(1);
+   if(existing.error)throw existing.error;
+   if(existing.data&&existing.data.length){button.textContent='✓ Saved';return}
+   var r=await window.sb.from('spotlight_saved').insert({owner_id:window.curUser.id,source:m.source,video_ref:m.ref,title:m.title,channel:m.channel,page_url:m.page});
+   if(r.error)throw r.error;button.textContent='✓ Saved';
+  }catch(e){button.textContent='Could not save';}
+  finally{button.disabled=false}
+ }
+ function requestPip(button){
+  var video=mediaBox&&mediaBox.querySelector('video');
+  if(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture){video.requestPictureInPicture().catch(function(){button.textContent='PiP unavailable'});return}
+  var frame=mediaBox&&mediaBox.querySelector('iframe');
+  if(frame){button.textContent='Use the player’s PiP control';return}
+  button.textContent='PiP not supported here';
+ }
+ function restoreMedia(){
+  if(returnPlaceholder&&returnPlaceholder.parentNode&&returnNode){returnPlaceholder.parentNode.insertBefore(returnNode,returnPlaceholder);returnPlaceholder.remove()}
+  returnPlaceholder=null;returnNode=null;if(mediaBox)mediaBox.innerHTML='';
+ }
+ function floatVideo(card){
+  var m=getMeta(card);if(!m.media)return;
+  ensureMini();restoreMedia();
+  returnPlaceholder=document.createComment('Spotlight player location');m.media.parentNode.insertBefore(returnPlaceholder,m.media);
+  returnNode=m.media;mediaBox.appendChild(returnNode);titleBox.textContent=m.title;mini.hidden=false;
+  var frame=mediaBox.querySelector('iframe');if(frame)frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture; encrypted-media');
+  var video=mediaBox.querySelector('video');if(video){video.setAttribute('playsinline','');video.setAttribute('controls','')}
+ }
+ function decorate(){
+  var root=document.getElementById('pxSpotResults');if(!root)return;
+  root.querySelectorAll('.spot-card,.px-provider-card').forEach(function(card){
+   if(card.querySelector('.px-spot-actions'))return;
+   var m=getMeta(card),actions=document.createElement('div');actions.className='px-spot-actions';
+   var save=document.createElement('button');save.type='button';save.textContent='☆ Save video';save.dataset.spAction='save';
+   if(!m.source||!m.ref||!m.page||!['youtube','vimeo','pexels','pixabay'].includes(m.source)){save.disabled=true;save.title='Saving is not available for this source yet'}
+   var play=document.createElement('button');play.type='button';play.textContent='▣ Keep playing';play.dataset.spAction='float';
+   actions.append(save,play);card.appendChild(actions);
+  });
+ }
+ async function showSaved(){
+  var root=document.getElementById('pxSpotSavedPanel');if(!root)return;
+  if(!ready()){root.innerHTML='<p>Sign in to view saved videos.</p>';root.hidden=false;return}
+  root.hidden=false;root.innerHTML='<b>Saved videos</b><p class="muted">Loading your saved videos…</p>';
+  var r=await window.sb.from('spotlight_saved').select('id,source,video_ref,title,channel,page_url,saved_at').eq('owner_id',window.curUser.id).order('saved_at',{ascending:false}).limit(100);
+  if(r.error){root.innerHTML='<b>Saved videos</b><p>Could not load saved videos. Please try again.</p>';return}
+  var rows=r.data||[];root.innerHTML='<b>Saved videos</b>'+(rows.length?rows.map(function(x){return '<div class="px-spot-saved-row"><div><b>'+esc(x.title||'Saved video')+'</b><div class="muted">'+esc(x.channel||x.source)+'</div><a href="'+esc(x.page_url)+'" target="_blank" rel="noopener noreferrer">Watch video</a></div><button type="button" data-remove-saved="'+x.id+'">Remove</button></div>'}).join(''):'<p class="muted">You have not saved any videos yet.</p>');
+ }
+ function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+ document.addEventListener('click',function(e){
+  var a=e.target.closest('[data-sp-action]');if(a){var card=a.closest('.spot-card,.px-provider-card');if(!card)return;if(a.dataset.spAction==='save')saveVideo(card,a);if(a.dataset.spAction==='float')floatVideo(card);return}
+  if(e.target.closest('#pxSpotSavedToggle'))showSaved();
+  var rm=e.target.closest('[data-remove-saved]');if(rm&&ready()){window.sb.from('spotlight_saved').delete().eq('id',Number(rm.dataset.removeSaved)).eq('owner_id',window.curUser.id).then(function(r){if(!r.error)showSaved()})}
+ });
+ var observer=new MutationObserver(decorate);
+ function start(){observer.observe(document.body,{childList:true,subtree:true});decorate()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+
+
+<style id="px-spotlight-save-mini-style">
+.px-spot-tools{display:flex;gap:8px;flex-wrap:wrap;padding:9px 12px;border-top:1px solid var(--line);background:var(--panel)}
+.px-spot-tools button,.px-mini-actions button,.px-saved-head button,.px-saved-row button{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer}
+.px-spot-tools button:disabled{opacity:.5;cursor:not-allowed}
+#pxSpotMini{position:fixed;right:18px;bottom:18px;z-index:99999;width:min(390px,calc(100vw - 24px));background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 48px rgba(0,0,0,.28);overflow:hidden}
+#pxSpotMini[hidden],#pxSpotSaved[hidden]{display:none}
+#pxSpotMiniHead,.px-saved-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;font-size:12px;font-weight:800}
+.px-mini-actions{display:flex;gap:6px}
+#pxSpotMiniMedia{background:#000;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden}
+#pxSpotMiniMedia video,#pxSpotMiniMedia iframe{width:100%;height:100%;border:0;object-fit:contain}
+#pxSpotMiniMedia .px-yt-shell{width:100%;height:100%}
+#pxSpotMiniMedia .px-yt-stage{height:100%;aspect-ratio:16/9}
+#pxSpotMiniMedia .px-yt-host,#pxSpotMiniMedia .px-yt-host iframe{width:100%;height:100%}
+#pxSpotMiniTitle{padding:8px 11px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pxSpotMiniFoot{display:flex;gap:7px;padding:0 11px 10px}
+#pxSpotMiniFoot button{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:9px;padding:7px 10px;font-size:11px;font-weight:700}
+#pxSpotSaved{margin:14px 0;padding:8px 14px;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--ink)}
+.px-saved-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.px-saved-row strong{display:block;font-size:13px}.px-saved-row small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.px-saved-row>div:first-child{min-width:0;overflow:hidden}
+@media(max-width:600px){#pxSpotMini{right:8px;bottom:calc(8px + env(safe-area-inset-bottom));width:min(340px,calc(100vw - 16px))}}
+</style>
+<script id="px-spotlight-save-mini">
+(function(){
+ 'use strict';
+ var current=null,mini=null,media=null,miniTitle=null,miniFoot=null,observer=null;
+ function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+ function client(){return window.sb&&window.curUser&&window.curUser.id?window.sb:null}
+ function getMeta(card){
+  var yt=card.querySelector('.px-yt-shell'),v=card.querySelector('video'),frame=card.querySelector('iframe');
+  var a=card.querySelector('.spot-meta a,.px-yt-meta a'),page=a&&a.href||'';
+  var source=yt?'youtube':card.getAttribute('data-provider')||(/vimeo\.com/i.test(page)?'vimeo':/pexels\.com/i.test(page)?'pexels':/pixabay\.com/i.test(page)?'pixabay':'');
+  var ref=yt&&yt.getAttribute('data-video-id')||page;
+  var title=(card.querySelector('.spot-meta b,.px-yt-meta b')||{}).textContent||'Video';
+  var channel=(card.querySelector('.spot-meta span,.px-yt-meta span')||{}).textContent||'';
+  return {source:source,ref:ref,title:title.trim(),channel:channel.trim(),page:page||ref,thumb:v&&v.poster||null,media:yt||v||frame};
+ }
+ function ensureMini(){
+  if(mini)return;
+  mini=document.createElement('section');mini.id='pxSpotMini';mini.hidden=true;
+  mini.innerHTML='<div id="pxSpotMiniHead"><span>Spotlight player</span><div class="px-mini-actions"><button type="button" data-mini="return">Return</button><button type="button" data-mini="close">Close</button></div></div><div id="pxSpotMiniMedia"></div><div id="pxSpotMiniTitle"></div><div id="pxSpotMiniFoot"><button type="button" data-mini="save">☆ Save video</button><button type="button" data-mini="pip">Picture in Picture</button></div>';
+  document.body.appendChild(mini);media=mini.querySelector('#pxSpotMiniMedia');miniTitle=mini.querySelector('#pxSpotMiniTitle');miniFoot=mini.querySelector('#pxSpotMiniFoot');
+  mini.addEventListener('click',function(e){
+   var b=e.target.closest('[data-mini]');if(!b)return;
+   if(b.dataset.mini==='close'){media.innerHTML='';mini.hidden=true;current=null}
+   if(b.dataset.mini==='return'){if(typeof window.go==='function')window.go('spotlight');mini.hidden=true}
+   if(b.dataset.mini==='save')save(current,b);
+   if(b.dataset.mini==='pip')pip();
+  });
+ }
+ async function save(meta,button){
+  var db=client();if(!db){if(button)button.textContent='Sign in to save';return}
+  if(!meta||!meta.source||!meta.ref||!meta.page)return;
+  if(button){button.disabled=true;button.textContent='Saving…'}
+  try{
+   var result=await db.from('spotlight_saved').upsert({owner_id:window.curUser.id,source:meta.source,video_ref:String(meta.ref),title:meta.title||'Video',thumb_url:meta.thumb,channel:meta.channel,page_url:meta.page},{onConflict:'owner_id,source,video_ref'});
+   if(result.error)throw result.error;
+   if(button)button.textContent='✓ Saved';
+   loadSaved();
+  }catch(err){if(button){button.textContent='Could not save';button.title='Please try again'}}
+  finally{if(button)button.disabled=false}
+ }
+ function pip(){
+  var video=media&&media.querySelector('video');
+  if(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture){video.requestPictureInPicture().catch(function(){alert('Picture in Picture is not available for this video in this browser.')});return}
+  alert('This provider controls Picture in Picture inside its own player. Use the player controls if the Picture in Picture option is available on your device.');
+ }
+ function floatCard(card){
+  var meta=getMeta(card);if(!meta.media)return;
+  current=meta;ensureMini();media.innerHTML='';media.appendChild(meta.media);miniTitle.textContent=meta.title;mini.hidden=false;
+  var frame=media.querySelector('iframe');if(frame)frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture; encrypted-media');
+  var video=media.querySelector('video');if(video){video.setAttribute('playsinline','');video.setAttribute('controls','');}
+ }
+ function decorate(){
+  var root=document.getElementById('pxSpotResults');if(!root)return;
+  root.querySelectorAll('.spot-card,.px-provider-card').forEach(function(card){
+   if(card.querySelector('.px-spot-tools'))return;
+   var meta=getMeta(card),bar=document.createElement('div');bar.className='px-spot-tools';
+   var saveBtn=document.createElement('button');saveBtn.type='button';saveBtn.textContent='☆ Save video';saveBtn.dataset.spAction='save';
+   if(!['youtube','vimeo','pexels','pixabay','internet_archive','peertube'].includes(meta.source)||!meta.ref||!meta.page){saveBtn.disabled=true;saveBtn.title='Saving is not supported for this source yet'}
+   var floatBtn=document.createElement('button');floatBtn.type='button';floatBtn.textContent='▣ Keep playing';floatBtn.dataset.spAction='float';
+   bar.append(saveBtn,floatBtn);card.appendChild(bar);
+  });
+ }
+ function ensureSavedPanel(){
+  var list=document.getElementById('spList');if(!list)return null;
+  var panel=document.getElementById('pxSpotSaved');if(panel)return panel;
+  panel=document.createElement('section');panel.id='pxSpotSaved';panel.hidden=true;
+  panel.innerHTML='<div class="px-saved-head"><strong>Saved videos</strong><button type="button" id="pxSpotSavedRefresh">Refresh</button></div><div id="pxSpotSavedRows"><p class="ls-empty">Your saved videos will appear here.</p></div>';
+  list.appendChild(panel);panel.querySelector('#pxSpotSavedRefresh').onclick=loadSaved;return panel;
+ }
+ async function loadSaved(){
+  var panel=ensureSavedPanel();if(!panel)return;
+  var db=client();panel.hidden=false;var rows=panel.querySelector('#pxSpotSavedRows');
+  if(!db){rows.innerHTML='<p class="ls-empty">Sign in to view your saved videos.</p>';return}
+  rows.innerHTML='<p class="ls-empty">Loading saved videos…</p>';
+  var result=await db.from('spotlight_saved').select('id,source,video_ref,title,channel,page_url,saved_at').eq('owner_id',window.curUser.id).order('saved_at',{ascending:false});
+  if(result.error){rows.innerHTML='<p class="ls-empty">Saved videos could not be loaded. Please try again.</p>';return}
+  if(!result.data||!result.data.length){rows.innerHTML='<p class="ls-empty">No saved videos yet. Use “Save video” on any supported card.</p>';return}
+  rows.innerHTML=result.data.map(function(v){return '<div class="px-saved-row"><div><strong>'+esc(v.title)+'</strong><small>'+esc(v.source)+' · '+esc(v.channel||'Saved video')+'</small></div><div><a href="'+esc(v.page_url)+'" target="_blank" rel="noopener noreferrer">Open</a> <button type="button" data-remove-saved="'+esc(v.id)+'">Remove</button></div></div>'}).join('');
+ }
+ document.addEventListener('click',function(e){
+  var action=e.target.closest('[data-sp-action]');if(action){var card=action.closest('.spot-card,.px-provider-card');if(!card)return;var meta=getMeta(card);if(action.dataset.spAction==='save')save(meta,action);if(action.dataset.spAction==='float')floatCard(card);return}
+  var remove=e.target.closest('[data-remove-saved]');if(remove){var db=client();if(!db)return;remove.disabled=true;db.from('spotlight_saved').delete().eq('id',remove.dataset.removeSaved).eq('owner_id',window.curUser.id).then(function(r){if(r.error){remove.disabled=false;remove.textContent='Retry'}else loadSaved()});}
+ });
+ function start(){
+  var host=document.getElementById('spList')||document.body;
+  observer=new MutationObserver(function(){decorate();var panel=ensureSavedPanel();var head=document.querySelector('.px-spot-feedhead');if(panel&&head&&!head.querySelector('[data-open-saved]')){var b=document.createElement('button');b.type='button';b.dataset.openSaved='1';b.className='px-spot-more';b.textContent='Saved videos';b.style.marginLeft='auto';b.onclick=function(){panel.hidden=!panel.hidden;if(!panel.hidden)loadSaved()};head.appendChild(b)}});
+  observer.observe(host,{childList:true,subtree:true});decorate();
+  var panel=ensureSavedPanel();var head=document.querySelector('.px-spot-feedhead');if(panel&&head&&!head.querySelector('[data-open-saved]')){var b=document.createElement('button');b.type='button';b.dataset.openSaved='1';b.className='px-spot-more';b.textContent='Saved videos';b.style.marginLeft='auto';b.onclick=function(){panel.hidden=!panel.hidden;if(!panel.hidden)loadSaved()};head.appendChild(b)}
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+
+</body></html>'};
       var pdf=document.createElement('button');pdf.type='button';pdf.className='dl';pdf.textContent='PDF';pdf.setAttribute('aria-label','Save as PDF');
       pdf.onclick=function(){var w=window.open('','_blank');if(!w){add('Your browser blocked the PDF window. Allow pop-ups for this site and try again.','sys');return}w.document.write(docHtml());w.document.close();w.focus();setTimeout(function(){try{w.print()}catch(e){}},400)};
       var wd=document.createElement('button');wd.type='button';wd.className='dl';wd.textContent='Word';wd.setAttribute('aria-label','Save as Word document');
@@ -7230,51 +7489,46 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
  }
  function empty(text){var l=$('spList');if(l)l.innerHTML='<div class="ls-empty">'+esc(text)+'</div>'}
  function loadProviders(){
-  if(!(window.sb&&window.curUser)){empty('Sign in to browse video sources in Spotlight.');return}
-  empty('Checking available video sources...');
-  call('providers').then(function(out){var j=parse(out),list=j.providers||[],l=$('spList');
-   if(!list.length){empty('No video sources are connected and responding yet. Add provider credentials and try again.');return}
-   var brand={youtube:{name:'YouTube',slug:'youtube',color:'#FF0033',hex:'FF0033',note:'Videos from creators worldwide'},vimeo:{name:'Vimeo',slug:'vimeo',color:'#17D5FF',hex:'17D5FF',note:'Films, stories and creative work'},pexels:{name:'Pexels',slug:'pexels',color:'#05A081',hex:'05A081',note:'Free stock videos and footage'},pixabay:{name:'Pixabay',slug:'pixabay',color:'#2EC66D',hex:'2EC66D',note:'Free creative videos and media'},internet_archive:{name:'Internet Archive',slug:'internetarchive',color:'#555555',hex:'555555',note:'A library of films and moving images'},peertube:{name:'PeerTube',slug:'peertube',color:'#F1680D',hex:'F1680D',note:'Videos across the federated network'}};
-   l.innerHTML='<div class="px-source-grid">'+list.map(function(p){var b=brand[p.id]||{name:p.name,slug:'',color:'#64748b',hex:'64748b',note:'Browse videos on this source'};var logo=b.slug?'https://cdn.simpleicons.org/'+b.slug+'/'+b.hex:'';return '<button type="button" class="px-source-card px-brand-'+esc(p.id)+'" data-provider="'+esc(p.id)+'" style="--px-brand:'+b.color+'"><span class="px-brand-mark">'+(logo?'<img src="'+logo+'" alt="'+esc(b.name)+' logo" loading="eager" referrerpolicy="no-referrer">':'<b>'+esc(b.name.charAt(0))+'</b>')+'</span><span class="px-brand-copy"><strong>'+esc(b.name)+'</strong><small>'+esc(b.note)+'</small><em>Explore source <span aria-hidden="true">↗</span></em></span><span class="px-brand-glow" aria-hidden="true"></span></button>'}).join('')+'</div>';
-   l.querySelectorAll('[data-provider]').forEach(function(b){b.onclick=function(){workspace(b.getAttribute('data-provider'))}});
-  }).catch(function(){empty('Spotlight could not check video sources right now. Please try again.')});
- }
- function workspace(provider){
   var l=$('spList'),title=$('spTitle');if(!l)return;
-  if(title)title.textContent=provider.replace(/_/g,' ');
-  l.innerHTML='<button type="button" class="px-spot-back">All video sources</button><div class="px-spot-search"><input type="search" id="pxSpotQuery" placeholder="Search videos" aria-label="Search videos"><button type="button" id="pxSpotSearch">Search</button></div><div id="pxSpotResults" class="spot-list"></div>';
-  l.querySelector('.px-spot-back').onclick=function(){if(title)title.textContent='Your picks';loadProviders()};
-  var input=$('pxSpotQuery'),results=$('pxSpotResults'),profile=window.curUser&&window.curUser.user_metadata&&window.curUser.user_metadata.profile;
-  var chosen=profile&&Array.isArray(profile.interests)&&profile.interests[0]||'',next=null,busy=false;
-  if(chosen)input.value=chosen;
-  function search(token,append){
-   var q=input.value.trim();if(q.length<2){results.innerHTML='<div class="ls-empty">Enter at least two characters to search.</div>';return}
-   if(busy)return;busy=true;
-   if(!append)results.innerHTML='<div class="ls-empty">Searching videos...</div>';
-   call('search',provider,q,token).then(function(out){
-    var j=parse(out),vids=j.videos||[];if(!append)results.innerHTML='';
-    if(!vids.length&&!append){results.innerHTML='<div class="ls-empty">No videos found. Try another search.</div>';return}
-    vids.forEach(function(v){
-     if(provider==='youtube'&&window.PelexYouTubePlayer){results.insertAdjacentHTML('beforeend',window.PelexYouTubePlayer.cardHtml(v));return}
-     var media='';
-     if((provider==='pexels'||provider==='pixabay')&&v.embedUrl&&/^https:\/\//i.test(v.embedUrl))
-      media='<div class="px-provider-media"><video controls playsinline preload="metadata" src="'+esc(v.embedUrl)+'"></video></div>';
-     else if(v.embedUrl&&/^https:\/\//i.test(v.embedUrl))
-      media='<div class="px-provider-media"><iframe src="'+esc(v.embedUrl)+'" title="'+esc(v.title)+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
-     else media='<div class="px-provider-media" style="display:grid;place-items:center;color:#fff">Preview on original website</div>';
-     var link=v.url&&/^https:\/\//i.test(v.url)?'<a href="'+esc(v.url)+'" target="_blank" rel="noopener noreferrer">Watch on '+esc(provider.replace(/_/g,' '))+'</a>':'';
-     var card='<article class="px-provider-card">'+media+'<div class="spot-meta"><b>'+esc(v.title)+'</b><span>'+esc(v.channel||provider)+' · '+esc(v.duration||'')+'</span>'+link+'</div></article>';
-     results.insertAdjacentHTML('beforeend',card);
-    });
-    next=j.nextPageToken||null;var old=results.querySelector('.px-spot-more');if(old)old.remove();
-    if(next){var more=document.createElement('button');more.type='button';more.className='spot-open px-spot-more';more.textContent='Load more videos';more.onclick=function(){more.disabled=true;more.textContent='Loading...';search(next,true)};results.appendChild(more)}
-    if(provider==='youtube'&&window.PelexYouTubePlayer)window.PelexYouTubePlayer.mount(results);
-   }).catch(function(){if(!append)results.innerHTML='<div class="ls-empty">This source is temporarily unavailable. Try again shortly.</div>'}).finally(function(){busy=false});
+  if(!(window.sb&&window.curUser)){empty('Sign in to explore videos in Spotlight.');return}
+  if(title)title.textContent='Discover videos';
+  l.innerHTML='<div class="px-spot-layout"><aside class="px-spot-sources"><div class="px-spot-label">SOURCES</div><div id="pxSpotSources" class="px-spot-source-list"><div class="ls-empty">Loading sources…</div></div></aside><section class="px-spot-feed"><div class="px-spot-feedhead"><div><div class="px-spot-eyebrow">SPOTLIGHT DISCOVERY</div><h3 id="pxSpotFeedTitle">Recommended for you</h3><p id="pxSpotFeedSub">Fresh picks from connected video platforms</p></div><span class="px-spot-live">● Live catalogue</span></div><div style="display:flex;justify-content:flex-end;margin:-5px 0 12px"><button type="button" id="pxSpotSavedToggle" class="px-spot-more" style="grid-column:auto">Saved videos</button></div><section id="pxSpotSavedPanel" hidden></section><div id="pxSpotResults" class="px-spot-results"><div class="ls-empty">Finding videos for you…</div></div></section><aside class="px-spot-searchpanel"><div class="px-spot-label">FIND SOMETHING</div><label class="px-spot-searchbox"><span aria-hidden="true">⌕</span><input type="search" id="pxSpotQuery" placeholder="Search videos, topics…" aria-label="Search videos"></label><button type="button" id="pxSpotSearch" class="px-spot-searchbtn">Search videos</button><div class="px-spot-searchhint">Search across the selected source. Choose a source on the left to filter your feed.</div></aside></div>';
+  var sources=$('pxSpotSources'),results=$('pxSpotResults'),input=$('pxSpotQuery'),feedTitle=$('pxSpotFeedTitle'),feedSub=$('pxSpotFeedSub');
+  var brand={youtube:{name:'YouTube',slug:'youtube',color:'#FF0000',hex:'FF0000'},vimeo:{name:'Vimeo',slug:'vimeo',color:'#1AB7EA',hex:'1AB7EA'},pexels:{name:'Pexels',slug:'pexels',color:'#05A081',hex:'05A081'},pixabay:{name:'Pixabay',slug:'pixabay',color:'#2EC66D',hex:'2EC66D'},internet_archive:{name:'Internet Archive',slug:'internetarchive',color:'#555555',hex:'555555'},peertube:{name:'PeerTube',slug:'peertube',color:'#F1680D',hex:'F1680D'}};
+  var active='',nextPages={},busy=false,seed='';
+  var profile=window.curUser&&window.curUser.user_metadata&&window.curUser.user_metadata.profile;
+  seed=profile&&Array.isArray(profile.interests)&&profile.interests[0]||'popular technology education entertainment';
+  function sourceButtons(list){
+   var html='<button type="button" class="px-spot-source active" data-provider=""><span class="px-spot-sourceicon">✦</span><span><b>All sources</b><small>Explore everything</small></span></button>';
+   html+=list.map(function(p){var b=brand[p.id]||{name:p.name,slug:'',color:'#64748b',hex:'64748b'};var logo=b.slug?'https://cdn.simpleicons.org/'+b.slug+'/'+b.hex:'';return '<button type="button" class="px-spot-source" data-provider="'+esc(p.id)+'" style="--px-brand:'+b.color+'"><span class="px-spot-sourceicon">'+(logo?'<img src="'+logo+'" alt="" loading="lazy">':'▶')+'</span><span><b>'+esc(b.name)+'</b><small>Browse videos</small></span></button>'}).join('');
+   sources.innerHTML=html;
+   sources.querySelectorAll('[data-provider]').forEach(function(btn){btn.onclick=function(){var p=btn.getAttribute('data-provider');if(p===active){active=''}else active=p;sourceButtons(list);sources.querySelectorAll('[data-provider="'+active+'"]').forEach(function(x){x.classList.add('active')});feedTitle.textContent=active?(brand[active]||{name:active}).name+' videos':'Recommended for you';feedSub.textContent=active?'Videos from this source':'Fresh picks from connected video platforms';input.value='';fetchFeed(seed,null,false)}});
   }
-  $('pxSpotSearch').onclick=function(){search(null,false)};
-  input.addEventListener('keydown',function(e){if(e.key==='Enter')search(null,false)});
-  if(chosen)search(null,false);
+  function render(v,provider){
+   if(provider==='youtube'&&window.PelexYouTubePlayer)return window.PelexYouTubePlayer.cardHtml(v);
+   var media='';
+   if((provider==='pexels'||provider==='pixabay')&&v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<div class="px-provider-media"><video controls playsinline preload="metadata" src="'+esc(v.embedUrl)+'"></video></div>';
+   else if(v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<div class="px-provider-media"><iframe src="'+esc(v.embedUrl)+'" title="'+esc(v.title)+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
+   else media='<div class="px-provider-media px-no-preview"><span>▶</span><small>Open video on source</small></div>';
+   var href=v.url&&/^https:\/\//i.test(v.url)?v.url:'#';
+   return '<article class="px-provider-card" data-provider="'+esc(provider)+'">'+media+'<div class="spot-meta"><b>'+esc(v.title)+'</b><span>'+esc(v.channel||provider)+' · '+esc(v.duration||'')+'</span><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">Watch on '+esc((brand[provider]||{name:provider}).name)+'</a></div></article>';
+  }
+  function fetchFeed(q,token,append){
+   if(busy)return;busy=true;if(!append){nextPages={};results.innerHTML='<div class="ls-empty">Loading videos…</div>'}
+   var providers=active?[active]:['youtube','vimeo','pexels','pixabay','internet_archive','peertube'];
+   var tasks=(append?providers.filter(function(p){return nextPages[p]}):providers).map(function(p){var page=append?nextPages[p]:token;return call('search',p,q,page).then(function(out){var j=parse(out);return {provider:p,videos:j.videos||[],next:j.nextPageToken||null}}).catch(function(){return {provider:p,videos:[],next:null}})});
+   Promise.all(tasks).then(function(rows){if(!append)results.innerHTML='';var total=0;rows.forEach(function(row){row.videos.forEach(function(v){results.insertAdjacentHTML('beforeend',render(v,row.provider));total++});if(row.next)nextPages[row.provider]=row.next;else delete nextPages[row.provider]});
+    if(!total&&!append)results.innerHTML='<div class="ls-empty">No videos are available right now. Try another topic or source.</div>';
+    if(window.PelexYouTubePlayer)window.PelexYouTubePlayer.mount(results);
+    var more=results.querySelector('.px-spot-more');if(more)more.remove();
+    if(Object.keys(nextPages).length){var btn=document.createElement('button');btn.className='px-spot-more';btn.type='button';btn.textContent='Load more videos';btn.onclick=function(){fetchFeed(q,null,true)};results.appendChild(btn)}
+   }).finally(function(){busy=false});
+  }
+  $('pxSpotSearch').onclick=function(){var q=input.value.trim();if(q.length<2){results.innerHTML='<div class="ls-empty">Enter at least two characters to search.</div>';return}nextPages={};fetchFeed(q,null,false)};
+  input.addEventListener('keydown',function(e){if(e.key==='Enter')$('pxSpotSearch').click()});
+  call('providers').then(function(out){var list=parse(out).providers||[];sourceButtons(list);fetchFeed(seed,null,false)}).catch(function(){sources.innerHTML='<div class="ls-empty">Sources are temporarily unavailable.</div>';fetchFeed(seed,null,false)});
  }
+ function workspace(provider){loadProviders();if(provider){setTimeout(function(){var b=document.querySelector('#pxSpotSources [data-provider="'+provider+'"]');if(b)b.click()},0)}}
  var oldGo=window.go;
  if(typeof oldGo==='function')window.go=function(v,t){oldGo(v,t);if(v==='spotlight')loadProviders()};
  window.addEventListener('load',function(){var b=$('spOpen');if(b)b.onclick=loadProviders});
