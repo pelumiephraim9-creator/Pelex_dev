@@ -108,10 +108,11 @@
     range.addEventListener('change', function () { if (player) player.seekTo(Number(range.value) / 10, true); });
     speed.addEventListener('change', function () { if (player) { try { player.setPlaybackRate(Number(speed.value)); } catch (_) {} } });
     volume.addEventListener('input', function () { if (player) { try { player.setVolume(Number(volume.value)); if (Number(volume.value) === 0) player.mute(); else player.unMute(); } catch (_) {} } });
-    shell.querySelector('.px-yt-full').addEventListener('click', function () {
-      var stage = shell.querySelector('.px-yt-stage');
+    var fullButton = shell.querySelector('.px-yt-full'), fullStage = shell.querySelector('.px-yt-stage');
+    if (!fullStage.requestFullscreen && !document.fullscreenEnabled) fullButton.hidden = true;
+    fullButton.addEventListener('click', function () {
       if (document.fullscreenElement) document.exitFullscreen();
-      else if (stage.requestFullscreen) stage.requestFullscreen();
+      else if (fullStage.requestFullscreen) fullStage.requestFullscreen();
     });
     [['.px-yt-left', -10], ['.px-yt-right', 10]].forEach(function (item) {
       var zone = shell.querySelector(item[0]), side = item[0];
