@@ -5525,7 +5525,7 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
  var T=[],U=[],O=[],rep=null,DAY=864e5;
  function wsId(){try{return localStorage.getItem('pelex_ws')||''}catch(e){return ''}}
  function money(n,c){try{return (c||'')+' '+Number(n||0).toLocaleString(undefined,{maximumFractionDigits:0})}catch(e){return String(n)}}
- function iso(d){return d.toISOString().slice(0,10)}
+ function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
  function parseD(s){return s?new Date(s+'T00:00:00'):null}
  function weekStart(s){var d=parseD(s);var day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return iso(d)}
  function bars(el,labels,vals,fmt){
@@ -5567,18 +5567,26 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
   var fx=loadFx(),Tc=[],skipped={};
   T.forEach(function(x){if(!x.currency)return;if(window.__lsHiddenFiles&&window.__lsHiddenFiles[x.upload_id])return;if(x.currency===rep){Tc.push(x);return}var r=Number(fx[x.currency]);if(r>0){Tc.push(Object.assign({},x,{amount:Number(x.amount)*r,currency:rep,converted:true}))}else{skipped[x.currency]=(skipped[x.currency]||0)+1}});
   if(window.__lsFile)Tc=Tc.filter(function(x){return x.upload_id===window.__lsFile});
-  if(window.__lsBuildDays)window.__lsBuildDays(Tc);
+  var a=asOf(),gran=($l('lsGran')&&$l('lsGran').value)||'week',rangeStart;
+  if(gran==='day'){var dayStart=parseD(a);dayStart.setDate(dayStart.getDate()-29);rangeStart=iso(dayStart)}
+  else if(gran==='week'){var endWeek=weekStart(a),startWeek=parseD(endWeek);startWeek.setDate(startWeek.getDate()-77);rangeStart=iso(startWeek)}
+  else{var monthEnd=parseD(a),startMonth=new Date(monthEnd.getFullYear(),monthEnd.getMonth()-11,1);rangeStart=iso(startMonth)}
+  var analysisRows=Tc.filter(function(x){return x.entry_date>=rangeStart&&x.entry_date<=a});
+  if(window.__lsBuildDays)window.__lsBuildDays(analysisRows);
   var skippedN=Object.keys(skipped).reduce(function(s,k){return s+skipped[k]},0);
   $l('lsFxNote').textContent=skippedN?(skippedN+' row(s) in '+Object.keys(skipped).join(', ')+' have no exchange rate and are not counted. Enter the rate below.'):(Tc.some(function(x){return x.converted})?'Other currencies are converted at the rates you entered.':'');
   $l('lsFx').innerHTML=curs.filter(function(c){return c!==rep}).map(function(c){return '<div class="irow" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>1 '+esc(c)+' = </span><input type="number" min="0" step="any" data-fx="'+esc(c)+'" value="'+(fx[c]||'')+'" style="width:120px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 9px;font:inherit" aria-label="Rate for '+esc(c)+'"><span>'+esc(rep)+'</span></div>'}).join('')||'<div class="ls-empty">Only one currency in the ledger. No rates needed.</div>';
   document.querySelectorAll('#lsFx input[data-fx]').forEach(function(inp){inp.onchange=function(){var f=loadFx();f[inp.getAttribute('data-fx')]=Number(inp.value)||0;saveFx(f);render()}});
   if(!Tc.length){$l('lsEmpty').hidden=false;$l('lsBody').hidden=true;return}
   $l('lsEmpty').hidden=true;$l('lsBody').hidden=false;
-  var a=asOf();
-  var rows=Tc.filter(function(x){return x.entry_date<=a});
-  var inv=rows.filter(function(x){return x.entry_type==='invoice'}), rec=rows.filter(function(x){return (x.entry_type==='invoice'&&x.kind==='income')||((x.entry_type==='receipt'||x.entry_type==='payment')&&(x.kind==='receivable_in'||!x.kind))});
-  var invT=inv.reduce(function(s,x){return s+Number(x.amount)},0), recT=rec.reduce(function(s,x){return s+Number(x.amount)},0);
-  var outT=Math.max(0,invT-recT);
+  var rows=analysisRows,allAsOf=Tc.filter(function(x){return x.entry_date<=a});
+  var inv=rows.filter(function(x){return x.entry_type==='invoice'});
+  var rec=rows.filter(function(x){return ['sale','receipt','payment'].indexOf(x.entry_type)>=0&&(x.kind==='income'||x.kind==='receivable_in'||!x.kind)});
+  var invT=inv.reduce(function(s,x){return s+Number(x.amount)},0),recT=rec.reduce(function(s,x){return s+Number(x.amount)},0);
+  var invAll=allAsOf.filter(function(x){return x.entry_type==='invoice'}),recAll=allAsOf.filter(function(x){return ['sale','receipt','payment'].indexOf(x.entry_type)>=0&&(x.kind==='income'||x.kind==='receivable_in'||!x.kind)});
+  var invByParty={},recByParty={};invAll.forEach(function(x){var k=x.party||'Unnamed';invByParty[k]=(invByParty[k]||0)+Number(x.amount)});
+  recAll.forEach(function(x){var k=x.party||'Unnamed';recByParty[k]=(recByParty[k]||0)+Number(x.amount)});
+  var outT=Object.keys(invByParty).reduce(function(s,k){return s+Math.max(0,invByParty[k]-(recByParty[k]||0))},0);
   // overdue: per customer, invoices past due with less received than invoiced
   var parties={};inv.forEach(function(x){var k=x.party||'Unnamed';parties[k]=parties[k]||{inv:0,rec:0,due:null,n:0};parties[k].inv+=Number(x.amount);parties[k].n++;if(x.due_date&&(!parties[k].due||x.due_date<parties[k].due))parties[k].due=x.due_date});
   rec.forEach(function(x){var k=x.party||'Unnamed';parties[k]=parties[k]||{inv:0,rec:0,due:null,n:0};parties[k].rec+=Number(x.amount)});
@@ -6999,13 +7007,20 @@ function pxCommandHelp(){
     if(r.error)throw r.error;
     var batch=r.data||[];rows=rows.concat(batch);offset+=batch.length;more=batch.length===batchSize;
    }
-   var years=Array.from(new Set(rows.map(function(x){return String(x.entry_date||'').slice(0,4)}).filter(Boolean))).sort().reverse();
+   var opRows=await window.sb.from('business_project_records').select('record_date,amount,quantity,reference,party,module_key,record_type').eq('workspace_id',ws()).eq('project_id',activeProject).order('record_date',{ascending:false}).limit(5000);
+    if(opRows.error)throw opRows.error;
+    rows.forEach(function(x){
+     if(!/^\\d+(?:\\.\\d+)?$/.test(String(x.party||''))||!String(x.category||'').startsWith('business_operations:'))return;
+     var match=(opRows.data||[]).find(function(o){return String(o.record_date)===String(x.entry_date)&&Number(o.amount)===Number(x.amount)&&Number(o.quantity)===Number(x.party)});
+     if(match){x.party=match.reference||match.party||String(match.record_type||'Sales record').replace(/_/g,' ');x.category=String(match.module_key||'sales').replace(/_/g,' ');}
+    });
+    var years=Array.from(new Set(rows.map(function(x){return String(x.entry_date||'').slice(0,4)}).filter(Boolean))).sort().reverse();
    var y=el('pxTrYear'),old=y.value;
    y.innerHTML='<option value="">All years</option>'+years.map(function(v){return '<option value="'+esc(v)+'">'+esc(v)+'</option>'}).join('');
    if(years.indexOf(old)>=0)y.value=old;
    render();message(rows.length+' transactions available.');if(window.__pxRegisterReady)window.__pxRegisterReady();
   }catch(e){message('We could not refresh the transaction register. Please try again.',true);el('pxTrRows').innerHTML='<tr><td colspan="7">The register could not be loaded. Check your workspace access and try refresh.</td></tr>'}
-  finally{busy=false}
+  finally{busy=false;if(pending){pending=false;setTimeout(load,0)}}
  }
  function filtered(){
   var y=el('pxTrYear').value,m=el('pxTrMonth').value,q=el('pxTrSearch').value.trim().toLowerCase();
@@ -7096,10 +7111,11 @@ function pxCommandHelp(){
  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(x){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[x]})}
  function ws(){try{return localStorage.getItem('pelex_ws')||''}catch(e){return ''}}
  function cash(v,c){return esc(c||'')+' '+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
- function month(){return $('pxMonthPick')&&$('pxMonthPick').value||new Date().toISOString().slice(0,7)}
- var busy=false;
+ function month(){var v=$('pxMonthPick')&&$('pxMonthPick').value;if(v)return v;var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')}
+ var busy=false,pending=false;
  async function load(){
-  if(busy||!window.sb||!window.curUser)return;
+  if(!window.sb||!window.curUser)return;
+   if(busy){pending=true;return}
   var project=$('pxTrProject')&&$('pxTrProject').value;
   if(!ws()){
    if($('pxMonthNote'))$('pxMonthNote').textContent='Create or join a workspace, then create a business project to activate its dashboard.';
@@ -7135,7 +7151,32 @@ function pxCommandHelp(){
    /* Charts use exact project-scoped RPCs, never workspace-wide ledger reads. */
    var chartRows=await sb.rpc('business_list_transactions',{p_workspace:ws(),p_project:project,p_from:monthStart,p_to:monthEndText,p_search:null,p_limit:1000});
    if(chartRows.error)throw chartRows.error;
-   var txRows=chartRows.data||[],daily={};
+   var txRows=chartRows.data||[],allRows=[],offset=0,more=true;
+   while(more&&offset<50000){
+    var page=await sb.rpc('business_list_transactions',{p_workspace:ws(),p_project:project,p_from:null,p_to:monthEndText,p_search:null,p_limit:1000}).range(offset,offset+999);
+    if(page.error)throw page.error;
+    var batch=page.data||[];allRows=allRows.concat(batch);offset+=batch.length;more=batch.length===1000;
+   }
+   var setupResult=await sb.from('business_projects').select('startup_month,startup_year,spent,spend_period,created_at').eq('workspace_id',ws()).eq('id',project).maybeSingle();
+   if(setupResult.error)throw setupResult.error;
+   if(!setupResult.data)throw new Error('Selected business setup could not be loaded.');
+   var setup=setupResult.data,annualCapital=Number(setup.startup_year||0),monthlyCapital=Number(setup.startup_month||0);
+   function sumRows(rows,fn){return rows.filter(fn).reduce(function(sum,x){return sum+Number(x.amount||0)},0)}
+   function kindOf(x){return String(x.kind||'').toLowerCase()}
+   function isOperatingRevenue(x){var k=kindOf(x);return k==='income'||(!k&&['invoice','sale'].indexOf(x.entry_type)>=0)}
+   function isOperatingExpense(x){var k=kindOf(x);return k==='expense'||(!k&&['expense','purchase','cost'].indexOf(x.entry_type)>=0)}
+   function isCashIn(x){var k=kindOf(x);if(x.entry_type==='invoice')return false;if(k==='capital'||k==='savings_in'||k==='principal_in'||k==='receivable_in')return true;return ['sale','receipt','payment'].indexOf(x.entry_type)>=0&&(k==='income'||!k||k==='receivable_in')}
+   function isCashOut(x){var k=kindOf(x);return k==='expense'||k==='principal_out'||(!k&&['expense','purchase','cost'].indexOf(x.entry_type)>=0)}
+   var monthIncome=sumRows(txRows,isOperatingRevenue),monthExpenses=sumRows(txRows,isOperatingExpense);
+   var monthCashIn=sumRows(txRows,isCashIn),monthCashOut=sumRows(txRows,isCashOut);
+   var priorRows=allRows.filter(function(x){return String(x.entry_date)<monthStart});
+   var priorCash=sumRows(priorRows,isCashIn)-sumRows(priorRows,isCashOut);
+   var monthIsStart=String(setup.created_at||'').slice(0,7)===m;
+   var openingCash=monthIsStart?monthlyCapital:annualCapital+priorCash;
+   var capitalAllocation=monthIsStart?monthlyCapital:0;
+   var closingCash=annualCapital+priorCash+monthCashIn-monthCashOut;
+   if(d.not_started){openingCash=0;capitalAllocation=0;closingCash=0;monthIncome=0;monthExpenses=0;monthCashIn=0;monthCashOut=0}
+   var daily={};
    for(var day=1;day<=monthEndDay;day++){var dayKey=m+'-'+String(day).padStart(2,'0');daily[dayKey]=0}
    var txMix={};txRows.forEach(function(x){var k=String(x.entry_date).slice(0,10);if(Object.prototype.hasOwnProperty.call(daily,k))daily[k]++;var typ=String(x.entry_type||x.kind||'other').replace(/_/g,' ');txMix[typ]=(txMix[typ]||0)+1});
    var dayKeys=Object.keys(daily);
@@ -7146,19 +7187,20 @@ function pxCommandHelp(){
    var bt=await sb.from('business_types').select('modules').eq('code',d.business_type).maybeSingle();
    if(bt.error)throw bt.error;
    var modules=(bt.data&&bt.data.modules)||[],cards=[
-    ['Opening cash',d.opening_startup],['Monthly capital allocation',d.startup_month],['Monthly operating balance',d.month_operating_balance],['Original yearly capital',d.startup_year],['Setup spending ('+(d.setup_spend_period||'period')+')',d.setup_spent],['Cash received',d.month_in],['Cash paid',d.month_out],
-    ['Closing cash',d.month_closing],['Operating revenue',d.month_income===undefined?0:d.month_income],['Operating expenses',d.month_expenses===undefined?0:d.month_expenses],['Operating profit',d.month_profit]
-   ];
-   if(d.business_type==='finance'&&modules.indexOf('agreements')>=0)cards=cards.concat([
+     ['Opening cash',openingCash],['Monthly capital allocation',capitalAllocation],['Cash received',monthCashIn],['Cash paid',monthCashOut],
+     ['Closing cash',closingCash],['Operating revenue',monthIncome],['Operating expenses',monthExpenses],['Operating profit',monthIncome-monthExpenses]
+    ]
+   if(monthIsStart&&setup.spend_period==='month'&&Number(setup.spent||0)>0)cards.push(['Setup spending declared',Number(setup.spent)]);
+    if(d.business_type==='finance'&&modules.indexOf('agreements')>=0)cards=cards.concat([
     ['Loan amount in setup',d.setup_loan],['Loan principal issued',d.month_principal_issued],['Loan principal repaid',d.month_principal_repaid],['Invoices issued',d.month_receivables_issued],['Invoice payments received',d.month_receivables_collected],['Recorded receivables outstanding',d.recorded_receivables_outstanding],['Interest income',d.month_interest_income],['Customer savings received',d.month_customer_savings_received],['Customer savings held',d.customer_savings_held]
    ]);
    var countMetrics=['agreement_count','contributors_recorded','delivery_count','production_batches','finished_goods_quantity','expiry_records','near_expiry_items','booking_count','bookings','cancellations','trips_recorded','project_milestones','orders_recorded','order_fulfilments','fulfilments','seasons_recorded','harvest_quantity','stock_on_hand_quantity'];
-   Object.keys(businessMetrics).forEach(function(k){if(k==='kind'||businessMetrics[k]==null)return;var label=k.replace(/_/g,' ').replace(/\b\w/g,function(x){return x.toUpperCase()});cards.push([label,businessMetrics[k],countMetrics.indexOf(k)>=0])});
+   Object.keys(businessMetrics).forEach(function(k){if(k==='kind'||k==='operational_amount'||k==='operational_cost'||businessMetrics[k]==null)return;var label=k.replace(/_/g,' ').replace(/\b\w/g,function(x){return x.toUpperCase()});cards.push([label,businessMetrics[k],countMetrics.indexOf(k)>=0])});
    $('pxMonthCards').innerHTML=cards.map(function(x){var value=x[2]?Number(x[1]).toLocaleString():cash(x[1],cur);return '<div class="ls-kpi"><b>'+value+'</b><span>'+esc(x[0])+'</span></div>'}).join('');
    var opHost=$('pxOpsDashboard');if(opHost){opHost.innerHTML=opsSummary.length?'<h3>Business operations · '+esc(bundle.month)+'</h3><div class="ls-kpis">'+opsSummary.map(function(x){return '<div class="ls-kpi"><b>'+esc(x.record_count)+' records</b><span>'+esc(x.module_key.replace(/_/g,' '))+' · '+esc(x.record_type.replace(/_/g,' '))+'</span><small>'+cash(x.amount_total,cur)+(Number(x.quantity_total)?' · Qty '+esc(x.quantity_total):'')+'</small></div>'}).join('')+'</div>':'<div class="muted dnote">No operational records for this project in '+esc(bundle.month)+'.</div>';
     if($('pxOpsMonth'))$('pxOpsMonth').value=bundle.month;
     if(window.pxBusinessProjects&&window.pxBusinessProjects.refreshOperations)window.pxBusinessProjects.refreshOperations();}
-   $('pxMonthNote').textContent='Cash flow reflects recorded money received and paid. Unpaid invoices remain receivables and do not increase available cash. Older receipts without an explicit accounting classification remain cash received but are excluded from operating profit until reviewed in Data Entry. Operating profit excludes capital movements and loan principal.';
+   $('pxMonthNote').textContent='Monthly working capital is shown separately from annual startup funding. Invoices count as operating revenue when issued, but are not cash received until a sale or payment is recorded. Closing cash includes annual startup funding and recorded cash movements. Setup spending declared in project setup is not treated as a ledger expense unless recorded in Data Entry.';
    var y=Number(($('pxYearPick')&&$('pxYearPick').value)||m.slice(0,4)),rows=await sb.rpc('project_months',{p_project:project});
    if(rows.error)throw rows.error;
    var yearRows=(rows.data||[]).filter(function(x){return String(x.month).slice(0,4)===String(y)});
@@ -7170,17 +7212,17 @@ function pxCommandHelp(){
    $('pxYearTable').querySelectorAll('[data-px-month-open]').forEach(function(b){b.onclick=function(){var v=b.getAttribute('data-px-month-open');$('pxMonthPick').value=v;$('pxTrYear').value=v.slice(0,4);$('pxTrMonth').value=v.slice(5,7);$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));$('pxMonthPick').dispatchEvent(new Event('change',{bubbles:true}));var reg=$('pxTrRows');if(reg){var panel=reg.closest('.dcard')||reg;panel.scrollIntoView({behavior:'smooth',block:'start'});}};});
    $('pxYearNote').textContent='*Original yearly capital is a fixed opening base. Monthly totals show cash movement and operating result. Select a month to open its detailed transactions in Data Entry.';
   }catch(e){$('pxMonthNote').textContent='We could not refresh the financial summary. Please try again.';$('pxYearTable').textContent='Yearly figures are temporarily unavailable.'}
-  finally{busy=false}
+  finally{busy=false;if(pending){pending=false;setTimeout(load,0)}}
  }
  function mount(){
   var dash=$('bDash');if(!dash)return;var yearly=document.querySelector('.px-year-summary'),pm=$('pxProjectManager');if(yearly&&pm&&yearly.parentNode!==pm)pm.appendChild(yearly);if($('pxFinancialSummary'))return;
   var box=document.createElement('section');box.className='dcard';box.id='pxFinancialSummary';
-  box.innerHTML='<div class="dhead"><h2>Monthly financial overview</h2><input id="pxMonthPick" type="month" value="'+new Date().toISOString().slice(0,7)+'" class="inp" style="max-width:170px"></div>'+
+  box.innerHTML='<div class="dhead"><h2>Monthly financial overview</h2><input id="pxMonthPick" type="month" value="'+(function(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')})()+'" class="inp" style="max-width:170px"></div>'+
    '<div class="dnote">All figures and visualisations below use only the selected business project and reporting month.</div><h3>Selected month</h3><div class="ls-kpis" id="pxMonthCards"></div><div id="pxOpsDashboard"></div><div class="two" style="margin-top:14px"><div class="an-card"><b>Transaction volume · selected month</b><div id="pxVolChart"></div></div><div class="an-card"><b>Transaction mix</b><div id="pxTxnPie"></div></div></div><div class="an-card" style="margin-top:12px"><b>Operational activity mix</b><div id="pxOpsPie"></div></div><p class="dnote" id="pxMonthNote"></p>'+
    '<section class="px-year-summary" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)"><div class="dhead"><h3 style="margin:0">Yearly project management</h3><label class="dnote" style="margin:0">Reporting year <input id="pxYearPick" class="inp" type="number" min="2000" max="2100" value="'+new Date().getFullYear()+'" style="width:110px"></label></div><p class="dnote">Annual cash movement, operating performance and closing position for this project.</p><div class="ls-kpis" id="pxYearCards" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))"></div><div id="pxYearTable"></div><p class="dnote" id="pxYearNote"></p></section>';
   dash.insertBefore(box,dash.firstChild);var yearlyPanel=box.querySelector('.px-year-summary'),projectManager=$('pxProjectManager');if(yearlyPanel&&projectManager)projectManager.appendChild(yearlyPanel);
   $('pxYearPick').onchange=load;
-  $('pxMonthPick').onchange=function(){var v=this.value,parts=/^([0-9]{4})-(0[1-9]|1[0-2])$/.exec(v);if(parts){if($('pxOpsMonth'))$('pxOpsMonth').value=v;if($('pxTrYear'))$('pxTrYear').value=parts[1];if($('pxTrMonth'))$('pxTrMonth').value=parts[2];window.__pxSyncingMonth=true;if($('pxTrYear'))$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));if($('pxTrMonth'))$('pxTrMonth').dispatchEvent(new Event('change',{bubbles:true}));window.__pxSyncingMonth=false;}load()};
+  $('pxMonthPick').onchange=function(){var v=this.value,parts=/^([0-9]{4})-(0[1-9]|1[0-2])$/.exec(v);if(parts){if($('pxOpsMonth'))$('pxOpsMonth').value=v;if($('pxTrYear'))$('pxTrYear').value=parts[1];if($('pxTrMonth'))$('pxTrMonth').value=parts[2];window.__pxSyncingMonth=true;if($('pxTrYear'))$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));if($('pxTrMonth'))$('pxTrMonth').dispatchEvent(new Event('change',{bubbles:true}));window.__pxSyncingMonth=false;var end=new Date(Number(parts[1]),Number(parts[2]),0);if($('lsDate'))$('lsDate').value=end.getFullYear()+'-'+String(end.getMonth()+1).padStart(2,'0')+'-'+String(end.getDate()).padStart(2,'0');if(window.__lsRender)window.__lsRender();}load()};
   window.__pxDashboardLoad=load;
   document.addEventListener('change',function(e){if(e.target&&e.target.id==='pxTrProject')load()});
   var prev=window.__pxRegisterReady;
@@ -7194,7 +7236,7 @@ function pxCommandHelp(){
 })();
 </script>
 
-<script src="/pelex_projects.js?v=12"></script>
+<script src="/pelex_projects.js?v=13"></script>
 <script src="/pelex_addons_runtime.js?v=2"></script>
 
 <style id="pelex-final-ui-fixes">
@@ -7223,6 +7265,7 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
 <script src="/spotlight-player.js"></script>
 <script src="/spotlight-workspace.js?v=4"></script>
 <script src="/spotlight-layout-fix.js?v=1"></script>
-<script src="/pelex_minimal_business_ui.js?v=3"></script>
+<script src="/pelex_minimal_business_ui.js?v=5"></script>
+<script src="/pelex_business_analysis_layout.js?v=1"></script>
 </body>
 </html>

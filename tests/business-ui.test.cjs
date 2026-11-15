@@ -65,8 +65,8 @@ test('business financial dashboard calls the live monthly and yearly Supabase re
   const html = fs.readFileSync('index.html', 'utf8');
   assert.match(html, /business_project_dashboard_summary/);
   assert.match(html, /project_months/);
-  assert.match(html, /month_income/);
-  assert.match(html, /month_profit/);
+  assert.match(html, /monthIncome/);
+  assert.match(html, /monthIncome-monthExpenses/);
 });
 
 
@@ -100,7 +100,7 @@ test('business dashboard defaults to a real project and keeps currencies separat
   assert.match(manager, /px_project_/);
   assert.match(html, /project==='all'/);
   assert.match(html, /business_project_dashboard_summary/);
-  assert.match(html, /receipts without an explicit accounting classification/i);
+  assert.match(html, /Invoices count as operating revenue when issued/i);
 });
 
 test('document reader accepts common office and business document formats and keeps reading separate from import', () => {

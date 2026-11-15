@@ -7,7 +7,6 @@ if(window.__pxMinimalWorkspacesLoaded)return;
 window.__pxMinimalWorkspacesLoaded=true;
 var css=[
 '#pxFinancialSummary{margin:0 0 14px!important;padding:16px!important;border-radius:14px!important}',
-'#pxFinancialSummary>.dnote,#pxFinancialSummary>#pxMonthNote,#pxFinancialSummary>#pxOpsDashboard{display:none!important}',
 '#pxMonthCards .px-min-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}',
 '#pxMonthCards .px-min-card{min-width:0;min-height:84px;text-align:left;width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;box-shadow:none}',
 '.px-min-card .px-min-label{font-size:11px;color:var(--muted);font-weight:500}',
@@ -30,8 +29,6 @@ var css=[
 '.px-min-content{padding:16px;overflow:auto}.px-min-big{font-size:25px;font-weight:750;margin:0 0 8px;overflow-wrap:anywhere}',
 '.px-min-copy{font-size:13px;line-height:1.55;color:var(--muted)}',
 '.px-min-open-register{margin-top:12px;border:0;border-radius:9px;background:var(--btn);color:var(--btnink);padding:10px 14px;font-weight:650}',
-'#pxFinancialSummary .two:has(#pxVolChart),#pxFinancialSummary .an-card:has(#pxOpsPie){display:none!important}',
-'#pxFinancialSummary #pxVolChart,#pxFinancialSummary #pxTxnPie,#pxFinancialSummary #pxOpsPie{display:none!important}',
 '#pxProjectManager .px-year-summary{margin-top:16px!important;padding-top:14px!important;border-top:1px solid var(--line)!important}',
 '#pxYearCards .ls-kpi{padding:10px!important;min-height:66px}',
 '@media(max-width:600px){#pxMonthCards .px-min-grid{gap:7px}.px-min-card{min-height:76px;padding:10px!important}.px-min-secondary-list{grid-template-columns:1fr 1fr}.px-min-drawer{top:auto;right:0;left:0;bottom:0;width:100%;height:auto;max-height:88dvh;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(102%)}.px-min-drawer.open{transform:translateY(0)}}'
@@ -74,7 +71,7 @@ function renderCards(host,isYear){
  }
  var primaryRules=[[/^cash received$/i,'Cash received'],[/^cash paid$/i,'Cash paid'],[/^operating revenue$/i,'Operating revenue'],[/^operating profit$/i,'Operating result']];
  var primary=primaryRules.map(function(rule){var x=data.find(function(d){return rule[0].test(d.label)});return x?{label:rule[1],value:x.value}:null}).filter(Boolean);
- var extras=data.filter(function(x){return !primaryRules.some(function(rule){return rule[0].test(x.label)}) && !/^original yearly capital$/i.test(x.label)});
+ var extras=data.filter(function(x){return !primaryRules.some(function(rule){return rule[0].test(x.label)}) && !/^original yearly capital$/i.test(x.label) && !/^(operational amount|operational cost)$/i.test(x.label)});
  host.replaceChildren();var grid=el('div','px-min-grid');
  primary.forEach(function(x){
   var c=el('button','px-min-card');c.type='button';
@@ -106,12 +103,9 @@ function placeYearlyManagement(){
 }
 function compactDashboard(){
  var root=byId('pxFinancialSummary');if(!root)return;
- ['pxTxnPie','pxOpsPie','pxVolChart'].forEach(function(id){
-  var node=byId(id);if(node){var card=node.closest('.an-card');if(card)card.hidden=true;node.hidden=true}
- });
- var ops=byId('pxOpsDashboard');if(ops)ops.hidden=true;
- var note=byId('pxMonthNote');if(note)note.hidden=true;
- var heading=root.querySelector('h3');if(heading&&heading.textContent.trim()==='Selected month')heading.hidden=true;
+ /* Keep the supplied monthly layout's charts, month picker and notes visible. */
+ var note=byId('pxMonthNote');if(note)note.hidden=false;
+ var heading=root.querySelector('h3');if(heading&&heading.textContent.trim()==='Selected month')heading.hidden=false;
 }
 function arrangeBusinessCards(){
  var financial=byId('pxFinancialSummary'),wrap=byId('lsWrap');
@@ -152,12 +146,10 @@ function arrangeBusinessCards(){
   analysis.style.margin='0';
   var ah=analysis.querySelector('h2');if(ah)ah.hidden=true;
  }
- /* Remove the duplicate yearly-management panel. The existing Project
-    Management card remains the sole place for project milestone views. */
- var yearly=document.querySelector('.px-year-summary');
- if(yearly)yearly.remove();
- /* Retain existing Project management and Data entry cards in their workspace.
-    No duplicate cards are created or moved into the monthly overview. */
+ /* Keep the single yearly overview inside the existing Project Management
+    card. Do not delete its yearly or monthly project-management content. */
+ placeYearlyManagement();
+ /* Retain existing Project management and Data entry cards in their workspace. */
 }
 function apply(){
  arrangeBusinessCards();
