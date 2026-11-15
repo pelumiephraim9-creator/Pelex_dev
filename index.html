@@ -5552,8 +5552,8 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
   var ledgerRecords=T.filter(function(x){var d=String(x.entry_date||'');return !(x.upload_id&&hidden[x.upload_id])&&d>=analysisStart&&d<=analysisEnd});
   var linked={};ledgerRecords.forEach(function(x){if(x.source_key)linked[String(x.source_key)]=true});
   var operational=O.filter(function(x){var d=String(x.record_date||'');return !linked['business_project_record:'+x.id]&&d>=analysisStart&&d<=analysisEnd});
-  var counts={};T.forEach(function(x){if(x.upload_id)counts[x.upload_id]=(counts[x.upload_id]||0)+1});
-  var files=U.filter(function(u){return !hidden[u.id]});
+  var counts={};ledgerRecords.forEach(function(x){if(x.upload_id)counts[x.upload_id]=(counts[x.upload_id]||0)+1});
+  var files=U.filter(function(u){var d=String(u.created_at||'').slice(0,10);return !hidden[u.id]&&d>=analysisStart&&d<=analysisEnd});
   var recordRows=ledgerRecords.map(function(x){return {date:x.entry_date,type:x.entry_type||x.kind,party:(x.party&&!/^\d+(?:\.\d+)?$/.test(String(x.party)))?x.party:(x.category||'Business transaction'),amount:x.amount,currency:x.currency,source:x.upload_id?'Uploaded document':'Ledger transaction',ref:x.source_key||''}});
   operational.forEach(function(x){recordRows.push({date:x.record_date,type:x.record_type,party:(x.party&&!/^\d+(?:\.\d+)?$/.test(String(x.party)))?x.party:(x.data&&x.data.details?x.data.details:x.module_key),amount:x.amount,currency:x.currency,source:'Business operations · '+String(x.module_key||'').replace(/_/g,' '),ref:x.reference||''})});
   recordRows.sort(function(a,b){return String(b.date||'').localeCompare(String(a.date||''))});
