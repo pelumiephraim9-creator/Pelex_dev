@@ -1,27 +1,52 @@
-/* PELEX MONTHLY / ANALYSIS PERIOD SYNCHRONISATION
-   Keeps month selection, ledger analysis and transaction detail periods aligned. */
+/* PELEX REPORTING PERIOD LINK
+   Keeps the Monthly Financial Overview month and Analysis reporting window aligned.
+   Presentation/filter state only: never writes or modifies financial records. */
 (function(){
  'use strict';
- function id(x){return document.getElementById(x)}
- function endOfMonth(v){var p=/^(\d{4})-(\d{2})$/.exec(v||'');if(!p)return '';var d=new Date(Number(p[1]),Number(p[2]),0);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
- function syncAnalysis(month){
-  var gran=id('lsGran'),date=id('lsDate'),end=endOfMonth(month);
-  if(gran)gran.value='month';
-  if(date&&end)date.value=end;
+ var bound=false,observer=null;
+ function byId(id){return document.getElementById(id)}
+ function endOfMonth(value){
+  var m=/^(\d{4})-(\d{2})$/.exec(value||'');
+  if(!m)return '';
+  var last=new Date(Number(m[1]),Number(m[2]),0).getDate();
+  return m[1]+'-'+m[2]+'-'+String(last).padStart(2,'0');
+ }
+ function syncFromMonth(){
+  var picker=byId('pxMonthPick'),gran=byId('lsGran'),date=byId('lsDate');
+  if(!picker||!picker.value||!gran||!date)return false;
+  var end=endOfMonth(picker.value);
+  if(!end)return false;
+  gran.value='month';
+  date.value=end;
   if(window.__lsRender)window.__lsRender();
+  return true;
  }
  function bind(){
-  var picker=id('pxMonthPick');
-  if(picker&&!picker.dataset.pxPeriodBound){
-   picker.dataset.pxPeriodBound='1';
-   picker.addEventListener('change',function(){syncAnalysis(picker.value)});
-   syncAnalysis(picker.value);
+  var picker=byId('pxMonthPick');
+  if(picker&&!picker.dataset.pxPeriodLink){
+   picker.dataset.pxPeriodLink='1';
+   picker.addEventListener('change',syncFromMonth);
   }
-  var gran=id('lsGran'),date=id('lsDate');
-  if(gran&&!gran.dataset.pxPeriodBound){gran.dataset.pxPeriodBound='1';gran.addEventListener('change',function(){if(window.__lsRender)window.__lsRender()})}
-  if(date&&!date.dataset.pxPeriodBound){date.dataset.pxPeriodBound='1';date.addEventListener('change',function(){if(window.__lsRender)window.__lsRender()})}
+  var gran=byId('lsGran'),date=byId('lsDate');
+  if(gran&&!gran.dataset.pxPeriodLink){
+   gran.dataset.pxPeriodLink='1';
+   gran.addEventListener('change',function(){if(window.__lsRender)window.__lsRender()});
+  }
+  if(date&&!date.dataset.pxPeriodLink){
+   date.dataset.pxPeriodLink='1';
+   date.addEventListener('change',function(){if(window.__lsRender)window.__lsRender()});
+  }
+  if(picker&&gran&&date&&!bound){bound=true;syncFromMonth()}
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);
- window.addEventListener('load',function(){setTimeout(bind,700);setTimeout(bind,1700)});
- var n=0,t=setInterval(function(){bind();if(++n>40)clearInterval(t)},500);
+ function start(){
+  bind();
+  if(!observer&&document.body&&window.MutationObserver){
+   observer=new MutationObserver(bind);
+   observer.observe(document.body,{childList:true,subtree:true});
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);
+ else start();
+ window.addEventListener('load',start);
+ var tries=0,t=setInterval(function(){start();if(++tries>=40)clearInterval(t)},500);
 })();
