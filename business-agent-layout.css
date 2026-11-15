@@ -74,3 +74,103 @@
  #v-business #pxFinancialSummary .px-min-card .px-min-value{font-size:15px}
  #v-business #pxFinancialSummary .px-min-secondary-list{grid-template-columns:minmax(0,1fr)}
 }
+
+/* PELEX BUSINESS LAYOUT REPAIR — desktop card sizing and safe text wrapping */
+#v-business,
+#v-business>.wrap,
+#v-business #bWork,
+#v-business #bDash,
+#v-business #lsWrap,
+#v-business #pxFinancialSummary{min-width:0;max-width:100%;box-sizing:border-box}
+#v-business #bWork{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:stretch!important;
+ gap:18px!important;
+}
+#v-business #bWork>.dcard{
+ grid-column:auto!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ height:auto!important;
+ min-height:0;
+ overflow:visible;
+}
+#v-business #bWork>.dcard:first-child,
+#v-business #bWork>#pxProjectManager{grid-column:1/-1!important}
+#v-business #bWork #pxProjectManager{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+#v-business #bDash{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:stretch!important;
+ gap:18px!important;
+}
+#v-business #bDash>.dcard{grid-column:auto!important;width:100%;min-width:0;max-width:100%;height:auto;overflow:visible}
+#v-business #bDash>#pxFinancialSummary,
+#v-business #bDash>#lsWrap{grid-column:1/-1!important;width:100%;min-width:0;max-width:100%}
+#v-business #lsWrap{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch}
+#v-business #lsWrap>.dcard,
+#v-business #lsWrap>.dcard:first-child,
+#v-business #lsWrap>.dcard:nth-child(2),
+#v-business #lsWrap>.dcard:nth-child(3),
+#v-business #lsWrap>.dcard:nth-child(4){grid-column:auto!important;width:100%;min-width:0;max-width:100%;height:auto}
+#v-business #lsWrap>.dcard:first-child,
+#v-business #lsWrap>.dcard:nth-child(4){grid-column:1/-1!important}
+#v-business #bWork *,
+#v-business #bDash *,
+#v-business #lsWrap *,
+#v-business #pxFinancialSummary *{min-width:0;box-sizing:border-box}
+#v-business #bWork p,
+#v-business #bWork label,
+#v-business #bWork small,
+#v-business #bWork .muted,
+#v-business #bDash p,
+#v-business #bDash label,
+#v-business #bDash small,
+#v-business #bDash .muted,
+#v-business #lsWrap p,
+#v-business #lsWrap label,
+#v-business #lsWrap small,
+#v-business #lsWrap .muted{max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.55}
+#v-business #bWork input,
+#v-business #bWork select,
+#v-business #bWork textarea,
+#v-business #bDash input,
+#v-business #bDash select,
+#v-business #bDash textarea{width:100%;max-width:100%;min-width:0}
+#v-business #bWork .two,
+#v-business #bDash .two{grid-template-columns:repeat(2,minmax(0,1fr))}
+#v-business #bWork .ilist,
+#v-business #bWork .prow,
+#v-business #bWork .supbar,
+#v-business #bDash .ilist,
+#v-business #bDash .prow,
+#v-business #bDash .supbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+#v-business #bWork .prow>*,
+#v-business #bWork .supbar>*,
+#v-business #bDash .prow>*,
+#v-business #bDash .supbar>*{flex:0 1 auto;max-width:100%}
+#v-business table{display:block;width:100%;max-width:100%;overflow-x:auto}
+#v-business img,
+#v-business canvas,
+#v-business svg{max-width:100%}
+@media(max-width:1050px){
+ #v-business #bWork,
+ #v-business #bDash,
+ #v-business #lsWrap{grid-template-columns:minmax(0,1fr)!important}
+ #v-business #bWork>.dcard,
+ #v-business #bWork>.dcard:first-child,
+ #v-business #bWork>#pxProjectManager,
+ #v-business #bDash>.dcard,
+ #v-business #bDash>#pxFinancialSummary,
+ #v-business #bDash>#lsWrap,
+ #v-business #lsWrap>.dcard,
+ #v-business #lsWrap>.dcard:first-child,
+ #v-business #lsWrap>.dcard:nth-child(2),
+ #v-business #lsWrap>.dcard:nth-child(3),
+ #v-business #lsWrap>.dcard:nth-child(4){grid-column:1/-1!important}
+}
+@media(max-width:700px){
+ #v-business #bWork,#v-business #bDash,#v-business #lsWrap{grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+ #v-business #bWork .two,#v-business #bDash .two{grid-template-columns:minmax(0,1fr)!important}
+}
