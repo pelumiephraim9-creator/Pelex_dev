@@ -26,12 +26,9 @@
     return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function cardHtml(video) {
-    var id = 'px-yt-' + (++sequence), videoId = safeText(video.id);
-    var meta = [video.channel, video.views ? video.views + ' views' : '', video.length, video.published].filter(Boolean).join(' · ');
-    return '<article class="spot-card"><div class="px-yt-shell" data-video-id="' + videoId + '">' +
-      '<div class="px-yt-stage"><div class="px-yt-host" id="' + id + '"></div></div>' +
-      '<div class="px-yt-meta"><div class="px-yt-meta-main"><b>' + safeText(video.title || 'YouTube video') + '</b><span>' + safeText(meta) + '</span></div>' +
-      '<a href="https://www.youtube.com/watch?v=' + encodeURIComponent(video.id) + '" target="_blank" rel="noopener noreferrer">Open on YouTube <span aria-hidden="true">↗</span></a></div></div></article>';
+    var id = 'px-yt-' + (++sequence), videoId = safeText(video.id || video.videoId || '');
+    return '<div class="px-yt-shell" data-video-id="' + videoId + '">' +
+      '<div class="px-yt-stage"><div class="px-yt-host" id="' + id + '"></div></div></div>';
   }
   function setup(shell, YT) {
     if (shell.dataset.pxPlayerReady === '1') return;
