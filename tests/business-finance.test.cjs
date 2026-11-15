@@ -66,3 +66,37 @@ test('business access hardening leaves the type catalogue read-only and protects
   assert.match(security, /revoke all on function public\.create_workspace\(text,text\) from public, anon/);
   assert.match(security, /grant execute on function public\.create_workspace\(text,text\) to authenticated/);
 });
+
+const layout = fs.readFileSync('pelex_minimal_business_ui.js', 'utf8');
+const periodSync = fs.readFileSync('business-analysis-period-fix.js', 'utf8');
+
+test('monthly financial overview responsive grid and analysis layout scripts parse', () => {
+  assert.doesNotThrow(() => new vm.Script(layout));
+  assert.doesNotThrow(() => new vm.Script(periodSync));
+  assert.match(layout, /#pxFinancialSummary\{display:grid;grid-template-columns:repeat\(12,minmax\(0,1fr\)\)/);
+  assert.match(layout, /@media\(max-width:820px\)/);
+  assert.match(layout, /px-analysis-details/);
+});
+
+test('monthly overview keeps monthly allocation and annual standby reserve distinct', () => {
+  assert.match(html, /Monthly capital allocation/);
+  assert.match(html, /Yearly standby reserve/);
+  assert.match(html, /Original yearly capital/);
+  assert.match(html, /Setup budget/);
+});
+
+test('monthly picker synchronizes the analysis period and backdated empty months render as zero', () => {
+  assert.match(periodSync, /syncAnalysis\(picker\.value\)/);
+  assert.match(periodSync, /gran\.value='month'/);
+  assert.match(html, /analysisStart=iso\(analysisStartDate\)/);
+  assert.match(html, /d>=analysisStart&&d<=analysisEnd/);
+  assert.match(html, /if\(rerun\)\{rerun=false;setTimeout\(load,0\)\}/);
+});
+
+test('fashion business dashboard no longer uses the generic operational-cost fallback', () => {
+  const migration = fs.readFileSync('supabase/migrations/20261115153000_monthly_financial_overview_accounting_reconciliation.sql', 'utf8');
+  assert.match(migration, /when 'fashion' then business_metrics/);
+  assert.match(migration, /recorded_product_cost/);
+  assert.doesNotMatch(migration, /'operational_cost'/);
+  assert.match(html, /recorded_product_cost:'Recorded product cost'/);
+});
