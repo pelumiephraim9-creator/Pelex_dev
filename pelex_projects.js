@@ -89,7 +89,8 @@
    var active=p.id===selected;
    return '<div class="irow" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:10px;margin:7px 0">'+
     '<div><b>'+esc(p.name)+'</b><div class="muted dnote">'+esc((type(p.business_type)||{}).name||p.business_type)+' · '+esc(p.currency)+' · '+esc(p.reporting_cycle||'monthly')+'</div>'+
-    '<div class="muted dnote">Startup capital: '+money(p.startup_year||0,p.currency)+'</div></div>'+
+    '<div class="muted dnote">Annual startup funding: '+money(p.startup_year||0,p.currency)+'</div>'+
+    '<div class="muted dnote">Monthly working capital: '+money(p.startup_month||0,p.currency)+' · Standby reserve: '+money(Math.max(0,Number(p.startup_year||0)-Number(p.startup_month||0)),p.currency)+'</div></div>'+
     '<div class="prow"><button class="btn '+(active?'':'alt')+'" type="button" data-px-select="'+esc(p.id)+'">'+(active?'Selected':'Open project')+'</button><button class="btn alt" type="button" data-px-edit="'+esc(p.id)+'">Edit setup</button></div></div>';
   }).join('');
   box.querySelectorAll('[data-px-select]').forEach(function(b){b.onclick=function(){select(b.getAttribute('data-px-select'))}});
