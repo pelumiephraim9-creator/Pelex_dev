@@ -74,7 +74,7 @@ function renderCards(host,isYear){
  }
  var primaryRules=[[/^cash received$/i,'Cash received'],[/^cash paid$/i,'Cash paid'],[/^operating revenue$/i,'Operating revenue'],[/^operating profit$/i,'Operating result']];
  var primary=primaryRules.map(function(rule){var x=data.find(function(d){return rule[0].test(d.label)});return x?{label:rule[1],value:x.value}:null}).filter(Boolean);
- var extras=data.filter(function(x){return !primaryRules.some(function(rule){return rule[0].test(x.label)}) && !/^original yearly capital$/i.test(x.label)});
+ var extras=data.filter(function(x){return !primaryRules.some(function(rule){return rule[0].test(x.label)}) && !/^original yearly capital$/i.test(x.label) && !/^(operational amount|operational cost)$/i.test(x.label)});
  host.replaceChildren();var grid=el('div','px-min-grid');
  primary.forEach(function(x){
   var c=el('button','px-min-card');c.type='button';
@@ -106,12 +106,9 @@ function placeYearlyManagement(){
 }
 function compactDashboard(){
  var root=byId('pxFinancialSummary');if(!root)return;
- ['pxTxnPie','pxOpsPie','pxVolChart'].forEach(function(id){
-  var node=byId(id);if(node){var card=node.closest('.an-card');if(card)card.hidden=true;node.hidden=true}
- });
- var ops=byId('pxOpsDashboard');if(ops)ops.hidden=true;
- var note=byId('pxMonthNote');if(note)note.hidden=true;
- var heading=root.querySelector('h3');if(heading&&heading.textContent.trim()==='Selected month')heading.hidden=true;
+ /* Keep the supplied monthly layout's charts, month picker and notes visible. */
+ var note=byId('pxMonthNote');if(note)note.hidden=false;
+ var heading=root.querySelector('h3');if(heading&&heading.textContent.trim()==='Selected month')heading.hidden=false;
 }
 function arrangeBusinessCards(){
  var financial=byId('pxFinancialSummary'),wrap=byId('lsWrap');
@@ -152,12 +149,10 @@ function arrangeBusinessCards(){
   analysis.style.margin='0';
   var ah=analysis.querySelector('h2');if(ah)ah.hidden=true;
  }
- /* Remove the duplicate yearly-management panel. The existing Project
-    Management card remains the sole place for project milestone views. */
- var yearly=document.querySelector('.px-year-summary');
- if(yearly)yearly.remove();
- /* Retain existing Project management and Data entry cards in their workspace.
-    No duplicate cards are created or moved into the monthly overview. */
+ /* Keep the single yearly overview inside the existing Project Management
+    card. Do not delete its yearly or monthly project-management content. */
+ placeYearlyManagement();
+ /* Retain existing Project management and Data entry cards in their workspace. */
 }
 function apply(){
  arrangeBusinessCards();
