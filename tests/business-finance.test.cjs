@@ -84,9 +84,15 @@ test('monthly overview keeps monthly allocation and annual standby reserve disti
   assert.match(html, /Setup budget/);
 });
 
-test('experimental period synchronisation is not loaded into the application startup path', () => {
-  assert.doesNotMatch(html, /business-analysis-period-fix\.js/);
-  assert.match(html, /pelex_minimal_business_ui\.js\?v=6/);
+test('monthly overview and analysis reporting period synchronisation is loaded', () => {
+  const periodFix = fs.readFileSync('business-analysis-period-fix.js', 'utf8');
+  assert.match(html, /business-analysis-period-fix\.js\?v=1/);
+  assert.doesNotThrow(() => new vm.Script(periodFix));
+  assert.match(periodFix, /pxMonthPick/);
+  assert.match(periodFix, /lsGran/);
+  assert.match(periodFix, /lsDate/);
+  assert.match(periodFix, /__lsRender/);
+  assert.match(periodFix, /MutationObserver/);
 });
 
 test('fashion business dashboard no longer uses the generic operational-cost fallback', () => {
