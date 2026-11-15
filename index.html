@@ -7166,7 +7166,7 @@ function pxCommandHelp(){
    function isOperatingRevenue(x){var k=kindOf(x);return k==='income'||(!k&&['invoice','sale'].indexOf(x.entry_type)>=0)}
    function isOperatingExpense(x){var k=kindOf(x);return k==='expense'||(!k&&['expense','purchase','cost'].indexOf(x.entry_type)>=0)}
    function isCashIn(x){var k=kindOf(x);if(x.entry_type==='invoice')return false;if(k==='capital'||k==='savings_in'||k==='principal_in'||k==='receivable_in')return true;return ['sale','receipt','payment'].indexOf(x.entry_type)>=0&&(k==='income'||!k||k==='receivable_in')}
-   function isCashOut(x){var k=kindOf(x);return k==='expense'||k==='principal_out'||k==='transfer'||(!k&&['expense','purchase','cost'].indexOf(x.entry_type)>=0)}
+   function isCashOut(x){var k=kindOf(x);return k==='expense'||k==='principal_out'||(!k&&['expense','purchase','cost'].indexOf(x.entry_type)>=0)}
    var monthIncome=total(txRows,isOperatingRevenue),monthExpenses=total(txRows,isOperatingExpense);
    var monthCashIn=total(txRows,isCashIn),monthCashOut=total(txRows,isCashOut);
    var priorRows=allRows.filter(function(x){return String(x.entry_date)<monthStart});
