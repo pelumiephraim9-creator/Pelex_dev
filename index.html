@@ -5574,11 +5574,14 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
   document.querySelectorAll('#lsFx input[data-fx]').forEach(function(inp){inp.onchange=function(){var f=loadFx();f[inp.getAttribute('data-fx')]=Number(inp.value)||0;saveFx(f);render()}});
   if(!Tc.length){$l('lsEmpty').hidden=false;$l('lsBody').hidden=true;return}
   $l('lsEmpty').hidden=true;$l('lsBody').hidden=false;
-  var a=asOf();
-  var rows=Tc.filter(function(x){return x.entry_date<=a});
-  var inv=rows.filter(function(x){return x.entry_type==='invoice'}), rec=rows.filter(function(x){return (x.entry_type==='invoice'&&x.kind==='income')||((x.entry_type==='receipt'||x.entry_type==='payment')&&(x.kind==='receivable_in'||!x.kind))});
-  var invT=inv.reduce(function(s,x){return s+Number(x.amount)},0), recT=rec.reduce(function(s,x){return s+Number(x.amount)},0);
-  var outT=Math.max(0,invT-recT);
+  var rows=analysisRows,allAsOf=Tc.filter(function(x){return x.entry_date<=a});
+  var inv=rows.filter(function(x){return x.entry_type==='invoice'});
+  var rec=rows.filter(function(x){return ['sale','receipt','payment'].indexOf(x.entry_type)>=0&&(x.kind==='income'||x.kind==='receivable_in'||!x.kind)});
+  var invT=inv.reduce(function(s,x){return s+Number(x.amount)},0),recT=rec.reduce(function(s,x){return s+Number(x.amount)},0);
+  var invAll=allAsOf.filter(function(x){return x.entry_type==='invoice'}),recAll=allAsOf.filter(function(x){return ['sale','receipt','payment'].indexOf(x.entry_type)>=0&&(x.kind==='income'||x.kind==='receivable_in'||!x.kind)});
+  var invByParty={},recByParty={};invAll.forEach(function(x){var k=x.party||'Unnamed';invByParty[k]=(invByParty[k]||0)+Number(x.amount)});
+  recAll.forEach(function(x){var k=x.party||'Unnamed';recByParty[k]=(recByParty[k]||0)+Number(x.amount)});
+  var outT=Object.keys(invByParty).reduce(function(s,k){return s+Math.max(0,invByParty[k]-(recByParty[k]||0))},0);
   // overdue: per customer, invoices past due with less received than invoiced
   var parties={};inv.forEach(function(x){var k=x.party||'Unnamed';parties[k]=parties[k]||{inv:0,rec:0,due:null,n:0};parties[k].inv+=Number(x.amount);parties[k].n++;if(x.due_date&&(!parties[k].due||x.due_date<parties[k].due))parties[k].due=x.due_date});
   rec.forEach(function(x){var k=x.party||'Unnamed';parties[k]=parties[k]||{inv:0,rec:0,due:null,n:0};parties[k].rec+=Number(x.amount)});
