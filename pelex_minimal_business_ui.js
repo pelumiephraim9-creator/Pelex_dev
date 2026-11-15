@@ -30,8 +30,6 @@ var css=[
 '.px-min-content{padding:16px;overflow:auto}.px-min-big{font-size:25px;font-weight:750;margin:0 0 8px;overflow-wrap:anywhere}',
 '.px-min-copy{font-size:13px;line-height:1.55;color:var(--muted)}',
 '.px-min-open-register{margin-top:12px;border:0;border-radius:9px;background:var(--btn);color:var(--btnink);padding:10px 14px;font-weight:650}',
-'#pxFinancialSummary .two:has(#pxVolChart),#pxFinancialSummary .an-card:has(#pxOpsPie){display:none!important}',
-'#pxFinancialSummary #pxVolChart,#pxFinancialSummary #pxTxnPie,#pxFinancialSummary #pxOpsPie{display:none!important}',
 '#pxProjectManager .px-year-summary{margin-top:16px!important;padding-top:14px!important;border-top:1px solid var(--line)!important}',
 '#pxYearCards .ls-kpi{padding:10px!important;min-height:66px}',
 '@media(max-width:600px){#pxMonthCards .px-min-grid{gap:7px}.px-min-card{min-height:76px;padding:10px!important}.px-min-secondary-list{grid-template-columns:1fr 1fr}.px-min-drawer{top:auto;right:0;left:0;bottom:0;width:100%;height:auto;max-height:88dvh;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(102%)}.px-min-drawer.open{transform:translateY(0)}}'
