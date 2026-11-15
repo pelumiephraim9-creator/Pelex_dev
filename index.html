@@ -5525,7 +5525,7 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
  var T=[],U=[],O=[],rep=null,DAY=864e5;
  function wsId(){try{return localStorage.getItem('pelex_ws')||''}catch(e){return ''}}
  function money(n,c){try{return (c||'')+' '+Number(n||0).toLocaleString(undefined,{maximumFractionDigits:0})}catch(e){return String(n)}}
- function iso(d){return d.toISOString().slice(0,10)}
+ function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
  function parseD(s){return s?new Date(s+'T00:00:00'):null}
  function weekStart(s){var d=parseD(s);var day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return iso(d)}
  function bars(el,labels,vals,fmt){
