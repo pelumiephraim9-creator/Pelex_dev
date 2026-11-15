@@ -91,61 +91,66 @@ function renderCards(host,isYear){
  }
 }
 function placeYearlyManagement(){
- var manager=byId('pxProjectManager'),host=byId('bWork');
- if(manager&&host&&manager.parentNode===host&&host.lastElementChild!==manager)host.appendChild(manager);
  var yearly=document.querySelector('.px-year-summary');
- if(yearly&&manager&&yearly.parentNode!==manager)manager.appendChild(yearly);
+ var wrap=byId('lsWrap');
+ if(!yearly||!wrap)return;
+ var project=Array.from(wrap.children).find(function(n){
+  var h=n.querySelector&&n.querySelector('h2');return h&&/^Project management$/i.test(h.textContent.trim());
+ });
+ if(project&&yearly.parentNode!==project)project.appendChild(yearly);
+ yearly.style.margin='12px 0 0';
+ yearly.style.padding='12px 0 0';
+ yearly.style.borderTop='1px solid var(--line)';
+ var title=yearly.querySelector('h3');
+ if(title)title.textContent='Yearly project overview';
 }
 function compactDashboard(){
  var root=byId('pxFinancialSummary');if(!root)return;
- placeYearlyManagement();
- var charts=root.querySelector('.two:has(#pxVolChart)');
- if(charts)charts.hidden=true;
- ['pxTxnPie','pxOpsPie','pxVolChart'].forEach(function(id){var node=byId(id);if(node){var card=node.closest('.an-card');if(card)card.hidden=true;node.hidden=true}});
+ ['pxTxnPie','pxOpsPie','pxVolChart'].forEach(function(id){
+  var node=byId(id);if(node){var card=node.closest('.an-card');if(card)card.hidden=true;node.hidden=true}
+ });
  var ops=byId('pxOpsDashboard');if(ops)ops.hidden=true;
  var note=byId('pxMonthNote');if(note)note.hidden=true;
  var heading=root.querySelector('h3');if(heading&&heading.textContent.trim()==='Selected month')heading.hidden=true;
 }
 function arrangeBusinessCards(){
- var work=byId('bWork'),dash=byId('bDash'),manager=byId('pxProjectManager'),ops=byId('pxProjectOperations'),financial=byId('pxFinancialSummary'),wrap=byId('lsWrap');
- if(manager&&work){
-  var opsCard=byId('pxOperationalRecordsCard');
-  if(ops&&!opsCard){
-   opsCard=el('section','dcard');opsCard.id='pxOperationalRecordsCard';
-   var h=el('h2','','Operational records');opsCard.append(h,ops);
-   manager.insertAdjacentElement('afterend',opsCard);
-  }else if(ops&&opsCard&&ops.parentNode!==opsCard)opsCard.append(ops);
- }
- if(!financial||!dash)return;
- /* The yearly summary is not a separate dashboard card. Keep its legacy data
-    nodes hidden for compatibility with the existing summary loader. */
- var yearly=financial.querySelector('.px-year-summary');
- if(yearly){yearly.hidden=true;yearly.style.display='none';}
- /* Keep the existing capture/upload workflow, but place it immediately after
-    the monthly overview rather than among setup and workspace controls. */
- var upload=byId('upDrop'),capture=upload&&upload.closest('.dcard');
- if(capture){
-  var title=capture.querySelector('h2');
-  if(title&&title.textContent.trim()==='Upload data')title.textContent='Capture';
-  if(capture.parentNode!==dash)dash.appendChild(capture);
-  if(capture.previousElementSibling!==financial)financial.insertAdjacentElement('afterend',capture);
- }
- /* Analysis belongs inside the monthly financial overview, not as a peer card. */
+ var financial=byId('pxFinancialSummary'),wrap=byId('lsWrap');
+ if(!financial)return;
+ /* Keep the monthly overview compact. Analysis is nested inside its own
+    collapsed detail area and is never displayed as a neighbouring card. */
+ var analysis=null;
  if(wrap){
-  var analysis=Array.from(wrap.children).find(function(n){var h=n.querySelector&&n.querySelector('h2');return h&&h.textContent.trim()==='Analysis'});
-  if(analysis&&analysis.parentNode!==financial)financial.appendChild(analysis);
-  var project=Array.from(wrap.children).find(function(n){var h=n.querySelector&&n.querySelector('h2');return h&&/^Project management$/i.test(h.textContent.trim())});
-  var data=Array.from(wrap.children).find(function(n){var h=n.querySelector&&n.querySelector('h2');return h&&/^Data entry$/i.test(h.textContent.trim())});
-  if(project){var ph=project.querySelector('h2');if(ph)ph.textContent='Project milestones';dash.appendChild(project);}
-  if(data){dash.appendChild(data);}
-  /* Remove the now-empty wrapper after its cards have been relocated. */
-  if(!wrap.children.length)wrap.remove();
+  analysis=Array.from(wrap.children).find(function(n){
+   var h=n.querySelector&&n.querySelector('h2');return h&&h.textContent.trim()==='Analysis';
+  });
  }
- /* Retire the old overview tiles, meetings and other duplicate dashboard cards. */
- Array.from(dash.children).forEach(function(n){
-  if(n===financial||n===capture||n===byId('pxOperationalRecordsCard')||n.id==='lsWrap')return;
-  if(n.classList&&n.classList.contains('dcard')&&!n.querySelector('#pxFinancialSummary'))n.hidden=true;
- });
+ var detail=financial.querySelector('.px-month-detail');
+ if(!detail){
+  detail=el('div','px-month-detail');
+  detail.hidden=true;
+  detail.style.cssText='margin-top:14px;padding-top:12px;border-top:1px solid var(--line)';
+  var toggle=el('button','btn alt px-month-toggle','Open monthly details');
+  toggle.type='button';toggle.setAttribute('aria-expanded','false');
+  toggle.style.cssText='margin-top:10px;width:100%;text-align:center';
+  toggle.onclick=function(){
+   var opening=detail.hidden;
+   detail.hidden=!opening;
+   toggle.textContent=opening?'Close monthly details':'Open monthly details';
+   toggle.setAttribute('aria-expanded',opening?'true':'false');
+  };
+  financial.appendChild(toggle);
+  financial.appendChild(detail);
+ }
+ if(analysis&&analysis.parentNode!==detail)detail.appendChild(analysis);
+ if(analysis){
+  analysis.style.margin='0';
+  var ah=analysis.querySelector('h2');if(ah)ah.hidden=true;
+ }
+ /* The one Project management card owns the yearly overview as a subsection.
+    Do not create or display a second yearly project-management card. */
+ placeYearlyManagement();
+ /* Retain existing Project management and Data entry cards in their workspace.
+    No duplicate cards are created or moved into the monthly overview. */
 }
 function apply(){
  arrangeBusinessCards();
