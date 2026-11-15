@@ -5,7 +5,7 @@
  if(document.getElementById(CSS_ID)) return;
  var css=
   '#pxFinancialSummary{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;background:transparent;border:0;box-shadow:none;padding:0}'+
-  '#pxFinancialSummary>.dhead,#pxFinancialSummary>.dnote,#pxFinancialSummary>h3,#pxFinancialSummary>#pxOpsDashboard,#pxFinancialSummary>.px-year-summary{grid-column:1/-1}'+
+  '#pxFinancialSummary>.dhead,#pxFinancialSummary>.dnote,#pxFinancialSummary>h3,#pxFinancialSummary>#pxOpsDashboard,#pxFinancialSummary>.px-year-summary,#pxFinancialSummary>.px-month-detail,#pxFinancialSummary>.px-month-toggle{grid-column:1/-1}'+
   '#pxFinancialSummary>.dhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}'+
   '#pxFinancialSummary>h3{margin:6px 0 0;font-size:15px}'+
   '#pxFinancialSummary #pxMonthCards{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}'+
