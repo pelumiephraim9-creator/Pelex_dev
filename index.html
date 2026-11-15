@@ -7212,7 +7212,7 @@ function pxCommandHelp(){
    $('pxYearTable').querySelectorAll('[data-px-month-open]').forEach(function(b){b.onclick=function(){var v=b.getAttribute('data-px-month-open');$('pxMonthPick').value=v;$('pxTrYear').value=v.slice(0,4);$('pxTrMonth').value=v.slice(5,7);$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));$('pxMonthPick').dispatchEvent(new Event('change',{bubbles:true}));var reg=$('pxTrRows');if(reg){var panel=reg.closest('.dcard')||reg;panel.scrollIntoView({behavior:'smooth',block:'start'});}};});
    $('pxYearNote').textContent='*Original yearly capital is a fixed opening base. Monthly totals show cash movement and operating result. Select a month to open its detailed transactions in Data Entry.';
   }catch(e){$('pxMonthNote').textContent='We could not refresh the financial summary. Please try again.';$('pxYearTable').textContent='Yearly figures are temporarily unavailable.'}
-  finally{busy=false}
+  finally{busy=false;if(pending){pending=false;setTimeout(load,0)}}
  }
  function mount(){
   var dash=$('bDash');if(!dash)return;var yearly=document.querySelector('.px-year-summary'),pm=$('pxProjectManager');if(yearly&&pm&&yearly.parentNode!==pm)pm.appendChild(yearly);if($('pxFinancialSummary'))return;
