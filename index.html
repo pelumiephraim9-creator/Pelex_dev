@@ -7190,7 +7190,8 @@ function pxCommandHelp(){
      ['Opening cash',openingCash],['Monthly capital allocation',capitalAllocation],['Cash received',monthCashIn],['Cash paid',monthCashOut],
      ['Closing cash',closingCash],['Operating revenue',monthIncome],['Operating expenses',monthExpenses],['Operating profit',monthIncome-monthExpenses]
     ]
-   if(d.business_type==='finance'&&modules.indexOf('agreements')>=0)cards=cards.concat([
+   if(monthIsStart&&setup.spend_period==='month'&&Number(setup.spent||0)>0)cards.push(['Setup spending declared',Number(setup.spent)]);
+    if(d.business_type==='finance'&&modules.indexOf('agreements')>=0)cards=cards.concat([
     ['Loan amount in setup',d.setup_loan],['Loan principal issued',d.month_principal_issued],['Loan principal repaid',d.month_principal_repaid],['Invoices issued',d.month_receivables_issued],['Invoice payments received',d.month_receivables_collected],['Recorded receivables outstanding',d.recorded_receivables_outstanding],['Interest income',d.month_interest_income],['Customer savings received',d.month_customer_savings_received],['Customer savings held',d.customer_savings_held]
    ]);
    var countMetrics=['agreement_count','contributors_recorded','delivery_count','production_batches','finished_goods_quantity','expiry_records','near_expiry_items','booking_count','bookings','cancellations','trips_recorded','project_milestones','orders_recorded','order_fulfilments','fulfilments','seasons_recorded','harvest_quantity','stock_on_hand_quantity'];
