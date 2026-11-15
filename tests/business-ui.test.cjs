@@ -66,7 +66,7 @@ test('business financial dashboard calls the live monthly and yearly Supabase re
   assert.match(html, /business_project_dashboard_summary/);
   assert.match(html, /project_months/);
   assert.match(html, /monthIncome/);
-  assert.match(html, /month_profit/);
+  assert.match(html, /monthIncome-monthExpenses/);
 });
 
 
