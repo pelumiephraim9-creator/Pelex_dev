@@ -5576,7 +5576,7 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
   $l('lsEmpty').hidden=true;$l('lsBody').hidden=false;
   var a=asOf();
   var rows=Tc.filter(function(x){return x.entry_date<=a});
-  var inv=rows.filter(function(x){return x.entry_type==='invoice'}), rec=rows.filter(function(x){return (x.entry_type==='receipt'||x.entry_type==='payment')&&(x.kind==='receivable_in'||!x.kind)});
+  var inv=rows.filter(function(x){return x.entry_type==='invoice'}), rec=rows.filter(function(x){return (x.entry_type==='invoice'&&x.kind==='income')||((x.entry_type==='receipt'||x.entry_type==='payment')&&(x.kind==='receivable_in'||!x.kind))});
   var invT=inv.reduce(function(s,x){return s+Number(x.amount)},0), recT=rec.reduce(function(s,x){return s+Number(x.amount)},0);
   var outT=Math.max(0,invT-recT);
   // overdue: per customer, invoices past due with less received than invoiced
@@ -7018,7 +7018,7 @@ function pxCommandHelp(){
    var key=String(x.project_id||'unassigned')+'|'+String(x.party||'').toLowerCase();
    if(!byParty[key])byParty[key]={invoiced:0,received:0};
    if(x.entry_type==='invoice')byParty[key].invoiced+=Number(x.amount)||0;
-   if(x.kind==='receivable_in'||(!x.kind&&(x.entry_type==='receipt'||x.entry_type==='payment')))byParty[key].received+=Number(x.amount)||0;
+   if((x.entry_type==='invoice'&&x.kind==='income')||x.kind==='receivable_in'||(!x.kind&&(x.entry_type==='receipt'||x.entry_type==='payment')))byParty[key].received+=Number(x.amount)||0;
   });
   function paymentStatus(x){
    if(x.entry_type==='sale')return 'Paid';
@@ -7146,7 +7146,7 @@ function pxCommandHelp(){
    var bt=await sb.from('business_types').select('modules').eq('code',d.business_type).maybeSingle();
    if(bt.error)throw bt.error;
    var modules=(bt.data&&bt.data.modules)||[],cards=[
-    ['Opening cash',d.opening_startup],['Setup capital · this month',d.startup_month],['Setup capital · this year',d.startup_year],['Setup spending ('+(d.setup_spend_period||'period')+')',d.setup_spent],['Cash received',d.month_in],['Cash paid',d.month_out],
+    ['Opening cash',d.opening_startup],['Monthly capital allocation',d.startup_month],['Original yearly capital',d.startup_year],['Setup spending ('+(d.setup_spend_period||'period')+')',d.setup_spent],['Cash received',d.month_in],['Cash paid',d.month_out],
     ['Closing cash',d.month_closing],['Operating revenue',d.month_income===undefined?0:d.month_income],['Operating expenses',d.month_expenses===undefined?0:d.month_expenses],['Operating profit',d.month_profit]
    ];
    if(d.business_type==='finance'&&modules.indexOf('agreements')>=0)cards=cards.concat([
@@ -7163,12 +7163,12 @@ function pxCommandHelp(){
    if(rows.error)throw rows.error;
    var yearRows=(rows.data||[]).filter(function(x){return String(x.month).slice(0,4)===String(y)});
    var total=yearRows.reduce(function(a,x){a.revenue+=Number(x.profit||0)+0; a.cashIn+=Number(x.money_in||0);a.cashOut+=Number(x.money_out||0);a.closing=Number(x.closing||0);return a},{revenue:0,cashIn:0,cashOut:0,closing:0});
-   var yearCards=[['Cash in',total.cashIn],['Cash out',total.cashOut],['Net operating result',yearRows.reduce(function(a,x){return a+Number(x.profit||0)},0)],['Latest closing cash',total.closing]];
+   var yearCards=[['Original yearly capital',d.startup_year],['Cash in',total.cashIn],['Cash out',total.cashOut],['Net operating result',yearRows.reduce(function(a,x){return a+Number(x.profit||0)},0)],['Latest closing cash',total.closing]];
    if(modules.indexOf('agreements')>=0)yearCards.push(['Recorded receivables outstanding',d.recorded_receivables_outstanding]);
    $('pxYearCards').innerHTML=yearCards.map(function(x){return '<div class="ls-kpi"><b>'+cash(x[1],cur)+'</b><span>'+esc(x[0])+'</span></div>'}).join('');
    $('pxYearTable').innerHTML=yearRows.length?'<div style="overflow-x:auto"><table class="ls-table"><thead><tr><th>Month</th><th>Cash in</th><th>Cash out</th><th>Operating profit</th><th>Closing cash</th></tr></thead><tbody>'+yearRows.map(function(x){return '<tr><td><button type="button" class="btn alt" data-px-month-open="'+esc(x.month)+'" style="padding:4px 8px">'+esc(x.month)+'</button></td><td>'+cash(x.money_in,cur)+'</td><td>'+cash(x.money_out,cur)+'</td><td>'+cash(x.profit,cur)+'</td><td>'+cash(x.closing,cur)+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">No ledger transactions for '+y+'.</p>';
    $('pxYearTable').querySelectorAll('[data-px-month-open]').forEach(function(b){b.onclick=function(){var v=b.getAttribute('data-px-month-open');$('pxMonthPick').value=v;$('pxTrYear').value=v.slice(0,4);$('pxTrMonth').value=v.slice(5,7);$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));$('pxMonthPick').dispatchEvent(new Event('change',{bubbles:true}));var reg=$('pxTrRows');if(reg){var panel=reg.closest('.dcard')||reg;panel.scrollIntoView({behavior:'smooth',block:'start'});}};});
-   $('pxYearNote').textContent='*Calculated from income less operating expenses. Loan principal, capital and savings are not profit. Select a month to open its detailed transactions in the register.';
+   $('pxYearNote').textContent='*Original yearly capital is a fixed opening base. Monthly totals show cash movement and operating result. Select a month to open its individual transactions in Data Entry.';
   }catch(e){$('pxMonthNote').textContent='We could not refresh the financial summary. Please try again.';$('pxYearTable').textContent='Yearly figures are temporarily unavailable.'}
   finally{busy=false}
  }
