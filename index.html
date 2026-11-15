@@ -5544,9 +5544,14 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
  function setSliderFromDate(d){var s=$l('lsSlider');var a=parseD(minDate()),b=parseD(maxDate()),c=parseD(d);if(!s||isNaN(a)||isNaN(b))return;var days=Math.round((b-a)/DAY);s.max=Math.max(0,days);s.value=Math.max(0,Math.min(days,Math.round((c-a)/DAY)))}
  function renderDataEntry(){
   var hidden=window.__lsHiddenFiles||{};
-  var ledgerRecords=T.filter(function(x){return !(x.upload_id&&hidden[x.upload_id])});
+  var analysisGran=($l('lsGran')&&$l('lsGran').value)||'week',analysisEnd=asOf(),analysisEndDate=parseD(analysisEnd),analysisStartDate=new Date(analysisEndDate);
+  if(analysisGran==='day')analysisStartDate.setDate(analysisStartDate.getDate()-29);
+  else if(analysisGran==='month'){analysisStartDate.setDate(1);analysisStartDate.setMonth(analysisStartDate.getMonth()-11)}
+  else analysisStartDate.setDate(analysisStartDate.getDate()-83);
+  var analysisStart=iso(analysisStartDate);
+  var ledgerRecords=T.filter(function(x){var d=String(x.entry_date||'');return !(x.upload_id&&hidden[x.upload_id])&&d>=analysisStart&&d<=analysisEnd});
   var linked={};ledgerRecords.forEach(function(x){if(x.source_key)linked[String(x.source_key)]=true});
-  var operational=O.filter(function(x){return !linked['business_project_record:'+x.id]});
+  var operational=O.filter(function(x){var d=String(x.record_date||'');return !linked['business_project_record:'+x.id]&&d>=analysisStart&&d<=analysisEnd});
   var counts={};T.forEach(function(x){if(x.upload_id)counts[x.upload_id]=(counts[x.upload_id]||0)+1});
   var files=U.filter(function(u){return !hidden[u.id]});
   var recordRows=ledgerRecords.map(function(x){return {date:x.entry_date,type:x.entry_type||x.kind,party:(x.party&&!/^\d+(?:\.\d+)?$/.test(String(x.party)))?x.party:(x.category||'Business transaction'),amount:x.amount,currency:x.currency,source:x.upload_id?'Uploaded document':'Ledger transaction',ref:x.source_key||''}});
@@ -7223,7 +7228,7 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
 <script src="/spotlight-player.js"></script>
 <script src="/spotlight-workspace.js?v=4"></script>
 <script src="/spotlight-layout-fix.js?v=1"></script>
-<script src="/pelex_minimal_business_ui.js?v=4"></script>
-<script src="/business-analysis-period-fix.js?v=1"></script>
+<script src="/pelex_minimal_business_ui.js?v=5"></script>
+<script src="/business-analysis-period-fix.js?v=2"></script>
 </body>
 </html>
