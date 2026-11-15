@@ -7179,7 +7179,7 @@ function pxCommandHelp(){
   finally{busy=false;if(rerun){rerun=false;setTimeout(load,0)}}
  }
  function mount(){
-  var dash=$('bDash');if(!dash)return;var yearly=document.querySelector('.px-year-summary'),pm=$('pxProjectManager');if(yearly&&pm&&yearly.parentNode!==pm)pm.appendChild(yearly);if($('pxFinancialSummary'))return;
+  var dash=$('bDash');if(!dash)return;var yearly=document.querySelector('.px-year-summary'),pm=$('pxProjectManager');if(yearly&&pm&&!yearly.closest('#lsWrap')&&yearly.parentNode!==pm)pm.appendChild(yearly);if($('pxFinancialSummary'))return;
   var box=document.createElement('section');box.className='dcard';box.id='pxFinancialSummary';
   box.innerHTML='<div class="dhead"><h2>Monthly financial overview</h2><input id="pxMonthPick" type="month" value="'+new Date().toISOString().slice(0,7)+'" class="inp" style="max-width:170px"></div>'+
    '<div class="dnote">All figures and visualisations below use only the selected business project and reporting month.</div><h3>Selected month</h3><div class="ls-kpis" id="pxMonthCards"></div><div id="pxOpsDashboard"></div><div class="two" style="margin-top:14px"><div class="an-card"><b>Transaction volume · selected month</b><div id="pxVolChart"></div></div><div class="an-card"><b>Transaction mix</b><div id="pxTxnPie"></div></div></div><div class="an-card" style="margin-top:12px"><b>Operational activity mix</b><div id="pxOpsPie"></div></div><p class="dnote" id="pxMonthNote"></p>'+
