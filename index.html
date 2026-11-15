@@ -7007,7 +7007,14 @@ function pxCommandHelp(){
     if(r.error)throw r.error;
     var batch=r.data||[];rows=rows.concat(batch);offset+=batch.length;more=batch.length===batchSize;
    }
-   var years=Array.from(new Set(rows.map(function(x){return String(x.entry_date||'').slice(0,4)}).filter(Boolean))).sort().reverse();
+   var opRows=await window.sb.from('business_project_records').select('record_date,amount,quantity,reference,party,module_key,record_type').eq('workspace_id',ws()).eq('project_id',activeProject).order('record_date',{ascending:false}).limit(5000);
+    if(opRows.error)throw opRows.error;
+    rows.forEach(function(x){
+     if(!/^\\d+(?:\\.\\d+)?$/.test(String(x.party||''))||!String(x.category||'').startsWith('business_operations:'))return;
+     var match=(opRows.data||[]).find(function(o){return String(o.record_date)===String(x.entry_date)&&Number(o.amount)===Number(x.amount)&&Number(o.quantity)===Number(x.party)});
+     if(match){x.party=match.reference||match.party||String(match.record_type||'Sales record').replace(/_/g,' ');x.category=String(match.module_key||'sales').replace(/_/g,' ');}
+    });
+    var years=Array.from(new Set(rows.map(function(x){return String(x.entry_date||'').slice(0,4)}).filter(Boolean))).sort().reverse();
    var y=el('pxTrYear'),old=y.value;
    y.innerHTML='<option value="">All years</option>'+years.map(function(v){return '<option value="'+esc(v)+'">'+esc(v)+'</option>'}).join('');
    if(years.indexOf(old)>=0)y.value=old;
