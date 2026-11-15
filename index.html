@@ -7161,16 +7161,16 @@ function pxCommandHelp(){
    if(setupResult.error)throw setupResult.error;
    if(!setupResult.data)throw new Error('Selected business setup could not be loaded.');
    var setup=setupResult.data,annualCapital=Number(setup.startup_year||0),monthlyCapital=Number(setup.startup_month||0);
-   function total(rows,fn){return rows.filter(fn).reduce(function(sum,x){return sum+Number(x.amount||0)},0)}
+   function sumRows(rows,fn){return rows.filter(fn).reduce(function(sum,x){return sum+Number(x.amount||0)},0)}
    function kindOf(x){return String(x.kind||'').toLowerCase()}
    function isOperatingRevenue(x){var k=kindOf(x);return k==='income'||(!k&&['invoice','sale'].indexOf(x.entry_type)>=0)}
    function isOperatingExpense(x){var k=kindOf(x);return k==='expense'||(!k&&['expense','purchase','cost'].indexOf(x.entry_type)>=0)}
    function isCashIn(x){var k=kindOf(x);if(x.entry_type==='invoice')return false;if(k==='capital'||k==='savings_in'||k==='principal_in'||k==='receivable_in')return true;return ['sale','receipt','payment'].indexOf(x.entry_type)>=0&&(k==='income'||!k||k==='receivable_in')}
    function isCashOut(x){var k=kindOf(x);return k==='expense'||k==='principal_out'||(!k&&['expense','purchase','cost'].indexOf(x.entry_type)>=0)}
-   var monthIncome=total(txRows,isOperatingRevenue),monthExpenses=total(txRows,isOperatingExpense);
-   var monthCashIn=total(txRows,isCashIn),monthCashOut=total(txRows,isCashOut);
+   var monthIncome=sumRows(txRows,isOperatingRevenue),monthExpenses=sumRows(txRows,isOperatingExpense);
+   var monthCashIn=sumRows(txRows,isCashIn),monthCashOut=sumRows(txRows,isCashOut);
    var priorRows=allRows.filter(function(x){return String(x.entry_date)<monthStart});
-   var priorCash=total(priorRows,isCashIn)-total(priorRows,isCashOut);
+   var priorCash=sumRows(priorRows,isCashIn)-sumRows(priorRows,isCashOut);
    var monthIsStart=String(setup.created_at||'').slice(0,7)===m;
    var openingCash=monthIsStart?monthlyCapital:annualCapital+priorCash;
    var capitalAllocation=monthIsStart?monthlyCapital:0;
