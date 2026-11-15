@@ -77,6 +77,19 @@ function saveCard(card,button){
  button.disabled=true;button.textContent='Saving…';
  window.sb.from('spotlight_saved').upsert({owner_id:window.curUser.id,source:provider,video_ref:ref,title:card.dataset.title||'Video',channel:card.dataset.channel||'',page_url:url},{onConflict:'owner_id,source,video_ref'}).then(function(r){button.textContent=r.error?'Try again':'✓ Saved';button.disabled=false});
 }
+window.pxFindVideos=function(interest,mount,pageToken,append){
+ if(!mount)return Promise.resolve();
+ if(!signed()){mount.innerHTML='<div class="ls-empty">Sign in to see videos picked for you.</div>';return Promise.resolve()}
+ if(!append)mount.innerHTML='<div class="ls-empty">Finding videos for: '+esc(interest)+'…</div>';
+ return call('search','youtube',interest,pageToken||null).then(function(raw){
+  var data=parse(raw),videos=data.videos||[];
+  if(!append)mount.innerHTML='';
+  if(!videos.length&&!append){mount.innerHTML='<div class="ls-empty">No videos found for this topic yet. Try another search.</div>';return data}
+  videos.forEach(function(v){mount.insertAdjacentHTML('beforeend',renderCard(v,'youtube'))});
+  if(window.PelexYouTubePlayer)window.PelexYouTubePlayer.mount(mount);
+  return data;
+ }).catch(function(){mount.innerHTML='<div class="ls-empty">Spotlight is not reachable right now. Please try again.</div>'});
+};
 function start(){
  if(state.started)return;state.started=true;
  document.addEventListener('click',function(e){
