@@ -7146,7 +7146,7 @@ function pxCommandHelp(){
    var bt=await sb.from('business_types').select('modules').eq('code',d.business_type).maybeSingle();
    if(bt.error)throw bt.error;
    var modules=(bt.data&&bt.data.modules)||[],cards=[
-    ['Opening cash',d.opening_startup],['Monthly capital allocation',d.startup_month],['Original yearly capital',d.startup_year],['Setup spending ('+(d.setup_spend_period||'period')+')',d.setup_spent],['Cash received',d.month_in],['Cash paid',d.month_out],
+    ['Opening cash',d.opening_startup],['Monthly capital allocation',d.startup_month],['Monthly operating balance',d.month_operating_balance],['Original yearly capital',d.startup_year],['Setup spending ('+(d.setup_spend_period||'period')+')',d.setup_spent],['Cash received',d.month_in],['Cash paid',d.month_out],
     ['Closing cash',d.month_closing],['Operating revenue',d.month_income===undefined?0:d.month_income],['Operating expenses',d.month_expenses===undefined?0:d.month_expenses],['Operating profit',d.month_profit]
    ];
    if(d.business_type==='finance'&&modules.indexOf('agreements')>=0)cards=cards.concat([
