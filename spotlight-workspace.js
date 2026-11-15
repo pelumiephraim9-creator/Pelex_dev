@@ -18,6 +18,7 @@ function sourceMarkup(){
 function renderSourceNav(){var root=$('pxSpotSources');if(root)root.innerHTML=sourceMarkup()}
 function renderCard(v,provider){
  var title=esc(v.title||'Video'),channel=esc(v.channel||v.creator||names[provider]||provider),duration=esc(v.duration||v.length||''),url=(typeof v.url==='string'&&/^https:\/\//i.test(v.url))?v.url:'';
+ if(provider==='youtube'&&(v.id||v.videoId))url='https://www.youtube.com/watch?v='+encodeURIComponent(v.id||v.videoId);
  var media='';
  if(provider==='youtube'&&window.PelexYouTubePlayer)media='<div class="px-spot-media">'+window.PelexYouTubePlayer.cardHtml(v)+'</div>';
  else if((provider==='pexels'||provider==='pixabay')&&v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<video controls playsinline preload="metadata" src="'+esc(v.embedUrl)+'"></video>';
