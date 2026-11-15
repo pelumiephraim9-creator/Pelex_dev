@@ -91,7 +91,9 @@ function renderCards(host,isYear){
  }
 }
 function placeYearlyManagement(){
- var yearly=document.querySelector('.px-year-summary'),manager=byId('pxProjectManager');
+ var manager=byId('pxProjectManager'),host=byId('bWork');
+ if(manager&&host&&manager.parentNode===host&&host.lastElementChild!==manager)host.appendChild(manager);
+ var yearly=document.querySelector('.px-year-summary');
  if(yearly&&manager&&yearly.parentNode!==manager)manager.appendChild(yearly);
 }
 function compactDashboard(){
