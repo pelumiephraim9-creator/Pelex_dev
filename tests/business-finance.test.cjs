@@ -66,3 +66,43 @@ test('business access hardening leaves the type catalogue read-only and protects
   assert.match(security, /revoke all on function public\.create_workspace\(text,text\) from public, anon/);
   assert.match(security, /grant execute on function public\.create_workspace\(text,text\) to authenticated/);
 });
+
+
+test('monthly financial overview layout and accounting semantics remain explicit', () => {
+  const layout = fs.readFileSync('pelex_business_analysis_layout.js', 'utf8');
+  assert.match(layout, /pxBizAnalysisLayoutCss/);
+  assert.match(layout, /#pxFinancialSummary/);
+  assert.match(html, /pelex_business_analysis_layout\.js/);
+
+  const marker = '/* Business financial summaries: same Supabase project ledger as the transaction register. */';
+  const at = html.indexOf(marker);
+  assert.notEqual(at, -1);
+  const open = html.lastIndexOf('<script>', at);
+  const close = html.indexOf('</script>', at);
+  const dashboard = html.slice(open + '<script>'.length, close);
+  assert.doesNotThrow(() => new vm.Script(dashboard));
+  assert.match(dashboard, /startup_month/);
+  assert.match(dashboard, /annualCapital/);
+  assert.match(dashboard, /function isCashIn[\s\S]*?entry_type==='invoice'\)return false/);
+  assert.match(dashboard, /monthIncome-monthExpenses/);
+  assert.match(dashboard, /if\(d\.not_started\)/);
+  assert.match(dashboard, /pending\)\{pending=false;setTimeout\(load,0\)\}/);
+});
+
+test('Analysis daily, weekly and monthly controls filter the selected reporting window', () => {
+  const marker = '/* PHASE 3: ledger-driven analysis.';
+  const at = html.indexOf(marker);
+  assert.notEqual(at, -1);
+  const open = html.lastIndexOf('<script>', at);
+  const close = html.indexOf('</script>', at);
+  const analysis = html.slice(open + '<script>'.length, close);
+  assert.match(analysis, /gran===\'day\'/);
+  assert.match(analysis, /gran===\'week\'/);
+  assert.match(analysis, /analysisRows=Tc\.filter/);
+  assert.match(analysis, /__lsBuildDays\(analysisRows\)/);
+});
+
+test('operational sales with numeric quantity display their linked reference in the transaction register', () => {
+  assert.match(html, /business_project_records.*quantity,reference/);
+  assert.match(html, /Number\(o\.quantity\)===Number\(x\.party\)/);
+});
