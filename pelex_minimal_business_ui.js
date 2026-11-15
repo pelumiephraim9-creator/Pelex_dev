@@ -129,26 +129,33 @@ function arrangeBusinessCards(){
   detail=el('div','px-month-detail');
   detail.hidden=true;
   detail.style.cssText='margin-top:14px;padding-top:12px;border-top:1px solid var(--line)';
-  var toggle=el('button','btn alt px-month-toggle','Open monthly details');
+  var toggle=el('button','btn alt px-month-toggle','View monthly details');
   toggle.type='button';toggle.setAttribute('aria-expanded','false');
   toggle.style.cssText='margin-top:10px;width:100%;text-align:center';
-  toggle.onclick=function(){
+  function toggleMonthly(){
    var opening=detail.hidden;
    detail.hidden=!opening;
-   toggle.textContent=opening?'Close monthly details':'Open monthly details';
+   toggle.textContent=opening?'Close monthly details':'View monthly details';
    toggle.setAttribute('aria-expanded',opening?'true':'false');
-  };
+  }
+  toggle.onclick=toggleMonthly;
   financial.appendChild(toggle);
   financial.appendChild(detail);
+  financial.style.cursor='pointer';
+  financial.addEventListener('click',function(e){
+   if(e.target.closest('button,input,select,a,label,summary,textarea'))return;
+   toggleMonthly();
+  });
  }
  if(analysis&&analysis.parentNode!==detail)detail.appendChild(analysis);
  if(analysis){
   analysis.style.margin='0';
   var ah=analysis.querySelector('h2');if(ah)ah.hidden=true;
  }
- /* The one Project management card owns the yearly overview as a subsection.
-    Do not create or display a second yearly project-management card. */
- placeYearlyManagement();
+ /* Remove the duplicate yearly-management panel. The existing Project
+    Management card remains the sole place for project milestone views. */
+ var yearly=document.querySelector('.px-year-summary');
+ if(yearly)yearly.remove();
  /* Retain existing Project management and Data entry cards in their workspace.
     No duplicate cards are created or moved into the monthly overview. */
 }
