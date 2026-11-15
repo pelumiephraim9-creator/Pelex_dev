@@ -66,3 +66,39 @@ test('business access hardening leaves the type catalogue read-only and protects
   assert.match(security, /revoke all on function public\.create_workspace\(text,text\) from public, anon/);
   assert.match(security, /grant execute on function public\.create_workspace\(text,text\) to authenticated/);
 });
+
+const layout = fs.readFileSync('pelex_minimal_business_ui.js', 'utf8');
+
+test('monthly financial overview responsive grid and analysis layout scripts parse', () => {
+  assert.doesNotThrow(() => new vm.Script(layout));
+  assert.match(layout, /#pxFinancialSummary\{display:grid;grid-template-columns:repeat\(12,minmax\(0,1fr\)\)/);
+  assert.match(layout, /@media\(max-width:820px\)/);
+  assert.match(layout, /pxBizAnalysisLayoutCss/);
+  assert.match(layout, /appendChild\(s\)/);
+});
+
+test('monthly overview keeps monthly allocation and annual standby reserve distinct', () => {
+  assert.match(html, /Monthly capital allocation/);
+  assert.match(html, /Yearly standby reserve/);
+  assert.match(html, /Original yearly capital/);
+  assert.match(html, /Setup budget/);
+});
+
+test('monthly overview and analysis reporting period synchronisation is loaded', () => {
+  const periodFix = fs.readFileSync('business-analysis-period-fix.js', 'utf8');
+  assert.match(html, /business-analysis-period-fix\.js\?v=1/);
+  assert.doesNotThrow(() => new vm.Script(periodFix));
+  assert.match(periodFix, /pxMonthPick/);
+  assert.match(periodFix, /lsGran/);
+  assert.match(periodFix, /lsDate/);
+  assert.match(periodFix, /__lsRender/);
+  assert.match(periodFix, /MutationObserver/);
+});
+
+test('fashion business dashboard no longer uses the generic operational-cost fallback', () => {
+  const migration = fs.readFileSync('supabase/migrations/20261115153000_monthly_financial_overview_accounting_reconciliation.sql', 'utf8');
+  assert.match(migration, /when 'fashion' then business_metrics/);
+  assert.match(migration, /recorded_product_cost/);
+  assert.doesNotMatch(migration, /'operational_cost'/);
+  assert.match(html, /recorded_product_cost:'Recorded product cost'/);
+});

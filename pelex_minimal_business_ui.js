@@ -7,7 +7,7 @@ if(window.__pxMinimalWorkspacesLoaded)return;
 window.__pxMinimalWorkspacesLoaded=true;
 var css=[
 '#pxFinancialSummary{margin:0 0 14px!important;padding:16px!important;border-radius:14px!important}',
-'#pxFinancialSummary>.dnote,#pxFinancialSummary>#pxMonthNote,#pxFinancialSummary>#pxOpsDashboard{display:none!important}',
+
 '#pxMonthCards .px-min-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}',
 '#pxMonthCards .px-min-card{min-width:0;min-height:84px;text-align:left;width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;box-shadow:none}',
 '.px-min-card .px-min-label{font-size:11px;color:var(--muted);font-weight:500}',
@@ -30,8 +30,8 @@ var css=[
 '.px-min-content{padding:16px;overflow:auto}.px-min-big{font-size:25px;font-weight:750;margin:0 0 8px;overflow-wrap:anywhere}',
 '.px-min-copy{font-size:13px;line-height:1.55;color:var(--muted)}',
 '.px-min-open-register{margin-top:12px;border:0;border-radius:9px;background:var(--btn);color:var(--btnink);padding:10px 14px;font-weight:650}',
-'#pxFinancialSummary .two:has(#pxVolChart),#pxFinancialSummary .an-card:has(#pxOpsPie){display:none!important}',
-'#pxFinancialSummary #pxVolChart,#pxFinancialSummary #pxTxnPie,#pxFinancialSummary #pxOpsPie{display:none!important}',
+
+
 '#pxProjectManager .px-year-summary{margin-top:16px!important;padding-top:14px!important;border-top:1px solid var(--line)!important}',
 '#pxYearCards .ls-kpi{padding:10px!important;min-height:66px}',
 '@media(max-width:600px){#pxMonthCards .px-min-grid{gap:7px}.px-min-card{min-height:76px;padding:10px!important}.px-min-secondary-list{grid-template-columns:1fr 1fr}.px-min-drawer{top:auto;right:0;left:0;bottom:0;width:100%;height:auto;max-height:88dvh;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(102%)}.px-min-drawer.open{transform:translateY(0)}}'
@@ -105,59 +105,22 @@ function placeYearlyManagement(){
  if(title)title.textContent='Yearly project overview';
 }
 function compactDashboard(){
+ /* Professional overview keeps the original financial charts, operational figures,
+    reporting controls and notes visible. This function intentionally changes no data. */
  var root=byId('pxFinancialSummary');if(!root)return;
- ['pxTxnPie','pxOpsPie','pxVolChart'].forEach(function(id){
-  var node=byId(id);if(node){var card=node.closest('.an-card');if(card)card.hidden=true;node.hidden=true}
+ ['pxTxnPie','pxOpsPie','pxVolChart','pxOpsDashboard','pxMonthNote'].forEach(function(id){
+  var node=byId(id);if(node){node.hidden=false;var card=node.closest('.an-card');if(card)card.hidden=false}
  });
- var ops=byId('pxOpsDashboard');if(ops)ops.hidden=true;
- var note=byId('pxMonthNote');if(note)note.hidden=true;
- var heading=root.querySelector('h3');if(heading&&heading.textContent.trim()==='Selected month')heading.hidden=true;
+ var note=root.querySelector('.dnote');if(note)note.hidden=false;
+ var heading=root.querySelector('h3');if(heading)heading.hidden=false;
 }
 function arrangeBusinessCards(){
+ /* Keep each existing live workspace as its own visible section:
+    monthly overview, analysis, project management and data entry.
+    Do not move, collapse or delete any source DOM nodes. */
  var financial=byId('pxFinancialSummary'),wrap=byId('lsWrap');
- if(!financial)return;
- /* Keep the monthly overview compact. Analysis is nested inside its own
-    collapsed detail area and is never displayed as a neighbouring card. */
- var analysis=null;
- if(wrap){
-  analysis=Array.from(wrap.children).find(function(n){
-   var h=n.querySelector&&n.querySelector('h2');return h&&h.textContent.trim()==='Analysis';
-  });
- }
- var detail=financial.querySelector('.px-month-detail');
- if(!detail){
-  detail=el('div','px-month-detail');
-  detail.hidden=true;
-  detail.style.cssText='margin-top:14px;padding-top:12px;border-top:1px solid var(--line)';
-  var toggle=el('button','btn alt px-month-toggle','View monthly details');
-  toggle.type='button';toggle.setAttribute('aria-expanded','false');
-  toggle.style.cssText='margin-top:10px;width:100%;text-align:center';
-  function toggleMonthly(){
-   var opening=detail.hidden;
-   detail.hidden=!opening;
-   toggle.textContent=opening?'Close monthly details':'View monthly details';
-   toggle.setAttribute('aria-expanded',opening?'true':'false');
-  }
-  toggle.onclick=toggleMonthly;
-  financial.appendChild(toggle);
-  financial.appendChild(detail);
-  financial.style.cursor='pointer';
-  financial.addEventListener('click',function(e){
-   if(e.target.closest('button,input,select,a,label,summary,textarea'))return;
-   toggleMonthly();
-  });
- }
- if(analysis&&analysis.parentNode!==detail)detail.appendChild(analysis);
- if(analysis){
-  analysis.style.margin='0';
-  var ah=analysis.querySelector('h2');if(ah)ah.hidden=true;
- }
- /* Remove the duplicate yearly-management panel. The existing Project
-    Management card remains the sole place for project milestone views. */
- var yearly=document.querySelector('.px-year-summary');
- if(yearly)yearly.remove();
- /* Retain existing Project management and Data entry cards in their workspace.
-    No duplicate cards are created or moved into the monthly overview. */
+ if(financial){financial.classList.add('px-professional-overview')}
+ if(wrap){wrap.classList.add('px-professional-sections')}
 }
 function apply(){
  arrangeBusinessCards();
@@ -170,4 +133,27 @@ function start(){apply();['pxMonthCards','pxYearCards','pxProjectManager'].forEa
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 window.addEventListener('load',function(){setTimeout(start,400);setTimeout(start,1500)});
 var attempts=0,t=setInterval(function(){start();if(++attempts>30)clearInterval(t)},700);
+})();
+
+
+/* PELEX BUSINESS ANALYSIS LAYOUT (add-on)
+   Arranges the Monthly financial overview as a grid of separate cards, on phones and on desktop.
+   Only the layout changes. The figures, charts and month picker are unchanged. */
+(function(){
+ var CSS_ID='pxBizAnalysisLayoutCss';
+ if(document.getElementById(CSS_ID)) return;
+ var css=
+  '#pxFinancialSummary{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;background:transparent;border:0;box-shadow:none;padding:0}'+
+  '#pxFinancialSummary>.dhead,#pxFinancialSummary>.dnote,#pxFinancialSummary>h3,#pxFinancialSummary>#pxOpsDashboard,#pxFinancialSummary>.px-year-summary{grid-column:1/-1}'+
+  '#pxFinancialSummary>.dhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}'+
+  '#pxFinancialSummary>h3{margin:6px 0 0;font-size:15px}'+
+  '#pxFinancialSummary #pxMonthCards{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}'+
+  '#pxFinancialSummary #pxMonthCards>*{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0;box-sizing:border-box}'+
+  '#pxFinancialSummary .two{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:0!important}'+
+  '#pxFinancialSummary .two>.an-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0;box-sizing:border-box;overflow:hidden}'+
+  '#pxFinancialSummary .px-year-summary{margin-top:0!important;padding-top:14px!important;border-top:1px solid var(--line);background:transparent}'+
+  '#pxFinancialSummary #pxMonthCards b,#pxFinancialSummary .ls-kpis b{white-space:nowrap;overflow-wrap:normal;font-size:clamp(14px,2.1vw,18px)}'+
+  '@media(max-width:820px){#pxFinancialSummary #pxMonthCards{grid-template-columns:repeat(2,minmax(0,1fr))}#pxFinancialSummary .two{grid-template-columns:minmax(0,1fr)}}';
+ var s=document.createElement('style'); s.id=CSS_ID; s.textContent=css;
+ document.head.appendChild(s);
 })();
