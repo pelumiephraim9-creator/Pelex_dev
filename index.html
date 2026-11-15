@@ -5567,7 +5567,12 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
   var fx=loadFx(),Tc=[],skipped={};
   T.forEach(function(x){if(!x.currency)return;if(window.__lsHiddenFiles&&window.__lsHiddenFiles[x.upload_id])return;if(x.currency===rep){Tc.push(x);return}var r=Number(fx[x.currency]);if(r>0){Tc.push(Object.assign({},x,{amount:Number(x.amount)*r,currency:rep,converted:true}))}else{skipped[x.currency]=(skipped[x.currency]||0)+1}});
   if(window.__lsFile)Tc=Tc.filter(function(x){return x.upload_id===window.__lsFile});
-  if(window.__lsBuildDays)window.__lsBuildDays(Tc);
+  var a=asOf(),gran=($l('lsGran')&&$l('lsGran').value)||'week',rangeStart;
+  if(gran==='day'){var dayStart=parseD(a);dayStart.setDate(dayStart.getDate()-29);rangeStart=iso(dayStart)}
+  else if(gran==='week'){var endWeek=weekStart(a),startWeek=parseD(endWeek);startWeek.setDate(startWeek.getDate()-77);rangeStart=iso(startWeek)}
+  else{var monthEnd=parseD(a),startMonth=new Date(monthEnd.getFullYear(),monthEnd.getMonth()-11,1);rangeStart=iso(startMonth)}
+  var analysisRows=Tc.filter(function(x){return x.entry_date>=rangeStart&&x.entry_date<=a});
+  if(window.__lsBuildDays)window.__lsBuildDays(analysisRows);
   var skippedN=Object.keys(skipped).reduce(function(s,k){return s+skipped[k]},0);
   $l('lsFxNote').textContent=skippedN?(skippedN+' row(s) in '+Object.keys(skipped).join(', ')+' have no exchange rate and are not counted. Enter the rate below.'):(Tc.some(function(x){return x.converted})?'Other currencies are converted at the rates you entered.':'');
   $l('lsFx').innerHTML=curs.filter(function(c){return c!==rep}).map(function(c){return '<div class="irow" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>1 '+esc(c)+' = </span><input type="number" min="0" step="any" data-fx="'+esc(c)+'" value="'+(fx[c]||'')+'" style="width:120px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 9px;font:inherit" aria-label="Rate for '+esc(c)+'"><span>'+esc(rep)+'</span></div>'}).join('')||'<div class="ls-empty">Only one currency in the ledger. No rates needed.</div>';
