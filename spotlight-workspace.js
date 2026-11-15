@@ -17,16 +17,16 @@ function sourceMarkup(){
 }
 function renderSourceNav(){var root=$('pxSpotSources');if(root)root.innerHTML=sourceMarkup()}
 function renderCard(v,provider){
- var title=esc(v.title||'Video'),channel=esc(v.channel||v.creator||names[provider]||provider),duration=esc(v.duration||v.length||''),url=(typeof v.url==='string'&&/^https:\/\//i.test(v.url))?v.url:'';
+ var title=esc(v.title||'Video'),channel=esc(v.channel||v.creator||names[provider]||provider),duration=esc(v.duration||v.length||''),views=esc(v.views||''),published=esc(v.published||v.publishedAt||''),url=(typeof v.url==='string'&&/^https:\/\//i.test(v.url))?v.url:'';
  if(provider==='youtube'&&(v.id||v.videoId))url='https://www.youtube.com/watch?v='+encodeURIComponent(v.id||v.videoId);
  var media='';
  if(provider==='youtube'&&window.PelexYouTubePlayer)media='<div class="px-spot-media">'+window.PelexYouTubePlayer.cardHtml(v)+'</div>';
- else if((provider==='pexels'||provider==='pixabay')&&v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<video controls playsinline preload="metadata" src="'+esc(v.embedUrl)+'"></video>';
- else if(v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<iframe src="'+esc(v.embedUrl)+'" title="'+title+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
- else media='<div class="px-spot-loading">Preview unavailable · open on source</div>';
- var player=provider==='youtube'?media:'<div class="px-spot-media">'+media+'</div>';
+ else if((provider==='pexels'||provider==='pixabay')&&v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<div class="px-spot-media"><video controls playsinline preload="metadata" src="'+esc(v.embedUrl)+'"></video></div>';
+ else if(v.embedUrl&&/^https:\/\//i.test(v.embedUrl))media='<div class="px-spot-media"><iframe src="'+esc(v.embedUrl)+'" title="'+title+'" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
+ else media='<div class="px-spot-media"><div class="px-spot-loading">Preview unavailable · open on source</div></div>';
  var ref=String(v.id||v.videoId||url||'');
- return '<article class="px-spot-card" data-provider="'+esc(provider)+'" data-ref="'+esc(ref)+'" data-url="'+esc(url)+'" data-title="'+title+'" data-channel="'+channel+'">'+player+'<div class="px-spot-meta"><b>'+title+'</b><small>'+channel+(duration?' · '+duration:'')+'</small>'+(url?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Watch on '+esc(names[provider]||provider)+' ↗</a>':'')+'</div><div class="px-spot-card-actions"><button type="button" data-save-video>☆ Save</button><button type="button" data-float-video>▣ Keep playing</button></div></article>';
+ var details=[channel,views?views+' views':'',published,duration].filter(Boolean).join(' · ');
+ return '<article class="px-spot-card" data-provider="'+esc(provider)+'" data-ref="'+esc(ref)+'" data-url="'+esc(url)+'" data-title="'+title+'" data-channel="'+channel+'">'+media+'<div class="px-spot-meta"><b>'+title+'</b><small>'+details+'</small>'+(url?'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Watch on '+esc(names[provider]||provider)+' ↗</a>':'')+'</div><div class="px-spot-card-actions"><button type="button" data-save-video>☆ Save</button><button type="button" data-float-video>▣ Keep playing</button></div></article>';
 }
 function showMessage(message){var root=$('pxSpotResults');if(root)root.innerHTML='<div class="px-spot-loading">'+esc(message)+'</div>'}
 function loadFeed(query,append){
