@@ -33,9 +33,10 @@
    if(!details){details=document.createElement('details');details.className='px-analysis-details';var summary=document.createElement('summary');summary.textContent='View monthly details and analysis';details.appendChild(summary);financial.appendChild(details)}
    if(analysis.parentNode!==details)details.appendChild(analysis);
   }
-  var yearly=financial.querySelector('.px-year-summary');
-  if(yearly){var h=yearly.querySelector('h3');if(h)h.textContent='Annual project overview'}
   var pm=Array.from(wrap.children).find(function(n){var h=n.querySelector&&n.querySelector('h2');return h&&h.textContent.trim()==='Project management'});
+  var yearly=document.querySelector('.px-year-summary');
+  if(yearly&&pm&&yearly.parentNode!==pm)pm.appendChild(yearly);
+  if(yearly){var h=yearly.querySelector('h3');if(h)h.textContent='Annual project overview'}
   if(pm&&pm!==wrap.lastElementChild)wrap.appendChild(pm);
  }
  function start(){
