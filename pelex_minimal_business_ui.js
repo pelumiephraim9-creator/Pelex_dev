@@ -1,50 +1,173 @@
-/* Minimal shared Pelex business UI. Presentation only: no ledger writes, schema changes, accounting formula changes, or business setup changes. */
+/* Pelex minimal business workspaces — presentation only.
+   Keeps the monthly landing summary concise; detailed records remain in their existing workspaces.
+   No ledger writes, schema changes, accounting formula changes, or business setup changes. */
 (function(){
 'use strict';
-if(window.__pxMinimalWorkspacesLoaded)return;window.__pxMinimalWorkspacesLoaded=true;
+if(window.__pxMinimalWorkspacesLoaded)return;
+window.__pxMinimalWorkspacesLoaded=true;
 var css=[
-'#pxMonthCards .px-min-grid,#pxYearCards .px-min-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}',
-'#pxMonthCards .px-min-card,#pxYearCards .px-min-card{min-width:0;text-align:left;width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);display:flex;flex-direction:column;gap:6px;cursor:pointer}',
-'.px-min-card .px-min-label{font-size:11px;color:var(--muted)}.px-min-card .px-min-value{font-size:clamp(19px,3vw,25px);font-weight:750;overflow-wrap:anywhere}.px-min-card .px-min-hint{font-size:11px;color:var(--muted)}',
-'.px-min-more{margin:12px 0;border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:var(--panel)}.px-min-more>summary{cursor:pointer;font-size:13px;font-weight:650;list-style:none}.px-min-more>summary::-webkit-details-marker{display:none}.px-min-more>summary:after{content:"+";float:right;color:var(--muted)}.px-min-more[open]>summary:after{content:"−"}',
-'.px-min-shade{position:fixed;inset:0;z-index:99990;background:rgba(10,20,38,.38);opacity:0;visibility:hidden;transition:opacity .16s}.px-min-drawer{position:fixed;z-index:99991;top:0;right:0;width:min(440px,100vw);height:100dvh;background:var(--panel);color:var(--ink);border-left:1px solid var(--line);box-shadow:-12px 0 32px rgba(0,0,0,.14);transform:translateX(102%);transition:transform .2s;display:flex;flex-direction:column}.px-min-shade.open{opacity:1;visibility:visible}.px-min-drawer.open{transform:translateX(0)}',
-'.px-min-head{display:flex;align-items:center;gap:12px;padding:15px 17px;border-bottom:1px solid var(--line)}.px-min-head strong{flex:1}.px-min-close{width:36px;height:36px;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--ink);font-size:20px}.px-min-content{padding:17px;overflow:auto}.px-min-big{font-size:27px;font-weight:750;margin:0 0 10px;overflow-wrap:anywhere}.px-min-copy{font-size:13px;line-height:1.55;color:var(--muted)}.px-min-open-register{margin-top:12px;border:0;border-radius:9px;background:var(--btn);color:#fff;padding:10px 14px;font-weight:650}',
-'#pxTransactionRegister .px-min-register-details{margin-top:12px}#pxTransactionRegister .px-min-register-body{padding-top:12px}#pxTransactionRegister .px-min-register-body table{font-size:12px}#pxTransactionRegister .px-min-register-body th:nth-child(2),#pxTransactionRegister .px-min-register-body td:nth-child(2),#pxTransactionRegister .px-min-register-body th:nth-child(5),#pxTransactionRegister .px-min-register-body td:nth-child(5),#pxTransactionRegister .px-min-register-body th:nth-child(7),#pxTransactionRegister .px-min-register-body td:nth-child(7){display:none}#pxTransactionRegister .px-min-register-body tbody tr{cursor:pointer}#pxTransactionRegister .px-min-register-body tbody tr:hover{background:var(--soft)}',
-'#lsUploads>.ls-kpis{display:none!important}',
-'@media(max-width:600px){#pxMonthCards .px-min-grid,#pxYearCards .px-min-grid{gap:7px}.px-min-card{padding:10px!important}.px-min-drawer{top:auto;right:0;left:0;bottom:0;width:100%;height:auto;max-height:88dvh;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(102%)}.px-min-drawer.open{transform:translateY(0)}.px-min-content{padding:14px}}'
+'#pxFinancialSummary{margin:0 0 14px!important;padding:16px!important;border-radius:14px!important}',
+'#pxFinancialSummary>.dnote,#pxFinancialSummary>#pxMonthNote,#pxFinancialSummary>#pxOpsDashboard{display:none!important}',
+'#pxMonthCards .px-min-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}',
+'#pxMonthCards .px-min-card{min-width:0;min-height:84px;text-align:left;width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;box-shadow:none}',
+'.px-min-card .px-min-label{font-size:11px;color:var(--muted);font-weight:500}',
+'.px-min-card .px-min-value{font-size:clamp(17px,2.4vw,22px);font-weight:700;line-height:1.2;overflow-wrap:anywhere}',
+'.px-min-card .px-min-hint{font-size:10px;color:var(--muted)}',
+'#pxFinancialSummary .px-min-secondary{margin:4px 0 0;border:0;border-top:1px solid var(--line);padding:10px 0 0}',
+'#pxFinancialSummary .px-min-secondary>summary{font-size:12px;color:var(--muted);cursor:pointer;list-style:none}',
+'#pxFinancialSummary .px-min-secondary>summary::-webkit-details-marker{display:none}',
+'#pxFinancialSummary .px-min-secondary>summary:after{content:"+";float:right}',
+'#pxFinancialSummary .px-min-secondary[open]>summary:after{content:"−"}',
+'.px-min-secondary-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:10px}',
+'.px-min-secondary-item{padding:9px 10px;border:1px solid var(--line);border-radius:9px;min-width:0}',
+'.px-min-secondary-item span{display:block;color:var(--muted);font-size:10px}',
+'.px-min-secondary-item b{display:block;font-size:13px;overflow-wrap:anywhere}',
+'.px-min-shade{position:fixed;inset:0;z-index:99990;background:rgba(10,20,38,.38);opacity:0;visibility:hidden;transition:opacity .16s}',
+'.px-min-drawer{position:fixed;z-index:99991;top:0;right:0;width:min(420px,100vw);height:100dvh;background:var(--panel);color:var(--ink);border-left:1px solid var(--line);box-shadow:-12px 0 32px rgba(0,0,0,.12);transform:translateX(102%);transition:transform .2s;display:flex;flex-direction:column}',
+'.px-min-shade.open{opacity:1;visibility:visible}.px-min-drawer.open{transform:translateX(0)}',
+'.px-min-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.px-min-head strong{flex:1}',
+'.px-min-close{width:36px;height:36px;border:1px solid var(--line);border-radius:9px;background:var(--soft);color:var(--ink);font-size:20px}',
+'.px-min-content{padding:16px;overflow:auto}.px-min-big{font-size:25px;font-weight:750;margin:0 0 8px;overflow-wrap:anywhere}',
+'.px-min-copy{font-size:13px;line-height:1.55;color:var(--muted)}',
+'.px-min-open-register{margin-top:12px;border:0;border-radius:9px;background:var(--btn);color:var(--btnink);padding:10px 14px;font-weight:650}',
+'#pxFinancialSummary .two:has(#pxVolChart),#pxFinancialSummary .an-card:has(#pxOpsPie){display:none!important}',
+'#pxFinancialSummary #pxVolChart,#pxFinancialSummary #pxTxnPie,#pxFinancialSummary #pxOpsPie{display:none!important}',
+'#pxProjectManager .px-year-summary{margin-top:16px!important;padding-top:14px!important;border-top:1px solid var(--line)!important}',
+'#pxYearCards .ls-kpi{padding:10px!important;min-height:66px}',
+'@media(max-width:600px){#pxMonthCards .px-min-grid{gap:7px}.px-min-card{min-height:76px;padding:10px!important}.px-min-secondary-list{grid-template-columns:1fr 1fr}.px-min-drawer{top:auto;right:0;left:0;bottom:0;width:100%;height:auto;max-height:88dvh;border:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;transform:translateY(102%)}.px-min-drawer.open{transform:translateY(0)}}'
 ].join('\n');
-var st=document.createElement('style');st.id='px-minimal-workspaces-style';st.textContent=css;document.head.appendChild(st);
-function byId(id){return document.getElementById(id)}function el(tag,cls,txt){var n=document.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=String(txt);return n}
+var style=document.createElement('style');style.id='px-minimal-workspaces-style';style.textContent=css;document.head.appendChild(style);
+function byId(id){return document.getElementById(id)}
+function el(tag,cls,txt){var n=document.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=String(txt);return n}
 var shade,drawer,heading,content;
 function close(){if(!drawer)return;shade.classList.remove('open');drawer.classList.remove('open');document.body.style.overflow=''}
 function open(title,amount,description){
- if(!drawer){shade=el('div','px-min-shade');shade.onclick=close;drawer=el('aside','px-min-drawer');drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');var h=el('div','px-min-head');heading=el('strong','',title);var x=el('button','px-min-close','×');x.type='button';x.setAttribute('aria-label','Close details');x.onclick=close;h.append(heading,x);content=el('div','px-min-content');drawer.append(h,content);document.body.append(shade,drawer);document.addEventListener('keydown',function(e){if(e.key==='Escape')close()})}
- heading.textContent=title;content.replaceChildren();if(amount)content.append(el('div','px-min-big',amount));if(description)content.append(el('p','px-min-copy',description));var b=el('button','px-min-open-register','Open transaction records');b.type='button';b.onclick=function(){close();var r=byId('pxTransactionRegister');if(r)r.scrollIntoView({behavior:'smooth',block:'start'});var d=r&&r.querySelector('.px-min-register-details');if(d)d.open=true};content.append(b);shade.classList.add('open');drawer.classList.add('open');document.body.style.overflow='hidden';
+ if(!drawer){
+  shade=el('div','px-min-shade');shade.onclick=close;
+  drawer=el('aside','px-min-drawer');drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');
+  var h=el('div','px-min-head');heading=el('strong','',title);var x=el('button','px-min-close','×');x.type='button';x.setAttribute('aria-label','Close details');x.onclick=close;
+  h.append(heading,x);content=el('div','px-min-content');drawer.append(h,content);document.body.append(shade,drawer);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+ }
+ heading.textContent=title;content.replaceChildren();
+ if(amount)content.append(el('div','px-min-big',amount));
+ if(description)content.append(el('p','px-min-copy',description));
+ var b=el('button','px-min-open-register','Open transaction records');b.type='button';
+ b.onclick=function(){close();var r=byId('pxTransactionRegister');if(r)r.scrollIntoView({behavior:'smooth',block:'start'})};
+ content.append(b);shade.classList.add('open');drawer.classList.add('open');document.body.style.overflow='hidden';
 }
-function readCard(n){var b=n.querySelector('b'),s=n.querySelector('span');return{value:b?b.textContent.trim():'',label:s?s.textContent.trim():''}}
-function cards(host,year){
- if(!host)return;var raw=Array.from(host.querySelectorAll(':scope > .ls-kpi'));if(!raw.length)return;var sig=raw.map(function(x){return x.textContent.trim()}).join('|');if(host.dataset.pxMinimalSig===sig&&host.querySelector('.px-min-grid'))return;host.dataset.pxMinimalSig=sig;var data=raw.map(readCard),rules=year?[[/^original yearly capital$/i,'Annual startup capital'],[/^cash in$/i,'Cash received this year'],[/^cash out$/i,'Cash paid this year'],[/^net operating result$/i,'Annual operating result'],[/^latest closing cash$/i,'Latest closing cash']]:[[/^monthly capital allocation$/i,'Startup capital this month'],[/^setup spending/i,'Setup spending'],[/^cash received$/i,'Cash received'],[/^cash paid$/i,'Cash paid'],[/^operating revenue$/i,'Operating revenue'],[/^operating expenses$/i,'Operating expenses'],[/^operating profit$/i,'Operating profit']];
- var matched=data.filter(function(x){return rules.some(function(z){return z[0].test(x.label)})});var chosen=data.map(function(x){var r=rules.find(function(z){return z[0].test(x.label)});return r?{label:r[1],value:x.value}:null}).filter(Boolean);var extras=data.filter(function(x){return matched.indexOf(x)<0});host.replaceChildren();var grid=el('div','px-min-grid');chosen.forEach(function(x){var b=el('button','px-min-card');b.type='button';b.append(el('span','px-min-label',x.label),el('span','px-min-value',x.value),el('span','px-min-hint','Tap to view details'));b.onclick=function(){var note=year?'Annual figures are calculated from the existing project summaries. Monthly allocations and closing reports remain available in Project Management.':'This is the selected month’s figure, calculated from the existing project ledger. Original transaction records and accounting classifications remain unchanged.';if(/cash received/i.test(x.label))note+=' Only actual payments received count as cash; unpaid invoices remain receivables.';if(/operating result|operating profit/i.test(x.label))note+=' Operating result is distinct from capital movements and loan principal.';if(/startup capital/i.test(x.label))note+=' The monthly allocation is separate from the annual capital reserve.';open(x.label,x.value,note)};grid.append(b)});host.append(grid);if(extras.length){var d=el('details','px-min-more');d.append(el('summary','','Business-specific metrics'));var list=el('div','px-min-register-body');extras.forEach(function(x){var row=el('div','px-min-row');row.style.cssText='display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)';row.append(el('span','px-min-copy',x.label),el('strong','',x.value));list.append(row)});d.append(list);host.append(d)}
+function readCard(node){var b=node.querySelector('b'),s=node.querySelector('span');return{value:b?b.textContent.trim():'',label:s?s.textContent.trim():''}}
+function renderCards(host,isYear){
+ if(!host)return;
+ var raw=Array.from(host.querySelectorAll(':scope > .ls-kpi'));
+ if(!raw.length)return;
+ var sig=raw.map(function(x){return x.textContent.trim()}).join('|');
+ if(host.dataset.pxMinimalSig===sig&&host.querySelector('.px-min-grid'))return;
+ host.dataset.pxMinimalSig=sig;
+ var data=raw.map(readCard);
+ if(isYear){
+  var yearRules=[[/^original yearly capital$/i,'Annual startup capital'],[/^cash in$/i,'Cash received this year'],[/^cash out$/i,'Cash paid this year'],[/^net operating result$/i,'Annual operating result']];
+  var yearCards=data.map(function(x){var rule=yearRules.find(function(r){return r[0].test(x.label)});return rule?{label:rule[1],value:x.value}:null}).filter(Boolean);
+  host.replaceChildren();var yearGrid=el('div','px-min-grid');yearGrid.style.cssText='display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px';
+  yearCards.forEach(function(x){var c=el('div','ls-kpi');c.innerHTML='<b></b><span></span>';c.querySelector('b').textContent=x.value;c.querySelector('span').textContent=x.label;yearGrid.append(c)});
+  host.append(yearGrid);return;
+ }
+ var primaryRules=[[/^cash received$/i,'Cash received'],[/^cash paid$/i,'Cash paid'],[/^operating revenue$/i,'Operating revenue'],[/^operating profit$/i,'Operating result']];
+ var primary=primaryRules.map(function(rule){var x=data.find(function(d){return rule[0].test(d.label)});return x?{label:rule[1],value:x.value}:null}).filter(Boolean);
+ var extras=data.filter(function(x){return !primaryRules.some(function(rule){return rule[0].test(x.label)}) && !/^original yearly capital$/i.test(x.label)});
+ host.replaceChildren();var grid=el('div','px-min-grid');
+ primary.forEach(function(x){
+  var c=el('button','px-min-card');c.type='button';
+  c.append(el('span','px-min-label',x.label),el('span','px-min-value',x.value),el('span','px-min-hint','Tap for details'));
+  c.onclick=function(){open(x.label,x.value,'This figure belongs to the selected reporting month. The full transaction-level breakdown remains in the transaction register.');};
+  grid.append(c);
+ });
+ host.append(grid);
+ if(extras.length){
+  var d=el('details','px-min-secondary');d.append(el('summary','','Other monthly figures'));
+  var list=el('div','px-min-secondary-list');
+  extras.forEach(function(x){var item=el('div','px-min-secondary-item');item.append(el('span','',x.label),el('b','',x.value));list.append(item)});
+  d.append(list);host.append(d);
+ }
 }
-function details(parent,target,id,label){if(!parent||!target||target.closest('details'))return;var d=el('details','px-min-more');d.id=id;d.append(el('summary','',label));target.parentNode.insertBefore(d,target);d.append(target)}
+function placeYearlyManagement(){
+ var yearly=document.querySelector('.px-year-summary');
+ var wrap=byId('lsWrap');
+ if(!yearly||!wrap)return;
+ var project=Array.from(wrap.children).find(function(n){
+  var h=n.querySelector&&n.querySelector('h2');return h&&/^Project management$/i.test(h.textContent.trim());
+ });
+ if(project&&yearly.parentNode!==project)project.appendChild(yearly);
+ yearly.style.margin='12px 0 0';
+ yearly.style.padding='12px 0 0';
+ yearly.style.borderTop='1px solid var(--line)';
+ var title=yearly.querySelector('h3');
+ if(title)title.textContent='Yearly project overview';
+}
 function compactDashboard(){
- var root=byId('pxFinancialSummary');if(!root)return;var row=root.querySelector('.two');if(row)details(root,row,'pxMinimalCharts','Charts and transaction mix');
- ['pxTxnPie','pxOpsPie','pxVolChart'].forEach(function(id){var t=byId(id),c=t&&t.closest('.an-card');if(c&&!c.closest('details')){var d=byId('pxMinimalCharts');if(!d){d=el('details','px-min-more');d.id='pxMinimalCharts';d.append(el('summary','','Charts and transaction mix'));root.append(d)}d.append(c)}});
- var ops=byId('pxOpsDashboard');if(ops&&ops.children.length)details(root,ops,'pxMinimalOperations','Business activity breakdown');
- var table=byId('pxYearTable');if(table)details(table.parentNode,table,'pxMinimalYearTable','Monthly closing summaries');
- if(byId('pxMonthNote'))byId('pxMonthNote').hidden=true;if(byId('pxYearNote'))byId('pxYearNote').hidden=true;
+ var root=byId('pxFinancialSummary');if(!root)return;
+ ['pxTxnPie','pxOpsPie','pxVolChart'].forEach(function(id){
+  var node=byId(id);if(node){var card=node.closest('.an-card');if(card)card.hidden=true;node.hidden=true}
+ });
+ var ops=byId('pxOpsDashboard');if(ops)ops.hidden=true;
+ var note=byId('pxMonthNote');if(note)note.hidden=true;
+ var heading=root.querySelector('h3');if(heading&&heading.textContent.trim()==='Selected month')heading.hidden=true;
 }
-function compactRegister(){
- var card=byId('pxTransactionRegister');if(!card||card.dataset.pxMinimalRegister)return;var actions=byId('pxTrNew')&&byId('pxTrNew').closest('.prow'),filters=card.querySelector('.prow'),form=byId('pxTrForm'),msg=byId('pxTrMsg'),tbody=byId('pxTrRows'),tableWrap=tbody&&tbody.closest('div[style*="overflow-x"]');if(!actions||!tableWrap)return;
- var d=el('details','px-min-more px-min-register-details'),summary=el('summary','','View transaction records'),body=el('div','px-min-register-body');d.append(summary,body);if(filters)body.append(filters);body.append(tableWrap);actions.parentNode.insertBefore(d,actions.nextSibling);
- var count=byId('pxTrCount');function update(){summary.textContent='View transaction records'+(count&&count.textContent.trim()?' · '+count.textContent.trim():'')}update();if(count)new MutationObserver(update).observe(count,{childList:true,characterData:true,subtree:true});
- if(tbody&&!tbody.dataset.pxMinimalClick){tbody.dataset.pxMinimalClick='1';tbody.addEventListener('click',function(e){if(e.target.closest('button'))return;var tr=e.target.closest('tr');if(!tr||!tr.cells||tr.cells.length<8)return;var names=['Date','Project','Type','Party / description','Category','Amount','Classification','Payment status'];var info=names.map(function(n,i){return n+': '+(tr.cells[i]?tr.cells[i].textContent.trim():'—')}).join('\n');open('Transaction details',tr.cells[5]?tr.cells[5].textContent.trim():'',info)})}
- card.dataset.pxMinimalRegister='1';
+function arrangeBusinessCards(){
+ var financial=byId('pxFinancialSummary'),wrap=byId('lsWrap');
+ if(!financial)return;
+ /* Keep the monthly overview compact. Analysis is nested inside its own
+    collapsed detail area and is never displayed as a neighbouring card. */
+ var analysis=null;
+ if(wrap){
+  analysis=Array.from(wrap.children).find(function(n){
+   var h=n.querySelector&&n.querySelector('h2');return h&&h.textContent.trim()==='Analysis';
+  });
+ }
+ var detail=financial.querySelector('.px-month-detail');
+ if(!detail){
+  detail=el('div','px-month-detail');
+  detail.hidden=true;
+  detail.style.cssText='margin-top:14px;padding-top:12px;border-top:1px solid var(--line)';
+  var toggle=el('button','btn alt px-month-toggle','View monthly details');
+  toggle.type='button';toggle.setAttribute('aria-expanded','false');
+  toggle.style.cssText='margin-top:10px;width:100%;text-align:center';
+  function toggleMonthly(){
+   var opening=detail.hidden;
+   detail.hidden=!opening;
+   toggle.textContent=opening?'Close monthly details':'View monthly details';
+   toggle.setAttribute('aria-expanded',opening?'true':'false');
+  }
+  toggle.onclick=toggleMonthly;
+  financial.appendChild(toggle);
+  financial.appendChild(detail);
+  financial.style.cursor='pointer';
+  financial.addEventListener('click',function(e){
+   if(e.target.closest('button,input,select,a,label,summary,textarea'))return;
+   toggleMonthly();
+  });
+ }
+ if(analysis&&analysis.parentNode!==detail)detail.appendChild(analysis);
+ if(analysis){
+  analysis.style.margin='0';
+  var ah=analysis.querySelector('h2');if(ah)ah.hidden=true;
+ }
+ /* Remove the duplicate yearly-management panel. The existing Project
+    Management card remains the sole place for project milestone views. */
+ var yearly=document.querySelector('.px-year-summary');
+ if(yearly)yearly.remove();
+ /* Retain existing Project management and Data entry cards in their workspace.
+    No duplicate cards are created or moved into the monthly overview. */
 }
-function compactDataEntry(){var host=byId('lsUploads');if(!host)return;Array.from(host.querySelectorAll(':scope > .dnote')).forEach(function(note){if(note.closest('details'))return;var target=note.nextElementSibling;if(!target)return;var txt=note.textContent.trim(),isBusiness=/^Business records/i.test(txt),isFiles=/^Uploaded documents/i.test(txt);if(!isBusiness&&!isFiles)return;var count=(txt.match(/·\s*([0-9]+)/)||[])[1]||'';if(isBusiness){var table=target.querySelector('table');var operational=0;if(table)Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){var source=row.cells&&row.cells[5]?row.cells[5].textContent.trim():'';var keep=source.indexOf('Business operations')===0;row.hidden=!keep;if(keep)operational++});if(!operational){note.hidden=true;target.hidden=true;return}note.textContent='Operational records · '+operational+' saved';count=String(operational)}var d=el('details','px-min-more');d.append(el('summary','', (isBusiness?'Operational records':'Uploaded documents')+(count?' · '+count:'')));note.parentNode.insertBefore(d,note);d.append(note,target)})}
-function compactInvoices(){var host=byId('lsFlow');if(!host)return;var table=host.querySelector('table');if(!table||table.closest('details'))return;var count=Math.max(0,table.querySelectorAll('tr').length-1),d=el('details','px-min-more');d.append(el('summary','','Invoice workflow · '+count+(count===1?' invoice':' invoices')));table.parentNode.insertBefore(d,table);d.append(table)}
-function apply(){cards(byId('pxMonthCards'),false);cards(byId('pxYearCards'),true);compactDashboard();compactRegister();compactDataEntry();compactInvoices()}
-function watch(id){var t=byId(id);if(!t||t.dataset.pxMinimalWatch)return;t.dataset.pxMinimalWatch='1';new MutationObserver(apply).observe(t,{childList:true,subtree:true})}
-function start(){apply();['pxMonthCards','pxYearCards','pxOpsDashboard','pxYearTable','pxTrRows','lsUploads','lsFlow'].forEach(watch)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();window.addEventListener('load',function(){setTimeout(start,500);setTimeout(start,1800)});var i=0,t=setInterval(function(){start();if(++i>30)clearInterval(t)},700);
+function apply(){
+ arrangeBusinessCards();
+ renderCards(byId('pxMonthCards'),false);
+ renderCards(byId('pxYearCards'),true);
+ compactDashboard();
+}
+function watch(id){var node=byId(id);if(!node||node.dataset.pxMinimalWatch)return;node.dataset.pxMinimalWatch='1';new MutationObserver(apply).observe(node,{childList:true,subtree:true})}
+function start(){apply();['pxMonthCards','pxYearCards','pxProjectManager'].forEach(watch)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+window.addEventListener('load',function(){setTimeout(start,400);setTimeout(start,1500)});
+var attempts=0,t=setInterval(function(){start();if(++attempts>30)clearInterval(t)},700);
 })();
