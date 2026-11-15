@@ -7,7 +7,6 @@ if(window.__pxMinimalWorkspacesLoaded)return;
 window.__pxMinimalWorkspacesLoaded=true;
 var css=[
 '#pxFinancialSummary{margin:0 0 14px!important;padding:16px!important;border-radius:14px!important}',
-'#pxFinancialSummary>.dnote,#pxFinancialSummary>#pxMonthNote,#pxFinancialSummary>#pxOpsDashboard{display:none!important}',
 '#pxMonthCards .px-min-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}',
 '#pxMonthCards .px-min-card{min-width:0;min-height:84px;text-align:left;width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;box-shadow:none}',
 '.px-min-card .px-min-label{font-size:11px;color:var(--muted);font-weight:500}',
