@@ -5576,7 +5576,7 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
   $l('lsEmpty').hidden=true;$l('lsBody').hidden=false;
   var a=asOf();
   var rows=Tc.filter(function(x){return x.entry_date<=a});
-  var inv=rows.filter(function(x){return x.entry_type==='invoice'}), rec=rows.filter(function(x){return (x.entry_type==='receipt'||x.entry_type==='payment')&&(x.kind==='receivable_in'||!x.kind)});
+  var inv=rows.filter(function(x){return x.entry_type==='invoice'}), rec=rows.filter(function(x){return (x.entry_type==='invoice'&&x.kind==='income')||((x.entry_type==='receipt'||x.entry_type==='payment')&&(x.kind==='receivable_in'||!x.kind))});
   var invT=inv.reduce(function(s,x){return s+Number(x.amount)},0), recT=rec.reduce(function(s,x){return s+Number(x.amount)},0);
   var outT=Math.max(0,invT-recT);
   // overdue: per customer, invoices past due with less received than invoiced
@@ -5993,6 +5993,10 @@ if(document.getElementById('pbOpen'))document.getElementById('pbOpen').onclick=f
    var cf=await sb.rpc('confirm_upload',{p_upload:id,p_currency:rc,p_entries:rows});
    if(cf.error)throw cf.error;
    $p('upMsg').textContent='Saved successfully. '+cf.data+' row(s) added to the ledger'+(t.bad?' ('+t.bad+' incomplete row(s) skipped)':'')+'.';
+   if(window.__lsLoad)await window.__lsLoad();
+   if(window.__pxRegisterReady)await window.__pxRegisterReady();
+   if(window.__pxDashboardLoad)await window.__pxDashboardLoad();
+   if(window.pxBusinessProjects&&window.pxBusinessProjects.refreshOperations)await window.pxBusinessProjects.refreshOperations();
    $p('rvBox').innerHTML='';pendingDoc=null;$p('upFile').value='';$p('upLabel').textContent='Tap to choose a file';
   }catch(e){
    var detail=(e&&e.message)||String(e)||'Unknown error';
@@ -6999,8 +7003,8 @@ function pxCommandHelp(){
    var y=el('pxTrYear'),old=y.value;
    y.innerHTML='<option value="">All years</option>'+years.map(function(v){return '<option value="'+esc(v)+'">'+esc(v)+'</option>'}).join('');
    if(years.indexOf(old)>=0)y.value=old;
-   render();message(rows.length+' transactions loaded from Supabase.');if(window.__pxRegisterReady)window.__pxRegisterReady();
-  }catch(e){message('Could not load transactions: '+(e.message||e),true);el('pxTrRows').innerHTML='<tr><td colspan="7">The register could not be loaded. Check your workspace access and try refresh.</td></tr>'}
+   render();message(rows.length+' transactions available.');if(window.__pxRegisterReady)window.__pxRegisterReady();
+  }catch(e){message('We could not refresh the transaction register. Please try again.',true);el('pxTrRows').innerHTML='<tr><td colspan="7">The register could not be loaded. Check your workspace access and try refresh.</td></tr>'}
   finally{busy=false}
  }
  function filtered(){
@@ -7014,7 +7018,7 @@ function pxCommandHelp(){
    var key=String(x.project_id||'unassigned')+'|'+String(x.party||'').toLowerCase();
    if(!byParty[key])byParty[key]={invoiced:0,received:0};
    if(x.entry_type==='invoice')byParty[key].invoiced+=Number(x.amount)||0;
-   if(x.kind==='receivable_in'||(!x.kind&&(x.entry_type==='receipt'||x.entry_type==='payment')))byParty[key].received+=Number(x.amount)||0;
+   if((x.entry_type==='invoice'&&x.kind==='income')||x.kind==='receivable_in'||(!x.kind&&(x.entry_type==='receipt'||x.entry_type==='payment')))byParty[key].received+=Number(x.amount)||0;
   });
   function paymentStatus(x){
    if(x.entry_type==='sale')return 'Paid';
@@ -7142,10 +7146,10 @@ function pxCommandHelp(){
    var bt=await sb.from('business_types').select('modules').eq('code',d.business_type).maybeSingle();
    if(bt.error)throw bt.error;
    var modules=(bt.data&&bt.data.modules)||[],cards=[
-    ['Opening cash',d.opening_startup],['Setup capital · this month',d.startup_month],['Setup capital · this year',d.startup_year],['Setup spending ('+(d.setup_spend_period||'period')+')',d.setup_spent],['Cash received',d.month_in],['Cash paid',d.month_out],
+    ['Opening cash',d.opening_startup],['Monthly capital allocation',d.startup_month],['Original yearly capital',d.startup_year],['Setup spending ('+(d.setup_spend_period||'period')+')',d.setup_spent],['Cash received',d.month_in],['Cash paid',d.month_out],
     ['Closing cash',d.month_closing],['Operating revenue',d.month_income===undefined?0:d.month_income],['Operating expenses',d.month_expenses===undefined?0:d.month_expenses],['Operating profit',d.month_profit]
    ];
-   if(modules.indexOf('agreements')>=0)cards=cards.concat([
+   if(d.business_type==='finance'&&modules.indexOf('agreements')>=0)cards=cards.concat([
     ['Loan amount in setup',d.setup_loan],['Loan principal issued',d.month_principal_issued],['Loan principal repaid',d.month_principal_repaid],['Invoices issued',d.month_receivables_issued],['Invoice payments received',d.month_receivables_collected],['Recorded receivables outstanding',d.recorded_receivables_outstanding],['Interest income',d.month_interest_income],['Customer savings received',d.month_customer_savings_received],['Customer savings held',d.customer_savings_held]
    ]);
    var countMetrics=['agreement_count','contributors_recorded','delivery_count','production_batches','finished_goods_quantity','expiry_records','near_expiry_items','booking_count','bookings','cancellations','trips_recorded','project_milestones','orders_recorded','order_fulfilments','fulfilments','seasons_recorded','harvest_quantity','stock_on_hand_quantity'];
@@ -7154,27 +7158,28 @@ function pxCommandHelp(){
    var opHost=$('pxOpsDashboard');if(opHost){opHost.innerHTML=opsSummary.length?'<h3>Business operations · '+esc(bundle.month)+'</h3><div class="ls-kpis">'+opsSummary.map(function(x){return '<div class="ls-kpi"><b>'+esc(x.record_count)+' records</b><span>'+esc(x.module_key.replace(/_/g,' '))+' · '+esc(x.record_type.replace(/_/g,' '))+'</span><small>'+cash(x.amount_total,cur)+(Number(x.quantity_total)?' · Qty '+esc(x.quantity_total):'')+'</small></div>'}).join('')+'</div>':'<div class="muted dnote">No operational records for this project in '+esc(bundle.month)+'.</div>';
     if($('pxOpsMonth'))$('pxOpsMonth').value=bundle.month;
     if(window.pxBusinessProjects&&window.pxBusinessProjects.refreshOperations)window.pxBusinessProjects.refreshOperations();}
-   $('pxMonthNote').textContent='Monthly cash movements include capital, loan principal and savings movements. Operating profit excludes them. Older receipts without an explicit accounting classification remain cash received but are excluded from operating profit until reviewed in the transaction register.';
-   var y=Number(m.slice(0,4)),rows=await sb.rpc('project_months',{p_project:project});
+   $('pxMonthNote').textContent='Cash flow reflects recorded money received and paid. Unpaid invoices remain receivables and do not increase available cash. Older receipts without an explicit accounting classification remain cash received but are excluded from operating profit until reviewed in Data Entry. Operating profit excludes capital movements and loan principal.';
+   var y=Number(($('pxYearPick')&&$('pxYearPick').value)||m.slice(0,4)),rows=await sb.rpc('project_months',{p_project:project});
    if(rows.error)throw rows.error;
    var yearRows=(rows.data||[]).filter(function(x){return String(x.month).slice(0,4)===String(y)});
    var total=yearRows.reduce(function(a,x){a.revenue+=Number(x.profit||0)+0; a.cashIn+=Number(x.money_in||0);a.cashOut+=Number(x.money_out||0);a.closing=Number(x.closing||0);return a},{revenue:0,cashIn:0,cashOut:0,closing:0});
-   var yearCards=[['Cash in',total.cashIn],['Cash out',total.cashOut],['Net operating result',yearRows.reduce(function(a,x){return a+Number(x.profit||0)},0)],['Latest closing cash',total.closing]];
-   if(modules.indexOf('agreements')>=0)yearCards.push(['Recorded receivables outstanding',d.recorded_receivables_outstanding]);
+   var yearCards=[['Original yearly capital',d.startup_year],['Cash in',total.cashIn],['Cash out',total.cashOut],['Net operating result',yearRows.reduce(function(a,x){return a+Number(x.profit||0)},0)],['Latest closing cash',total.closing]];
+   if(d.business_type==='finance'&&modules.indexOf('agreements')>=0)yearCards.push(['Recorded receivables outstanding',d.recorded_receivables_outstanding]);
    $('pxYearCards').innerHTML=yearCards.map(function(x){return '<div class="ls-kpi"><b>'+cash(x[1],cur)+'</b><span>'+esc(x[0])+'</span></div>'}).join('');
    $('pxYearTable').innerHTML=yearRows.length?'<div style="overflow-x:auto"><table class="ls-table"><thead><tr><th>Month</th><th>Cash in</th><th>Cash out</th><th>Operating profit</th><th>Closing cash</th></tr></thead><tbody>'+yearRows.map(function(x){return '<tr><td><button type="button" class="btn alt" data-px-month-open="'+esc(x.month)+'" style="padding:4px 8px">'+esc(x.month)+'</button></td><td>'+cash(x.money_in,cur)+'</td><td>'+cash(x.money_out,cur)+'</td><td>'+cash(x.profit,cur)+'</td><td>'+cash(x.closing,cur)+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">No ledger transactions for '+y+'.</p>';
    $('pxYearTable').querySelectorAll('[data-px-month-open]').forEach(function(b){b.onclick=function(){var v=b.getAttribute('data-px-month-open');$('pxMonthPick').value=v;$('pxTrYear').value=v.slice(0,4);$('pxTrMonth').value=v.slice(5,7);$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));$('pxMonthPick').dispatchEvent(new Event('change',{bubbles:true}));var reg=$('pxTrRows');if(reg){var panel=reg.closest('.dcard')||reg;panel.scrollIntoView({behavior:'smooth',block:'start'});}};});
-   $('pxYearNote').textContent='*Calculated from income less operating expenses. Loan principal, capital and savings are not profit. Select a month to open its detailed transactions in the register.';
-  }catch(e){$('pxMonthNote').textContent='Financial summaries could not be loaded: '+(e.message||e);$('pxYearTable').textContent='Unable to load yearly figures.'}
+   $('pxYearNote').textContent='*Original yearly capital is a fixed opening base. Monthly totals show cash movement and operating result. Select a month to open its detailed transactions in Data Entry.';
+  }catch(e){$('pxMonthNote').textContent='We could not refresh the financial summary. Please try again.';$('pxYearTable').textContent='Yearly figures are temporarily unavailable.'}
   finally{busy=false}
  }
  function mount(){
-  var dash=$('bDash');if(!dash||$('pxFinancialSummary'))return;
+  var dash=$('bDash');if(!dash)return;var yearly=document.querySelector('.px-year-summary'),pm=$('pxProjectManager');if(yearly&&pm&&yearly.parentNode!==pm)pm.appendChild(yearly);if($('pxFinancialSummary'))return;
   var box=document.createElement('section');box.className='dcard';box.id='pxFinancialSummary';
-  box.innerHTML='<div class="dhead"><h2>Monthly and yearly financial summary</h2><input id="pxMonthPick" type="month" value="'+new Date().toISOString().slice(0,7)+'" class="inp" style="max-width:170px"></div>'+
+  box.innerHTML='<div class="dhead"><h2>Monthly financial overview</h2><input id="pxMonthPick" type="month" value="'+new Date().toISOString().slice(0,7)+'" class="inp" style="max-width:170px"></div>'+
    '<div class="dnote">All figures and visualisations below use only the selected business project and reporting month.</div><h3>Selected month</h3><div class="ls-kpis" id="pxMonthCards"></div><div id="pxOpsDashboard"></div><div class="two" style="margin-top:14px"><div class="an-card"><b>Transaction volume · selected month</b><div id="pxVolChart"></div></div><div class="an-card"><b>Transaction mix</b><div id="pxTxnPie"></div></div></div><div class="an-card" style="margin-top:12px"><b>Operational activity mix</b><div id="pxOpsPie"></div></div><p class="dnote" id="pxMonthNote"></p>'+
-   '<section class="px-year-summary" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)"><div class="dhead"><h3 style="margin:0">Yearly project management</h3><span class="ttag">'+new Date().getFullYear()+'</span></div><p class="dnote">Annual cash movement, operating performance and closing position for this project.</p><div class="ls-kpis" id="pxYearCards" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))"></div><div id="pxYearTable"></div><p class="dnote" id="pxYearNote"></p></section>';
-  dash.insertBefore(box,dash.firstChild);
+   '<section class="px-year-summary" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)"><div class="dhead"><h3 style="margin:0">Yearly project management</h3><label class="dnote" style="margin:0">Reporting year <input id="pxYearPick" class="inp" type="number" min="2000" max="2100" value="'+new Date().getFullYear()+'" style="width:110px"></label></div><p class="dnote">Annual cash movement, operating performance and closing position for this project.</p><div class="ls-kpis" id="pxYearCards" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))"></div><div id="pxYearTable"></div><p class="dnote" id="pxYearNote"></p></section>';
+  dash.insertBefore(box,dash.firstChild);var yearlyPanel=box.querySelector('.px-year-summary'),projectManager=$('pxProjectManager');if(yearlyPanel&&projectManager)projectManager.appendChild(yearlyPanel);
+  $('pxYearPick').onchange=load;
   $('pxMonthPick').onchange=function(){var v=this.value,parts=/^([0-9]{4})-(0[1-9]|1[0-2])$/.exec(v);if(parts){if($('pxOpsMonth'))$('pxOpsMonth').value=v;if($('pxTrYear'))$('pxTrYear').value=parts[1];if($('pxTrMonth'))$('pxTrMonth').value=parts[2];window.__pxSyncingMonth=true;if($('pxTrYear'))$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));if($('pxTrMonth'))$('pxTrMonth').dispatchEvent(new Event('change',{bubbles:true}));window.__pxSyncingMonth=false;}load()};
   window.__pxDashboardLoad=load;
   document.addEventListener('change',function(e){if(e.target&&e.target.id==='pxTrProject')load()});
