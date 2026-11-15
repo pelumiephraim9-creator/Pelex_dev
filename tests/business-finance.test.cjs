@@ -68,14 +68,13 @@ test('business access hardening leaves the type catalogue read-only and protects
 });
 
 const layout = fs.readFileSync('pelex_minimal_business_ui.js', 'utf8');
-const periodSync = fs.readFileSync('business-analysis-period-fix.js', 'utf8');
 
 test('monthly financial overview responsive grid and analysis layout scripts parse', () => {
   assert.doesNotThrow(() => new vm.Script(layout));
-  assert.doesNotThrow(() => new vm.Script(periodSync));
   assert.match(layout, /#pxFinancialSummary\{display:grid;grid-template-columns:repeat\(12,minmax\(0,1fr\)\)/);
   assert.match(layout, /@media\(max-width:820px\)/);
-  assert.match(layout, /px-analysis-details/);
+  assert.match(layout, /pxBizAnalysisLayoutCss/);
+  assert.match(layout, /appendChild\(s\)/);
 });
 
 test('monthly overview keeps monthly allocation and annual standby reserve distinct', () => {
@@ -85,12 +84,9 @@ test('monthly overview keeps monthly allocation and annual standby reserve disti
   assert.match(html, /Setup budget/);
 });
 
-test('monthly picker synchronizes the analysis period and backdated empty months render as zero', () => {
-  assert.match(periodSync, /syncAnalysis\(picker\.value\)/);
-  assert.match(periodSync, /gran\.value='month'/);
-  assert.match(html, /analysisStart=iso\(analysisStartDate\)/);
-  assert.match(html, /d>=analysisStart&&d<=analysisEnd/);
-  assert.match(html, /if\(rerun\)\{rerun=false;setTimeout\(load,0\)\}/);
+test('experimental period synchronisation is not loaded into the application startup path', () => {
+  assert.doesNotMatch(html, /business-analysis-period-fix\.js/);
+  assert.match(html, /pelex_minimal_business_ui\.js\?v=6/);
 });
 
 test('fashion business dashboard no longer uses the generic operational-cost fallback', () => {
