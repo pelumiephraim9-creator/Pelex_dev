@@ -86,7 +86,7 @@ test('monthly financial overview layout and accounting semantics remain explicit
   assert.match(dashboard, /function isCashIn[\s\S]*?entry_type==='invoice'\)return false/);
   assert.match(dashboard, /monthIncome-monthExpenses/);
   assert.match(dashboard, /if\(d\.not_started\)/);
-  assert.match(dashboard, /pending\)\{pending=false;setTimeout\(load,0\)\}/);
+  assert.match(dashboard, /if\(pending\)\{pending=false;setTimeout\(load,0\)\}/);
 });
 
 test('Analysis daily, weekly and monthly controls filter the selected reporting window', () => {
