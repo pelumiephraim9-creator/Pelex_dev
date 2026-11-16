@@ -2058,7 +2058,7 @@ async function agentAuth(force,skipUser){
   if(__gt.p)return __gt.p;
   __gt.p=(async function(){try{
     var ht=await guestHumanToken();
-    var r=await fetch(AGENT_URL.replace(/\\/+$/,'')+'/auth/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({turnstileToken:ht})});
+    var r=await fetch(AGENT_URL.replace(/\/+$/,'')+'/auth/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({turnstileToken:ht})});
     var j=await r.json().catch(function(){return{}});
     if(!r.ok||!j.token){capDiag('guest','token_submit_failed',{httpStatus:r.status,serverCode:j.code||j.errorCode||'not_provided'});var ge=new Error(j.error||'Could not confirm you are human. Please try again.');if([404,500,502,503].indexOf(r.status)>-1)ge.backend=true;throw ge}
     __gt.tok=j.token;__gt.exp=Date.now()+(j.expiresIn||1800000);return j.token}finally{__gt.p=null}})();
