@@ -2052,6 +2052,18 @@ async function personalOn(){
 }
 // ---- public agent (code backend): login token or human-checked guest token, live activity steps ----
 var __gt={tok:'',exp:0,p:null};
+async function agentAuth(force,skipUser){
+  if(!skipUser){try{var ss=await sb.auth.getSession(),tk=ss&&ss.data&&ss.data.session&&ss.data.session.access_token;if(tk)return tk}catch(e){}}
+  if(!force&&__gt.tok&&Date.now()<__gt.exp-60000)return __gt.tok;
+  if(__gt.p)return __gt.p;
+  __gt.p=(async function(){try{
+    var ht=await guestHumanToken();
+    var r=await fetch(AGENT_URL.replace(/\\/+$/,'')+'/auth/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({turnstileToken:ht})});
+    var j=await r.json().catch(function(){return{}});
+    if(!r.ok||!j.token){capDiag('guest','token_submit_failed',{httpStatus:r.status,serverCode:j.code||j.errorCode||'not_provided'});var ge=new Error(j.error||'Could not confirm you are human. Please try again.');if([404,500,502,503].indexOf(r.status)>-1)ge.backend=true;throw ge}
+    __gt.tok=j.token;__gt.exp=Date.now()+(j.expiresIn||1800000);return j.token}finally{__gt.p=null}})();
+  return __gt.p
+}
 function stepWait(el){window.__lastSteps=[];window.__stepsDone=false;window.__stepCb=function(l){try{window.__lastSteps.push(l);var sp=el.querySelector('span')||el,h=document.createElement('div'),n=window.__lastSteps.length;h.className='act';window.__lastSteps.forEach(function(x,i){var r=document.createElement('div');r.className='actrow'+(i===n-1?' now':'');r.textContent=(i===n-1?'\u2022 ':'\u2713 ')+x;h.appendChild(r)});sp.innerHTML='';sp.appendChild(h)}catch(e){}}}
 async function askPublicAgent(text,meta){
   var base=AGENT_URL.replace(/\/+$/,'');
