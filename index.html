@@ -352,9 +352,9 @@ dialog.adsheet::backdrop{background:rgba(11,27,74,.35)}
 .plugreq{margin-top:10px}
 .hdrmark{flex:none;opacity:.9}
 /* entrance splash */
-#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(60% 50% at 50% 42%,color-mix(in srgb,var(--btn,#0a89f4) 14%,var(--bg)),var(--bg) 70%);transition:opacity .55s ease,filter .55s ease,transform .55s ease}
+#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:var(--bg);transition:opacity .55s ease,filter .55s ease,transform .55s ease}
 #splash.out{opacity:0;filter:blur(10px);transform:scale(1.06);pointer-events:none}
-#splash .sg{position:absolute;width:min(90vw,520px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--btn,#0a89f4) 22%,transparent),transparent 65%);opacity:0;transform:scale(.4);animation:spGlow 1.8s .1s ease-out forwards}
+#splash .sg{display:none!important}
 #splash svg{position:relative;width:min(46vw,150px);height:auto;overflow:visible}
 #splash .hx{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:spDraw .9s .15s cubic-bezier(.4,0,.2,1) forwards}
 #splash .nd{opacity:0;transform:scale(0);transform-box:fill-box;transform-origin:center;animation:spPop .45s cubic-bezier(.34,1.56,.64,1) forwards}
