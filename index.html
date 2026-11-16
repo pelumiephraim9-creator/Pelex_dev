@@ -2050,19 +2050,20 @@ async function personalOn(){
   }catch(e){return false}
 }
 // ---- public agent (code backend): login token or human-checked guest token, live activity steps ----
+function capDiag(scope,stage,detail){try{console.warn('[Pelex CAPTCHA]',scope,stage,detail||'')}catch(e){}}
 var __gt={tok:'',exp:0,p:null};
 function tsReady(){return new Promise(function(res,rej){
   if(window.turnstile)return res();
   var n=0,sc=document.querySelector('script[src*="turnstile/v0/api.js"]');
-  if(!sc){sc=document.createElement('script');sc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';sc.async=true;sc.onerror=function(){rej(new Error('Could not load the human check. Check your connection and try again.'))};document.head.appendChild(sc)}
-  var t=setInterval(function(){if(window.turnstile){clearInterval(t);res()}else if(++n>120){clearInterval(t);rej(new Error('Could not load the human check. Check your connection and try again.'))}},100)})}
+  if(!sc){sc=document.createElement('script');sc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';sc.async=true;sc.onerror=function(){capDiag('loader','script_error','SCRIPT_LOAD_FAILED');rej(new Error('Could not load the human check (SCRIPT_LOAD_FAILED). Check your connection and try again.'))};document.head.appendChild(sc)}
+  var t=setInterval(function(){if(window.turnstile){clearInterval(t);res()}else if(++n>120){clearInterval(t);capDiag('loader','timeout','SCRIPT_LOAD_TIMEOUT');rej(new Error('Could not load the human check (SCRIPT_LOAD_TIMEOUT). Check your connection and try again.'))}},100)})}
 function guestHumanToken(){return tsReady().then(function(){return new Promise(function(res,rej){
   var box=document.getElementById('guestCap');
   if(!box){box=document.createElement('div');box.id='guestCap';box.style.cssText='position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:80';document.body.appendChild(box)}
   box.innerHTML='';var done=false,id,MSG='Could not confirm you are human. Please try again.';
   function fin(f,v){if(done)return;done=true;clearTimeout(to);try{turnstile.remove(id)}catch(e){}box.innerHTML='';f(v)}
-  var to=setTimeout(function(){fin(rej,new Error(MSG))},30000);
-  try{id=turnstile.render(box,{sitekey:TURNSTILE_SITE_KEY,appearance:'always',theme:'auto',callback:function(t){fin(res,t)},'expired-callback':function(){fin(rej,new Error(MSG))},'error-callback':function(){fin(rej,new Error(MSG))}})}catch(e){fin(rej,new Error(MSG))}
+  var to=setTimeout(function(){capDiag('guest','timeout','CHALLENGE_TIMEOUT');fin(rej,new Error(MSG+' (CHALLENGE_TIMEOUT)'))},30000);
+  try{id=turnstile.render(box,{sitekey:TURNSTILE_SITE_KEY,appearance:'always',theme:'auto',callback:function(t){fin(res,t)},'expired-callback':function(){capDiag('guest','expired','TOKEN_EXPIRED');fin(rej,new Error(MSG+' (TOKEN_EXPIRED)'))},'error-callback':function(code){var ec=String(code||'UNKNOWN');capDiag('guest','challenge_error',ec);fin(rej,new Error(MSG+' (Turnstile '+ec+')'))}})}catch(e){capDiag('guest','render_exception',String(e&&e.message||'WIDGET_RENDER_FAILED'));fin(rej,new Error(MSG+' (WIDGET_RENDER_FAILED)'))}
 })})}
 async function agentAuth(force,skipUser){
   if(!skipUser){try{var ss=await sb.auth.getSession(),tk=ss&&ss.data&&ss.data.session&&ss.data.session.access_token;if(tk)return tk}catch(e){}}
@@ -2072,7 +2073,7 @@ async function agentAuth(force,skipUser){
     var ht=await guestHumanToken();
     var r=await fetch(AGENT_URL.replace(/\/+$/,'')+'/auth/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({turnstileToken:ht})});
     var j=await r.json().catch(function(){return{}});
-    if(!r.ok||!j.token){var ge=new Error(j.error||'Could not confirm you are human. Please try again.');if([404,500,502,503].indexOf(r.status)>-1)ge.backend=true;throw ge}
+    if(!r.ok||!j.token){capDiag('guest','token_submit_failed',{httpStatus:r.status,serverCode:j.code||j.errorCode||'not_provided'});var ge=new Error(j.error||'Could not confirm you are human. Please try again.');if([404,500,502,503].indexOf(r.status)>-1)ge.backend=true;throw ge}
     __gt.tok=j.token;__gt.exp=Date.now()+(j.expiresIn||1800000);return j.token}finally{__gt.p=null}})();
   return __gt.p}
 function stepWait(el){window.__lastSteps=[];window.__stepsDone=false;window.__stepCb=function(l){try{window.__lastSteps.push(l);var sp=el.querySelector('span')||el,h=document.createElement('div'),n=window.__lastSteps.length;h.className='act';window.__lastSteps.forEach(function(x,i){var r=document.createElement('div');r.className='actrow'+(i===n-1?' now':'');r.textContent=(i===n-1?'\u2022 ':'\u2713 ')+x;h.appendChild(r)});sp.innerHTML='';sp.appendChild(h)}catch(e){}}}
@@ -2534,7 +2535,7 @@ function capLoad(){
   tsReady().then(function(){
     var box=document.getElementById('authCaptcha');
     if(!box)throw new Error('The human-check area is unavailable. Please reload and try again.');
-    capId=turnstile.render(box,{sitekey:TURNSTILE_SITE_KEY,theme:'auto',appearance:'always',callback:function(t){capTok=t},'expired-callback':function(){capTok='';try{if(capId!==null)turnstile.reset(capId)}catch(e){}},'error-callback':function(){capTok='';var failedId=capId;capId=null;capBusy=false;try{if(failedId!==null)turnstile.remove(failedId)}catch(e){}box.innerHTML='';authMsg('The security check could not complete. Please try again.',true)}});
+    capId=turnstile.render(box,{sitekey:TURNSTILE_SITE_KEY,theme:'auto',appearance:'always',callback:function(t){capTok=t;capDiag('auth','challenge_complete','token_received')},'expired-callback':function(){capTok='';capDiag('auth','expired','TOKEN_EXPIRED');try{if(capId!==null)turnstile.reset(capId)}catch(e){}},'error-callback':function(code){var ec=String(code||'UNKNOWN');capDiag('auth','challenge_error',ec);capTok='';var failedId=capId;capId=null;capBusy=false;try{if(failedId!==null)turnstile.remove(failedId)}catch(e){}box.innerHTML='';authMsg('The security check could not complete. Please try again. (Turnstile '+ec+')',true)}});
   }).catch(function(e){capBusy=false;capTok='';authMsg(e&&e.message?e.message:'Could not load the human check. Check your connection and try again.',true)});
 }
 function capOpts(o){o=o||{};if(capOn()&&capTok)o.captchaToken=capTok;return o}
@@ -2556,10 +2557,10 @@ document.getElementById('authSubmit').addEventListener('click',async function(){
   var btn=this;btn.disabled=true;authMsg(authMode==='in'?'Signing in...':'Creating your account...');
   try{
     if(authMode==='in'){
-      var r=await sb.auth.signInWithPassword({email:em,password:pw,options:capOpts()});
+      capDiag('auth','submit',{mode:'signin',captchaTokenPresent:!!capTok});var r=await sb.auth.signInWithPassword({email:em,password:pw,options:capOpts()});
       if(r.error)authMsg(friendly(r.error),true);else{authMsg('');document.getElementById('authPass').value=''}
     }else{
-      var r2=await sb.auth.signUp({email:em,password:pw,options:capOpts({emailRedirectTo:location.origin+'/'})});
+      capDiag('auth','submit',{mode:'signup',captchaTokenPresent:!!capTok});var r2=await sb.auth.signUp({email:em,password:pw,options:capOpts({emailRedirectTo:location.origin+'/'})});
       if(r2.error)authMsg(friendly(r2.error),true);
       else if(!r2.data.session){showCode(em)}
       else{authMsg('');document.getElementById('authPass').value=''}
