@@ -351,40 +351,6 @@ dialog.adsheet::backdrop{background:rgba(11,27,74,.35)}
 #plugs>.card{margin-top:22px}
 .plugreq{margin-top:10px}
 .hdrmark{flex:none;opacity:.9}
-/* entrance splash */
-#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(60% 50% at 50% 42%,color-mix(in srgb,var(--btn,#0a89f4) 14%,var(--bg)),var(--bg) 70%);transition:opacity .55s ease,filter .55s ease,transform .55s ease}
-#splash.out{opacity:0;filter:blur(10px);transform:scale(1.06);pointer-events:none}
-#splash .sg{position:absolute;width:min(90vw,520px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--btn,#0a89f4) 22%,transparent),transparent 65%);opacity:0;transform:scale(.4);animation:spGlow 1.8s .1s ease-out forwards}
-#splash svg{position:relative;width:min(46vw,150px);height:auto;overflow:visible}
-#splash .hx{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:spDraw .9s .15s cubic-bezier(.4,0,.2,1) forwards}
-#splash .nd{opacity:0;transform:scale(0);transform-box:fill-box;transform-origin:center;animation:spPop .45s cubic-bezier(.34,1.56,.64,1) forwards}
-#splash .bd{opacity:0;transform:scale(.5);transform-box:fill-box;transform-origin:center;animation:spPop .6s .85s cubic-bezier(.34,1.56,.64,1) forwards}
-#splash .pl{opacity:0;animation:spFade .4s 1.15s ease forwards}
-#splash .wm{position:relative;font-weight:800;font-size:clamp(30px,8vw,44px);letter-spacing:.3em;color:var(--ink);opacity:0;transform:translateY(10px);animation:spWord .8s 1.2s cubic-bezier(.2,.8,.2,1) forwards}
-#splash .tg{position:relative;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:0;animation:spFade .6s 1.65s ease forwards}
-#splash .sbar{position:relative;width:96px;height:3px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:6px;opacity:0;animation:spFade .3s 1.4s ease forwards}
-#splash .sbar i{display:block;height:100%;width:100%;background:var(--btn,#0a89f4);transform:translateX(-100%);animation:spLoad 2.9s 1.4s ease-in-out forwards}
-@keyframes spDraw{to{stroke-dashoffset:0}}
-@keyframes spPop{to{opacity:1;transform:scale(1)}}
-@keyframes spFade{to{opacity:1}}
-@keyframes spWord{to{opacity:1;transform:none;letter-spacing:.12em}}
-@keyframes spGlow{to{opacity:1;transform:scale(1)}}
-@keyframes spLoad{to{transform:translateX(0)}}
-@media(prefers-reduced-motion:reduce){#splash *{animation-duration:.01s!important;animation-delay:0s!important}}
-
-/* splash sky: stars + slow 3D spaceship flight (theme-aware) */
-#splash .sky{position:absolute;inset:0;overflow:hidden;container-type:size;pointer-events:none}
-#splash .st{position:absolute;border-radius:50%;background:var(--muted);opacity:.25;animation:spTw 2.2s ease-in-out infinite alternate}
-#splash .ship3{position:absolute;left:0;top:0;width:min(56cqw,240px);opacity:0;transform:translate(-22cqw,100cqh) rotate(var(--ang,-45deg)) scale(.7);perspective:900px;animation:spFlight 4.2s .2s cubic-bezier(.4,.05,.55,.95) forwards}
-#splash .ship3 .body{transform-style:preserve-3d;animation:spSway 2.6s ease-in-out infinite alternate;filter:drop-shadow(0 18px 22px rgba(8,16,40,.35))}
-#splash .ship3 svg{display:block;width:100%;height:auto;overflow:visible}
-#splash .eg{transform-box:fill-box;transform-origin:right center;animation:spFlame .5s ease-in-out infinite alternate}
-@keyframes spTw{from{opacity:.15;transform:scale(.7)}to{opacity:.9;transform:scale(1.25)}}
-@keyframes spFlight{0%{opacity:0;transform:translate(-22cqw,100cqh) rotate(var(--ang,-45deg)) scale(.7)}12%{opacity:.95}88%{opacity:.95}100%{opacity:0;transform:translate(74cqw,-4cqh) rotate(var(--ang,-45deg)) scale(1.15)}}
-@keyframes spSway{from{transform:rotateY(-26deg) rotateX(4deg) rotateZ(-2deg)}to{transform:rotateY(-6deg) rotateX(12deg) rotateZ(2deg)}}
-@keyframes spFlame{from{transform:scaleX(.8);opacity:.75}to{transform:scaleX(1.2);opacity:1}}
-@media(prefers-reduced-motion:reduce){#splash .ship3{display:none}#splash .st{animation:none!important;opacity:.25}}
-
 /* LAYOUT LOCK: page never scrolls; chat scrolls inside; top bar always visible */
 html,body{overflow:hidden}
 .app{height:100vh;height:100dvh;overflow:hidden;grid-template-rows:minmax(0,1fr)}
@@ -458,9 +424,6 @@ main{min-height:0;height:100%;overflow:hidden}
 
 
 
-/* SPLASH: solid background so it works on older iPhones */
-#splash{background:var(--bg)!important}
-#splash .sg{display:none}
 /* ONE-LINE OPTION BAR, ALIGNED RIGHT */
 .chips{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start}
 .chips>.chip-sugg:first-child{margin-left:auto}
@@ -1371,57 +1334,6 @@ main{min-height:0;height:100%;overflow:hidden}
 <link rel="stylesheet" href="/business-agent-layout.css?v=4">
 </head>
 <body>
-<!-- Pelex animated entrance: theme-aware, quick to dismiss, no tagline. -->
-<div id="splash" role="button" tabindex="0" aria-label="PELEX. Tap to skip the intro">
-  <div class="sg" aria-hidden="true"></div>
-  <div class="sky" aria-hidden="true">
-    <i class="st" style="left:16%;top:22%;width:3px;height:3px;animation-delay:.1s"></i>
-    <i class="st" style="left:78%;top:18%;width:2px;height:2px;animation-delay:.7s"></i>
-    <i class="st" style="left:83%;top:72%;width:3px;height:3px;animation-delay:1.1s"></i>
-    <i class="st" style="left:20%;top:78%;width:2px;height:2px;animation-delay:.4s"></i>
-    <i class="st" style="left:50%;top:12%;width:2px;height:2px;animation-delay:1.4s"></i>
-  </div>
-  <svg viewBox="0 0 160 160" role="img" aria-label="Pelex P logo">
-    <path class="hx" pathLength="1" d="M80 8 142 44 142 116 80 152 18 116 18 44Z"/>
-    <circle class="nd" style="animation-delay:.25s" cx="80" cy="8" r="4" fill="var(--btn)"/>
-    <circle class="nd" style="animation-delay:.4s" cx="142" cy="44" r="4" fill="var(--btn)"/>
-    <circle class="nd" style="animation-delay:.55s" cx="142" cy="116" r="4" fill="var(--btn)"/>
-    <circle class="nd" style="animation-delay:.7s" cx="80" cy="152" r="4" fill="var(--btn)"/>
-    <circle class="nd" style="animation-delay:.85s" cx="18" cy="116" r="4" fill="var(--btn)"/>
-    <circle class="nd" style="animation-delay:1s" cx="18" cy="44" r="4" fill="var(--btn)"/>
-    <path class="bd" d="M80 34 111 52 111 108 80 126 49 108 49 52Z" fill="var(--btn)"/>
-    <text class="pl" x="80" y="93" text-anchor="middle" font-size="55" font-weight="800" font-family="Segoe UI,system-ui,Arial,sans-serif" fill="var(--btnink)">P</text>
-  </svg>
-  <div class="wm">PELEX</div>
-</div>
-<style>
-#splash{cursor:pointer;touch-action:manipulation;user-select:none}
-#splash .wm{font-size:clamp(30px,8vw,44px)}
-#splash .sg{animation-duration:1.25s}
-#splash .st{animation-duration:1.5s}
-#splash .hx{animation-duration:.65s;animation-delay:.05s}
-#splash .bd{animation-delay:.48s;animation-duration:.38s}
-#splash .pl{animation-delay:.72s;animation-duration:.3s}
-#splash .wm{animation-delay:.78s;animation-duration:.45s}
-#splash .sbar{animation-delay:.9s;animation-duration:.2s}
-#splash .sbar i{animation-delay:.9s;animation-duration:.8s}
-#splash.out{pointer-events:none}
-@media(prefers-reduced-motion:reduce){#splash .ship3{display:none}}
-</style>
-<script>
-(function(){
-  var splash=document.getElementById('splash'),done=false;
-  if(!splash)return;
-  function skip(){
-    if(done)return;done=true;
-    splash.classList.add('out');
-    window.setTimeout(function(){if(splash.parentNode)splash.parentNode.removeChild(splash)},180);
-  }
-  splash.addEventListener('click',skip);
-  splash.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();skip()}});
-  window.setTimeout(skip,1900);
-})();
-</script>
 <div class="app" id="app"><button class="iconbtn reopen" id="sideReopen" aria-label="Show sidebar"><svg viewBox="0 0 24 24"><path d="M5 6h8M9 12h11M4 18h12"/></svg></button>
 <aside id="side" aria-label="Sidebar">
 <div class="brand"><svg class="mark" viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><polygon points="20,3 35,11.5 35,28.5 20,37 5,28.5 5,11.5" fill="none" stroke="#0b1b4a" stroke-width="1.6"/><circle cx="20" cy="3" r="2" fill="#5ec3e6"/><circle cx="20" cy="37" r="2" fill="#5ec3e6"/><circle cx="35" cy="11.5" r="2" fill="var(--btn)"/><circle cx="35" cy="28.5" r="2" fill="var(--btn)"/><circle cx="5" cy="11.5" r="2" fill="var(--btn)"/><circle cx="5" cy="28.5" r="2" fill="var(--btn)"/><rect x="11" y="11" width="18" height="18" rx="5" fill="var(--btn)"/><text x="20" y="25" text-anchor="middle" font-size="13" font-weight="800" font-family="Segoe UI,system-ui,Arial,sans-serif" fill="var(--btnink)">P</text></svg>Pelex<span style="margin-left:auto;display:flex;gap:14px"><button class="iconbtn" id="instNavDesk" aria-label="Install app" hidden><svg viewBox="0 0 24 24"><path d="M12 4v10M8 10l4 4 4-4M5 19h14"/></svg></button><button class="iconbtn" id="sideCollapse" aria-label="Hide sidebar"><svg viewBox="0 0 24 24"><path d="M5 6h8M9 12h11M4 18h12"/></svg></button></span></div>
