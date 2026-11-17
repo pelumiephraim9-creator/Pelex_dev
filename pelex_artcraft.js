@@ -40,7 +40,16 @@
    '.px-art-studio p{margin:0 0 12px;color:var(--muted,#68758c);font-size:14px;line-height:1.5}'+
    '.px-art-studio a{font-weight:700;color:var(--accent,#2765bd);text-decoration:none}.px-art-studio img{width:76px;height:76px;object-fit:contain;flex:none;background:#fff!important;border:1px solid #e6eaf0;border-radius:12px;padding:6px;box-sizing:border-box}'+
    '.px-art-launch{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 18px;border-radius:10px;background:#0b2a5b;color:#fff!important;text-decoration:none;font-weight:700;margin-top:4px}'+
-   '.px-art-launch:hover{background:#123b78}.px-art-account-note{font-size:12px!important;margin:9px 0 0!important;max-width:560px}'+
+   '.px-art-launch:hover{background:#123b78}.px-art-launch{border:0;cursor:pointer;font:inherit;font-weight:700}'+
+   '.px-art-modal[hidden]{display:none}.px-art-modal{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:18px;box-sizing:border-box}'+
+   '.px-art-modal-backdrop{position:absolute;inset:0;background:rgba(12,24,43,.56);backdrop-filter:blur(3px)}'+
+   '.px-art-account-panel{position:relative;z-index:1;width:min(100%,460px);box-sizing:border-box;padding:28px;border:1px solid var(--line,#e3e8f1);border-radius:20px;background:var(--panel,#fff);color:var(--ink,#17243b);box-shadow:0 24px 70px rgba(10,25,50,.24)}'+
+   '.px-art-modal-close{position:absolute;right:12px;top:10px;width:38px;height:38px;border:0;border-radius:10px;background:var(--soft,#f5f7fb);color:var(--ink,#17243b);font-size:26px;line-height:1;cursor:pointer}'+
+   '.px-art-account-logo-wrap{width:76px;height:76px;display:grid;place-items:center;margin:0 0 18px;border:1px solid #e3e8f1;border-radius:15px;background:#fff;padding:8px;box-sizing:border-box}'+
+   '.px-art-account-logo{width:100%;height:100%;object-fit:contain;background:#fff}.px-art-account-panel h2{margin:7px 0 9px;font-size:22px;color:var(--ink,#17243b)}'+
+   '.px-art-account-panel p{font-size:14px;line-height:1.55;color:var(--muted,#68758c)}.px-art-account-continue{display:flex;width:100%;box-sizing:border-box;margin-top:18px}'+
+   '.px-art-account-panel .px-art-account-security{font-size:12px;margin:13px 0 0}.px-art-modal-open{overflow:hidden}'+
+   '@media(max-width:560px){.px-art-account-panel{padding:24px 20px;border-radius:17px}}'+
    '.px-art-section{margin:0 0 14px}.px-art-section h2{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:19px;color:var(--ink,#17243b)}'+
    '.px-art-section h2 span{font-size:11px;font-weight:700;color:var(--muted,#68758c);border:1px solid var(--line,#e3e8f1);padding:4px 8px;border-radius:20px}'+
    '.px-art-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr));gap:13px}'+
@@ -65,21 +74,44 @@
 
  function addStudioActions(){
   var copy=document.querySelector('.px-art-studio-copy');
-  if(copy&&!document.getElementById('pxArtStudioLaunch')){
-   var a=document.createElement('a');
-   a.id='pxArtStudioLaunch';
-   a.href='https://app.getartcraft.com/browser-studio';
-   a.target='_blank';
-   a.rel='noopener noreferrer';
-   a.className='px-art-launch';
-   a.textContent='Open ArtCraft Studio';
-   copy.appendChild(a);
-   var note=document.createElement('p');
-   note.className='px-art-account-note';
-   note.textContent='Sign in or create your ArtCraft account securely in the official Studio. Pelex does not collect your ArtCraft password.';
-   copy.appendChild(note);
+  if(copy&&!document.getElementById('pxArtStudioAccess')){
+   var trigger=document.createElement('button');
+   trigger.type='button';
+   trigger.id='pxArtStudioAccess';
+   trigger.className='px-art-launch';
+   trigger.setAttribute('aria-haspopup','dialog');
+   trigger.setAttribute('aria-controls','pxArtAccountPanel');
+   trigger.textContent='Open ArtCraft Studio';
+   trigger.addEventListener('click',openAccountPanel);
+   copy.appendChild(trigger);
   }
  }
+ function openAccountPanel(){
+  var panel=document.getElementById('pxArtAccountPanel');
+  if(!panel){
+   panel=document.createElement('div');
+   panel.id='pxArtAccountPanel';
+   panel.className='px-art-modal';
+   panel.innerHTML='<div class="px-art-modal-backdrop" data-art-close="1"></div><section class="px-art-account-panel" role="dialog" aria-modal="true" aria-labelledby="pxArtAccountTitle" aria-describedby="pxArtAccountDescription"><button type="button" class="px-art-modal-close" aria-label="Close ArtCraft account panel" data-art-close="1">×</button><div class="px-art-account-logo-wrap"><img src="'+ROOT+'/artcraft-logo.png" alt="ArtCraft logo" class="px-art-account-logo"></div><div class="px-art-eyebrow">ARTCRAFT ACCOUNT ACCESS</div><h2 id="pxArtAccountTitle">Continue to ArtCraft Studio</h2><p id="pxArtAccountDescription">Use your ArtCraft account to access the creative studio. You can sign in or create an account on ArtCraft’s official website.</p><a class="px-art-launch px-art-account-continue" href="https://app.getartcraft.com/browser-studio" target="_blank" rel="noopener noreferrer">Continue to ArtCraft sign in</a><p class="px-art-account-security">Your ArtCraft password is entered only on ArtCraft’s official site. Pelex does not collect your password or claim that your account is connected.</p></section>';
+   panel.addEventListener('click',function(e){if(e.target&&e.target.getAttribute('data-art-close')==='1')closeAccountPanel()});
+   document.body.appendChild(panel);
+  }
+  panel.hidden=false;
+  document.body.classList.add('px-art-modal-open');
+  var close=panel.querySelector('.px-art-modal-close');
+  if(close)close.focus();
+  document.addEventListener('keydown',handleAccountEscape);
+ }
+ function closeAccountPanel(){
+  var panel=document.getElementById('pxArtAccountPanel');
+  if(!panel)return;
+  panel.hidden=true;
+  document.body.classList.remove('px-art-modal-open');
+  document.removeEventListener('keydown',handleAccountEscape);
+  var trigger=document.getElementById('pxArtStudioAccess');
+  if(trigger)trigger.focus();
+ }
+ function handleAccountEscape(e){if(e.key==='Escape')closeAccountPanel()}
  function restoreExistingScheduleNavigation(){
   var nav=document.querySelector('button[data-go="groups"]');
   if(nav&&!document.querySelector('button[data-go="scheduled"]')){
@@ -100,5 +132,5 @@
 
  function init(){addStyles();render();addStudioActions();restoreExistingScheduleNavigation()}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
- window.PelexArtCraftSpace={apps:APPS,studioUrl:'https://app.getartcraft.com/'};
+ window.PelexArtCraftSpace={apps:APPS,studioUrl:'https://app.getartcraft.com/browser-studio',openAccountPanel:openAccountPanel,closeAccountPanel:closeAccountPanel};
 })();
