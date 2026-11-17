@@ -4,112 +4,234 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy Policy | Pelex</title>
-<meta name="description" content="How Pelex collects, uses, stores, shares and deletes personal data, including Google user data.">
+<meta name="description" content="How Pelex collects, uses, stores, shares and deletes personal data, including how Google sign-in and Google Workspace features are handled.">
 <style>
-:root{color-scheme:light dark;--ink:#0b1b4a;--muted:#55617f;--bg:#f5f7fb;--card:#fff;--line:#dfe4ee}
-@media (prefers-color-scheme:dark){:root{--ink:#e8eef8;--muted:#9aa8c4;--bg:#0c1423;--card:#131d33;--line:#25324f}}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.65}
-main{max-width:820px;margin:0 auto;padding:28px 18px 60px}
-h1{font-size:28px;margin:0 0 6px}
-h2{font-size:18px;margin:28px 0 8px}
-p,li{font-size:15px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
-.muted{color:var(--muted);font-size:14px}
-table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
-th,td{border:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}
-th{background:var(--card)}
-a{color:var(--ink);font-weight:700}
+:root{color-scheme:light dark;--ink:#0b1b4a;--muted:#55617f;--bg:#ffffff;--card:#ffffff;--soft:#f4f6fb;--line:#dfe4ee;--accent:#2457b8}
+@media (prefers-color-scheme:dark){:root{--ink:#e8eef8;--muted:#9aa8c4;--bg:#0c1423;--card:#131d33;--soft:#18243d;--line:#25324f;--accent:#7aa6ff}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.65;font-size:15px}
+header.top{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:5}
+header.top .in{max-width:1080px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:12px}
+.mark{width:34px;height:34px;flex:none}
+.brand{font-weight:800;letter-spacing:.02em;font-size:16px}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:11px;letter-spacing:0}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 18px 60px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px}
+nav.toc{position:sticky;top:76px;align-self:start;font-size:13px}
+nav.toc h3{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+nav.toc ol{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+nav.toc li{margin:0}
+nav.toc a{display:block;padding:5px 10px;color:var(--muted);text-decoration:none;border-left:2px solid transparent;margin-left:-2px}
+nav.toc a:hover{color:var(--ink)}
+h1{font-size:30px;letter-spacing:-.02em;margin:0 0 6px}
+.meta{color:var(--muted);font-size:13px;margin:0 0 18px}
+.intro{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:0 0 18px}
+section.s{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:0 0 16px;scroll-margin-top:90px}
+section.s h2{font-size:18px;margin:0 0 10px;display:flex;gap:10px;align-items:baseline}
+section.s h2 span{color:var(--accent);font-size:13px;font-weight:800;min-width:24px}
+h3{font-size:15px;margin:16px 0 6px}
+p{margin:0 0 10px}
+ul{margin:0 0 10px;padding-left:20px}
+li{margin:0 0 6px}
+a{color:var(--accent);font-weight:700}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;margin:8px 0 6px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--soft);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+figure{margin:12px 0 6px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+figure svg{display:block;width:100%;height:auto}
+figcaption{font-size:12.5px;color:var(--muted);margin-top:8px}
+.note{border-left:3px solid var(--accent);background:var(--soft);padding:10px 14px;border-radius:10px;margin:10px 0}
+footer{max-width:1080px;margin:0 auto;padding:0 18px 40px;color:var(--muted);font-size:12.5px}
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:16px;padding:20px 14px 48px}
+  nav.toc{position:static;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card)}
+  nav.toc ol{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;border-left:0}
+  nav.toc a{border-left:0;padding:4px 0}
+  h1{font-size:25px}
+  section.s{padding:16px 16px}
+  table,thead,tbody,tr,th,td{display:block;width:100%}
+  thead{display:none}
+  table{border:0;border-radius:0}
+  tr{border:1px solid var(--line);border-radius:12px;margin:0 0 10px;padding:6px 10px;background:var(--card)}
+  td{border:0;padding:6px 0}
+  td::before{content:attr(data-label);display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+}
+@media print{header.top,nav.toc{display:none}.wrap{display:block}section.s{break-inside:avoid;border:0}}
 </style>
 </head>
 <body>
+<header class="top"><div class="in"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 L35 11.5 L35 28.5 L20 37 L5 28.5 L5 11.5 Z" fill="none" stroke="#0b1b4a" stroke-width="2.4"/><rect x="13" y="12" width="14" height="16" rx="3" fill="#0b1b4a"/><text x="20" y="25" text-anchor="middle" font-family="Arial" font-size="11" font-weight="700" fill="#fff">P</text></svg><div class="brand">Pelex<small>Privacy Policy</small></div></div></header>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+<h3>Contents</h3>
+<ol>
+<li><a href="#s1">1 How data flows</a></li>
+<li><a href="#s2">2 What we collect</a></li>
+<li><a href="#s3">3 How we use it</a></li>
+<li><a href="#s4">4 Where it is stored</a></li>
+<li><a href="#s5">5 How long we keep it</a></li>
+<li><a href="#s6">6 Google sign-in</a></li>
+<li><a href="#s7">7 Sharing</a></li>
+<li><a href="#s8">8 Your rights</a></li>
+<li><a href="#s9">9 Security</a></li>
+<li><a href="#s10">10 Children</a></li>
+<li><a href="#s11">11 Changes</a></li>
+<li><a href="#s12">12 Contact</a></li>
+</ol>
+</nav>
 <main>
 <h1>Privacy Policy</h1>
-<p class="muted">Effective date: 10 November 2026 &middot; Last updated: 10 November 2026</p>
+<p class="meta">Effective 16 November 2026 &middot; Last updated 16 November 2026</p>
+<div class="intro"><p>This policy explains what Pelex collects, why, where it is kept, who it is shared with, how long it is kept, and what you can do about it. Pelex is an AI assistant and business record platform operated from Nigeria by PelexSkillHub (&ldquo;Pelex&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;).</p><p style="margin:0"><b>Questions and requests:</b> <a href="mailto:hello@pelex.tech">hello@pelex.tech</a> &middot; <b>Support:</b> <a href="mailto:support@pelex.tech">support@pelex.tech</a></p></div>
 
-<div class="card">
-<p>This policy explains what Pelex collects, why, where it is kept, who it is shared with, how long it is kept, and what you can do about it. Pelex is an AI assistant and business record platform operated from Nigeria by Emmanuel Ephraim Uwem (&ldquo;Pelex&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;). Questions and requests: <a href="mailto:hello@pelex.tech">hello@pelex.tech</a>. Support: <a href="mailto:support@pelex.tech">support@pelex.tech</a>.</p>
-</div>
+<section class="s" id="s1"><h2><span>1</span>How data flows through Pelex</h2>
+<p>The diagram shows how your requests move through the agents. Only the agents you use are involved.</p>
+<figure><svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="How Pelex agents work together" style="width:100%;height:auto;max-width:900px">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0b1b4a"/></marker></defs>
+  <g font-family="Arial" text-anchor="middle">
+    <rect x="370" y="14" width="160" height="56" rx="14" fill="#ffffff" stroke="#0b1b4a" stroke-width="2"/>
+    <text x="450" y="38" font-size="15" font-weight="700" fill="#0b1b4a">You</text>
+    <text x="450" y="58" font-size="11" fill="#55617f">sign in and ask</text>
 
-<h2>1. Information we collect</h2>
+    <rect x="370" y="110" width="160" height="66" rx="14" fill="#0b1b4a"/>
+    <text x="450" y="138" font-size="15" font-weight="700" fill="#ffffff">General agent</text>
+    <text x="450" y="158" font-size="11" fill="#dfe7f5">routes each request</text>
+
+    <rect x="40" y="230" width="250" height="130" rx="14" fill="#ffffff" stroke="#0b1b4a" stroke-width="2"/>
+    <text x="165" y="256" font-size="14" font-weight="700" fill="#0b1b4a">Business agent</text>
+    <text x="165" y="278" font-size="11" fill="#55617f">business analysis</text>
+    <text x="165" y="296" font-size="11" fill="#55617f">data entry and records</text>
+    <text x="165" y="314" font-size="11" fill="#55617f">meetings and notes</text>
+    <text x="165" y="332" font-size="11" fill="#55617f">customer inbox and leads</text>
+    <text x="165" y="352" font-size="10" fill="#55617f">works only for its own business</text>
+
+    <rect x="330" y="230" width="210" height="104" rx="14" fill="#ffffff" stroke="#0b1b4a" stroke-width="2"/>
+    <text x="435" y="256" font-size="14" font-weight="700" fill="#0b1b4a">Pitch agent</text>
+    <text x="435" y="278" font-size="11" fill="#55617f">finds opportunities</text>
+    <text x="435" y="296" font-size="11" fill="#55617f">drafts, you approve</text>
+    <text x="435" y="314" font-size="11" fill="#55617f">sends only when you say</text>
+
+    <rect x="610" y="230" width="250" height="104" rx="14" fill="#ffffff" stroke="#0b1b4a" stroke-width="2"/>
+    <text x="735" y="256" font-size="14" font-weight="700" fill="#0b1b4a">Mail agent</text>
+    <text x="735" y="278" font-size="11" fill="#55617f">shared by the business</text>
+    <text x="735" y="296" font-size="11" fill="#55617f">and pitch agents</text>
+    <text x="735" y="314" font-size="11" fill="#55617f">drafts; you review first</text>
+
+    <rect x="20" y="380" width="860" height="40" rx="14" fill="#f4f6fb" stroke="#dfe4ee" stroke-width="1.5"/>
+    <text x="450" y="405" font-size="12" font-weight="700" fill="#0b1b4a">Tools the agents use: Spotlight videos · document reader and file converters (on your device) · ArtCraft apps where available</text>
+  </g>
+  <g stroke="#0b1b4a" stroke-width="2" fill="none" marker-end="url(#ar)">
+    <line x1="450" y1="70" x2="450" y2="110"/>
+    <line x1="420" y1="176" x2="165" y2="230"/>
+    <line x1="450" y1="176" x2="435" y2="230"/>
+    <line x1="480" y1="176" x2="735" y2="230"/>
+  </g>
+  <g stroke="#55617f" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#ar)">
+    <line x1="610" y1="330" x2="540" y2="330"/>
+  </g>
+  <text x="20" y="442" font-family="Arial" font-size="11" fill="#55617f">Solid arrows: a request passed on. Dashed arrow: the mail agent, which the business and pitch agents share. Nothing is sent without your approval.</text>
+</svg>
+<figcaption>How the agents work together. Your request goes to the general agent, which passes it to the agent for that job. Documents are read on your device.</figcaption></figure>
+</section>
+
+<section class="s" id="s2"><h2><span>2</span>What we collect</h2>
 <table>
-<tr><th>What</th><th>When it is collected</th><th>Why</th></tr>
-<tr><td>Account details: email address, a display name, and optional profile details you enter (date of birth, a short description, a category and up to three interests)</td><td>When you sign up or complete onboarding</td><td>To create and secure your account, greet you, and tailor replies to the interests you choose</td></tr>
-<tr><td>Sign-in details: a password (stored only as a secure hash), or a passkey, or a Google or GitHub account identifier when you sign in that way</td><td>When you sign in</td><td>To verify who you are</td></tr>
-<tr><td>Chats and messages you send, and the replies you receive</td><td>When you use chat, and only if chat saving is on</td><td>To answer you, show your history, and let you continue earlier chats</td></tr>
-<tr><td>Files and images you upload, and pictures you attach to chat</td><td>When you upload or attach them</td><td>To read documents, edit images, and keep your business records</td></tr>
-<tr><td>Business records you enter or import: sales, expenses, loans, repayments, payments, invoices and receipts, business projects, team members and roles</td><td>When you enter, import or capture them</td><td>To run your business records, reports and analysis</td></tr>
-<tr><td>Payment records from Paystack or Flutterwave (amount, status, reference, date). Pelex does not store your card numbers</td><td>When a payment succeeds or fails</td><td>To record what clients have paid</td></tr>
-<tr><td>Activity records: who added, changed, deleted or restored a business record, and when</td><td>Automatically, for business records</td><td>To keep an accountable trail for each business</td></tr>
-<tr><td>Technical data: device type, browser, approximate location from your network address, and the time of requests</td><td>Automatically</td><td>To keep the service secure, detect abuse, and show the right currency</td></tr>
-<tr><td>Basic Google profile information (such as your name, email address and profile picture) if you choose Google sign-in</td><td>When you sign in with Google</td><td>To authenticate your account through Supabase Auth. Google sign-in does not give Pelex access to Gmail, Calendar, Drive or Sheets content.</td></tr>
-</table>
+<thead><tr><th>What</th><th>When</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td data-label="What">Account details: email address, display name, and optional profile details (date of birth, a short description, a category and up to three interests)</td><td data-label="When">When you sign up or complete onboarding</td><td data-label="Why">To create and secure your account, greet you, and tailor replies to your chosen interests</td></tr>
+<tr><td data-label="What">Sign-in details: a password (stored only as a secure hash), a passkey, or a Google or GitHub account identifier</td><td data-label="When">When you sign in</td><td data-label="Why">To verify who you are</td></tr>
+<tr><td data-label="What">Chats: messages you send and the replies you receive</td><td data-label="When">When you use chat, and only if chat saving is on</td><td data-label="Why">To answer you, show your history, and let you continue earlier chats</td></tr>
+<tr><td data-label="What">Files you upload, such as invoices and receipts, and pictures you attach to chat</td><td data-label="When">When you upload or attach them</td><td data-label="Why">To read the document and keep your business records. Documents are read on your device first. Nothing is saved to your records until you confirm it</td></tr>
+<tr><td data-label="What">Business records you enter or import: sales, expenses, loans, repayments, payments, projects, team members and roles</td><td data-label="When">When you enter, import or confirm them</td><td data-label="Why">To run your records, analysis and monthly reports</td></tr>
+<tr><td data-label="What">Payment records from Paystack or Flutterwave: amount, status, reference and date. Pelex does not store your full card number</td><td data-label="When">When a payment succeeds or fails</td><td data-label="Why">To record what clients have paid</td></tr>
+<tr><td data-label="What">Activity records: who added, changed, deleted or restored a business record, and when</td><td data-label="When">Automatically, for business records</td><td data-label="Why">To keep an accountable trail for each business</td></tr>
+<tr><td data-label="What">Spotlight: videos you save (stored as references only: title, thumbnail, channel and link) and the search terms you type</td><td data-label="When">When you search or save a video</td><td data-label="Why">To show results and your saved list. Pelex does not store the videos themselves</td></tr>
+<tr><td data-label="What">Technical data: device type, browser, approximate location from your network address, and the time of requests</td><td data-label="When">Automatically</td><td data-label="Why">To keep the service secure, detect abuse, and show the right currency</td></tr>
+</tbody></table>
+</section>
 
-<h2>2. How we use information</h2>
+<section class="s" id="s3"><h2><span>3</span>How we use information</h2>
 <ul>
-<li>To provide the features you use: chat, business records, analysis, uploads, scheduled reports and payments.</li>
+<li>To provide the features you use: chat, business records, analysis, document reading, scheduled reports, Spotlight and payments.</li>
 <li>To keep accounts secure, prevent abuse, and apply usage limits.</li>
-<li>To send service emails you asked for or that the service needs (sign-up confirmation, password help, receipts).</li>
-<li>To improve reliability. We do not use your business records or chats to train public AI models.</li>
+<li>To send service emails you asked for or that the service needs, such as sign-up confirmation, password help and receipts.</li>
+<li>To keep the service reliable. We do not use your business records or chats to train public AI models.</li>
 </ul>
+</section>
 
-<h2>3. Where data is processed and stored</h2>
-<p>Pelex runs on these providers. Each handles data only to provide its part of the service:</p>
+<section class="s" id="s4"><h2><span>4</span>Where it is stored and processed</h2>
+<p>These providers handle data only to provide their part of the service:</p>
 <ul>
-<li><b>Supabase</b>: the database, sign-in, and file storage. Each business is kept separate, and access is limited to its members by row-level security rules.</li>
-<li><b>Cloudflare</b>: hosting of the website and the security layer in front of the chat service. It also checks the human-verification step (Turnstile).</li>
-<li><b>Render</b>: runs the Pelex server that handles chat, tools and scheduled tasks.</li>
-<li><b>AI model providers</b>: OpenRouter, Groq, Anthropic (Claude), Cloudflare Workers AI, Mistral, SambaNova and Google Gemini. When you send a message, the text (and any picture you attach) is sent to the provider that answers it. Pelex removes sensitive details where it can before sending. Provider terms apply to what they receive.</li>
-<li><b>Paystack and Flutterwave</b>: payment processing. They receive your payment details directly.</li>
-<li><b>Email delivery provider</b>: sends service emails.</li>
+<li><b>Our hosting and database services:</b> store your accounts, business records and files, and keep the service running. Access is controlled by database rules, so each business sees only its own data. Live updates reach only the business that owns the record.</li>
+<li><b>Security checks:</b> a human-verification check and a protective layer guard the service against misuse.</li>
+<li><b>AI model services:</b> the messages you send to chat, and any picture you attach to a chat, go to the AI service that answers them. Pelex removes sensitive details where it can first. That service&rsquo;s own terms also apply. You can use the business tools without any AI feature.</li>
+<li><b>Paystack and Flutterwave:</b> payment processing. They receive your payment details directly, and send payment notices to Pelex.</li>
+<li><b>Email delivery provider:</b> sends service emails.</li>
 </ul>
 <p>Some providers store data outside Nigeria. Where that happens, we rely on their contractual safeguards.</p>
+</section>
 
-<h2>4. How long we keep data</h2>
+<section class="s" id="s5"><h2><span>5</span>How long we keep it</h2>
 <table>
-<tr><th>Data</th><th>Kept for</th></tr>
-<tr><td>Chat history</td><td>The period you choose for each chat: 7 days, 30 days, 3 months, 6 months, 1 year, or until you delete it. Private (Ignitor) chats are not saved and are cleared when closed.</td></tr>
-<tr><td>Images generated or edited in chat</td><td>Automatically deleted 2 days after creation.</td></tr>
-<tr><td>Business uploads you delete</td><td>Kept for one year so you can restore them, then permanently removed. The activity record of the deletion is kept.</td></tr>
-<tr><td>Business records</td><td>For as long as the business account is active, unless you delete them.</td></tr>
-<tr><td>Meeting notes (when available)</td><td>7 days from creation unless you download them. You are warned on day 5.</td></tr>
-<tr><td>Account data</td><td>Until you delete your account. Some records may be kept longer where the law requires.</td></tr>
-</table>
+<thead><tr><th>Data</th><th>Kept for</th></tr></thead>
+<tbody>
+<tr><td data-label="Data">Chat history</td><td data-label="Kept for">The period you choose for each chat: 7 days, 30 days, 3 months, 6 months, 1 year, or until you delete it. Private (Ignitor) chats are not saved and are cleared when closed.</td></tr>
+<tr><td data-label="Data">Pictures created earlier in chat</td><td data-label="Kept for">Automatically deleted 2 days after creation. Picture creation is turned off at present.</td></tr>
+<tr><td data-label="Data">Business uploads you delete</td><td data-label="Kept for">One year, so you can restore them. Then permanently removed. The record of the deletion is kept.</td></tr>
+<tr><td data-label="Data">Business records</td><td data-label="Kept for">While the business account is active, unless you delete them.</td></tr>
+<tr><td data-label="Data">Spotlight saved list</td><td data-label="Kept for">Until you remove an item or delete your account.</td></tr>
+<tr><td data-label="Data">Spotlight seen list</td><td data-label="Kept for">30 days, then removed. It stops the same video being shown again too soon.</td></tr>
+<tr><td data-label="Data">Spotlight search cache</td><td data-label="Kept for">About one day, then removed. It is shared between users and holds only search results.</td></tr>
+<tr><td data-label="Data">Account data</td><td data-label="Kept for">Until you delete your account. Some records may be kept longer where the law requires.</td></tr>
+</tbody></table>
+</section>
 
-<h2>5. Google sign-in and Google Workspace data</h2>
-<p><b>Google sign-in is not Gmail access.</b> If you choose “Continue with Google”, Pelex receives your basic Google profile information (such as your name, email address and profile picture) through Supabase Auth so you can sign in. This sign-in does not give Pelex permission to read your Gmail, Calendar, Drive or Sheets data.</p>
-<p><b>Current connector status.</b> Gmail, Google Calendar, Google Drive and Google Sheets account connectors are not currently enabled in Pelex. The Gmail Bot currently helps you draft email text and can open a compose window in Gmail. You review and send that email yourself. Pelex does not currently read your Gmail inbox, messages, attachments or labels, and does not send messages through the Gmail API. It does not currently access your Calendar, Drive or Sheets content through Google APIs.</p>
-<p>If a Google Workspace connector is introduced in the future, Pelex will explain the feature and request the specific permissions it needs on a separate Google consent screen before accessing that data. You will be able to decline or disconnect the connector. This policy will be updated to describe the actual data accessed, how it is used, where it is processed, how long it is retained, and how to disconnect or request deletion before the connector is made available.</p>
+<section class="s" id="s6"><h2><span>6</span>Google sign-in and Google Workspace data</h2>
+<div class="note"><b>Google sign-in is not Gmail access.</b> If you choose &ldquo;Continue with Google&rdquo;, Pelex receives your basic Google profile information (name, email address and profile picture) through our database service Auth so you can sign in. It does not give Pelex permission to read your Gmail, Calendar, Drive or Sheets data.</div>
+<h3>Current connector status</h3>
+<p>Gmail, Google Calendar, Google Drive and Google Sheets connectors are not enabled in Pelex. The Gmail Bot currently helps you draft email text and can open a compose window in Gmail. You review and send that email yourself. Pelex does not read your Gmail inbox, messages, attachments or labels, does not send messages through the Gmail API, and does not access your Calendar, Drive or Sheets content through Google APIs.</p>
+<p>If a Google Workspace connector is introduced later, Pelex will explain the feature and request specific permissions on Google&rsquo;s consent screen before accessing that data. You can decline or disconnect it. This policy will be updated before any connector is made available, to describe the data accessed, how it is used, where it is processed, how long it is kept, and how to disconnect or request deletion.</p>
 <ul>
 <li>Pelex does not sell Google user data or use it for advertising.</li>
 <li>Pelex does not use Google Workspace user data to train AI models.</li>
 <li>When and if a Google API connector is enabled, Pelex&rsquo;s use and transfer of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including its Limited Use requirements.</li>
 <li>Any future email-sending connector will require your explicit approval before a message is sent.</li>
 </ul>
+</section>
 
-<h2>6. Sharing</h2>
-<p>We share information only with the providers listed in section 3, with people you invite to a business you own, with authorities when the law requires, and to protect people&rsquo;s safety. We do not sell personal data.</p>
+<section class="s" id="s7"><h2><span>7</span>Sharing</h2>
+<p>We share information only with the providers listed in section 4, with people you invite to a business you own, with authorities when the law requires, and to protect people&rsquo;s safety. We do not sell personal data.</p>
+</section>
 
-<h2>7. Your choices and rights</h2>
+<section class="s" id="s8"><h2><span>8</span>Your rights and choices</h2>
 <ul>
-<li><b>Access and copy:</b> you can see your business records and chats in the app, and ask for a copy of your data.</li>
+<li><b>Access and copy:</b> you can see your business records, chats and saved videos in the app, and ask for a copy of your data.</li>
 <li><b>Correct:</b> you can edit your profile and business records.</li>
-<li><b>Delete:</b> you can delete chats, uploads and business records, and delete your account. Deleted uploads can be restored for one year.</li>
-<li><b>Withdraw:</b> you can turn off chat saving, change keep-times, and stop using optional features at any time. Google sign-in is an authentication method; it does not connect a Google Workspace account.</li>
+<li><b>Delete:</b> you can delete chats, uploads, saved videos and business records, and delete your account. Deleted uploads can be restored for one year.</li>
+<li><b>Withdraw:</b> you can turn off chat saving, change keep-times, and stop optional features at any time. Google sign-in authenticates your account; it does not connect a Google Workspace account.</li>
 <li><b>Complain:</b> you may contact the Nigeria Data Protection Commission.</li>
 </ul>
 <p>To use a right, write to <a href="mailto:hello@pelex.tech">hello@pelex.tech</a>. We respond within 30 days.</p>
+</section>
 
-<h2>8. Security</h2>
-<p>We use encryption in transit, access controls, row-level security so that each business sees only its own data, an activity record for business changes, and separate keys for each service. No system is perfectly secure. If we learn of a breach that affects you, we will tell you and the authorities as the law requires.</p>
+<section class="s" id="s9"><h2><span>9</span>Security</h2>
+<p>We use encryption in transit, access controls, database rules so that each business sees only its own data, an activity record for business changes, and separate keys for each service. Keys are kept on the server and never placed in the website. No system is perfectly secure. If we learn of a breach that affects you, we will tell you and the authorities as the law requires.</p>
+</section>
 
-<h2>9. Children</h2>
+<section class="s" id="s10"><h2><span>10</span>Children</h2>
 <p>Pelex is not for children under 18. If you believe a child has given us personal data, contact us and we will delete it.</p>
+</section>
 
-<h2>10. Changes to this policy</h2>
-<p>We will update the date at the top when this policy changes, and for important changes we will tell you in the app before they take effect.</p>
+<section class="s" id="s11"><h2><span>11</span>Changes to this policy</h2>
+<p>We will update the date at the top when this policy changes. For important changes we will tell you in the app before they take effect.</p>
+</section>
 
-<h2>11. Contact</h2>
-<p>Pelex, operated by Emmanuel Ephraim Uwem, Nigeria. <a href="mailto:hello@pelex.tech">hello@pelex.tech</a> &middot; <a href="mailto:support@pelex.tech">support@pelex.tech</a>.</p>
+<section class="s" id="s12"><h2><span>12</span>Contact</h2>
+<p>Pelex, operated by PelexSkillHub, Nigeria.<br><a href="mailto:hello@pelex.tech">hello@pelex.tech</a> &middot; <a href="mailto:support@pelex.tech">support@pelex.tech</a></p>
+</section>
 </main>
+</div>
+<footer>&copy; 2026 Pelex. <a href="terms.html">Terms of Service</a></footer>
 </body>
 </html>
