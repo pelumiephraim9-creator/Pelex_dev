@@ -6926,7 +6926,15 @@ function pxCommandHelp(){
    $('pxYearTable').innerHTML=yearRows.length?'<div style="overflow-x:auto"><table class="ls-table"><thead><tr><th>Month</th><th>Cash in</th><th>Cash out</th><th>Operating profit</th><th>Closing cash</th></tr></thead><tbody>'+yearRows.map(function(x){return '<tr><td><button type="button" class="btn alt" data-px-month-open="'+esc(x.month)+'" style="padding:4px 8px">'+esc(x.month)+'</button></td><td>'+cash(x.money_in,cur)+'</td><td>'+cash(x.money_out,cur)+'</td><td>'+cash(x.profit,cur)+'</td><td>'+cash(x.closing,cur)+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">No ledger transactions for '+y+'.</p>';
    $('pxYearTable').querySelectorAll('[data-px-month-open]').forEach(function(b){b.onclick=function(){var v=b.getAttribute('data-px-month-open');$('pxMonthPick').value=v;$('pxTrYear').value=v.slice(0,4);$('pxTrMonth').value=v.slice(5,7);$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));$('pxMonthPick').dispatchEvent(new Event('change',{bubbles:true}));var reg=$('pxTrRows');if(reg){var panel=reg.closest('.dcard')||reg;panel.scrollIntoView({behavior:'smooth',block:'start'});}};});
    $('pxYearNote').textContent='*Original yearly capital is a fixed opening base. Monthly totals show cash movement and operating result. Select a month to open its detailed transactions in Data Entry.';
-  }catch(e){$('pxMonthNote').textContent='We could not refresh the financial summary. Please try again.';$('pxYearTable').textContent='Yearly figures are temporarily unavailable.'}
+  }catch(e){
+   var unavailable='<div class="ls-empty">This dashboard section could not be loaded. Please retry.</div>';
+   ['pxVolChart','pxTxnPie','pxOpsPie','pxOpsDashboard'].forEach(function(id){var node=$(id);if(node&&!node.textContent.trim())node.innerHTML=unavailable});
+   if($('pxMonthCards')&&!$('pxMonthCards').textContent.trim())$('pxMonthCards').innerHTML='<div class="ls-empty">Financial figures are temporarily unavailable.</div>';
+   if($('pxYearCards')&&!$('pxYearCards').textContent.trim())$('pxYearCards').innerHTML='<div class="ls-empty">Yearly figures are temporarily unavailable.</div>';
+   $('pxMonthNote').innerHTML='The business dashboard could not be fully refreshed. <button type="button" class="btn alt" id="pxDashboardRetry">Retry dashboard</button>';
+   var retry=$('pxDashboardRetry');if(retry)retry.onclick=load;
+   $('pxYearTable').textContent='Yearly figures are temporarily unavailable.';
+  }
   finally{busy=false;if(rerun){rerun=false;setTimeout(load,0)}}
  }
  function mount(){
@@ -6945,13 +6953,12 @@ function pxCommandHelp(){
   setTimeout(load,300);
  }
  var oldGo=window.go;
- if(typeof oldGo==='function')window.go=function(v,t){oldGo(v,t);if(v==='business')setTimeout(mount,300)};
- window.addEventListener('load',function(){setTimeout(mount,1800)});
- setInterval(function(){if($('bDash')&&!$('bDash').hidden){mount();if($('pxFinancialSummary')&&$('pxMonthCards').textContent==='')load()}},5000);
+ if(typeof oldGo==='function')window.go=function(v,t){oldGo(v,t);if(v==='business')setTimeout(function(){mount();load()},300)};
+ window.addEventListener('load',function(){setTimeout(function(){mount();if($('bDash')&&!$('bDash').hidden)load()},1800)});
 })();
 </script>
 
-<script src="/pelex_artcraft.js?v=1"></script>
+<script src="/pelex_artcraft.js?v=2"></script>
 <script src="/pelex_projects.js?v=12"></script>
 <script src="/pelex_addons_runtime.js?v=2"></script>
 
