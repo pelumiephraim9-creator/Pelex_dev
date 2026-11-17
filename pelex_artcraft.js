@@ -112,25 +112,7 @@
   if(trigger)trigger.focus();
  }
  function handleAccountEscape(e){if(e.key==='Escape')closeAccountPanel()}
- function restoreExistingScheduleNavigation(){
-  var nav=document.querySelector('button[data-go="groups"]');
-  if(nav&&!document.querySelector('button[data-go="scheduled"]')){
-   var b=document.createElement('button');
-   b.className='nav';
-   b.setAttribute('data-go','scheduled');
-   b.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Scheduled<span class="nbadge" id="schedBadge" hidden aria-label="New scheduled results"></span>';
-   nav.parentNode.insertBefore(b,nav);
-  }
-  var bot=document.getElementById('sBot');
-  if(bot&&!Array.from(bot.options).some(function(o){return o.value==='general'})){
-   var option=document.createElement('option');
-   option.value='general';
-   option.textContent='General Agent';
-   bot.insertBefore(option,bot.options[0]||null);
-  }
- }
-
- function init(){addStyles();render();addStudioActions();restoreExistingScheduleNavigation()}
+ function init(){addStyles();render();addStudioActions()}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
  window.PelexArtCraftSpace={apps:APPS,studioUrl:'https://app.getartcraft.com/browser-studio',openAccountPanel:openAccountPanel,closeAccountPanel:closeAccountPanel};
 })();
