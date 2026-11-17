@@ -31,22 +31,25 @@
   s.textContent=
    '.px-art-space{max-width:1180px;margin:0 auto;padding-bottom:30px}'+
    '.px-art-head{display:flex;align-items:center;gap:18px;padding:8px 0 22px;border-bottom:1px solid var(--line,#e3e8f1);margin-bottom:20px}'+
-   '.px-art-brand{width:76px;height:76px;object-fit:contain;flex:none;border-radius:15px;background:#fff}'+
+   '.px-art-brand{display:block;width:240px;flex:none;line-height:0}'+
+   '.px-art-brand img{display:block;width:100%;height:auto}'+
+   '.px-art-logo-dark{display:none}'+
+   ':root[data-theme="dark"] .px-art-logo-light{display:none}:root[data-theme="dark"] .px-art-logo-dark{display:block}'+
    '.px-art-eyebrow{font-size:11px;letter-spacing:.12em;font-weight:800;color:var(--muted,#68758c)}'+
    '.px-art-head h1{margin:4px 0;font-size:clamp(24px,4vw,32px);line-height:1.12;color:var(--ink,#17243b)}'+
    '.px-art-head p,.px-art-section p{margin:0;color:var(--muted,#68758c);font-size:14px}'+
    '.px-art-studio{display:flex;justify-content:space-between;align-items:center;gap:18px;border:1px solid var(--line,#e3e8f1);border-radius:16px;padding:18px 20px;background:var(--panel,#fff);margin:0 0 26px}'+
    '.px-art-studio-copy{max-width:760px}.px-art-studio h2{margin:5px 0;font-size:20px;color:var(--ink,#17243b)}'+
    '.px-art-studio p{margin:0 0 12px;color:var(--muted,#68758c);font-size:14px;line-height:1.5}'+
-   '.px-art-studio a{font-weight:700;color:var(--accent,#2765bd);text-decoration:none}.px-art-studio img{width:76px;height:76px;object-fit:contain;flex:none;background:#fff!important;border:1px solid #e6eaf0;border-radius:12px;padding:6px;box-sizing:border-box}'+
+   '.px-art-studio a{font-weight:700;color:var(--accent,#2765bd);text-decoration:none}'+
    '.px-art-launch{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 18px;border-radius:10px;background:#0b2a5b;color:#fff!important;text-decoration:none;font-weight:700;margin-top:4px}'+
    '.px-art-launch:hover{background:#123b78}.px-art-launch{border:0;cursor:pointer;font:inherit;font-weight:700}'+
    '.px-art-modal[hidden]{display:none}.px-art-modal{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:18px;box-sizing:border-box}'+
    '.px-art-modal-backdrop{position:absolute;inset:0;background:rgba(12,24,43,.56);backdrop-filter:blur(3px)}'+
    '.px-art-account-panel{position:relative;z-index:1;width:min(100%,460px);box-sizing:border-box;padding:28px;border:1px solid var(--line,#e3e8f1);border-radius:20px;background:var(--panel,#fff);color:var(--ink,#17243b);box-shadow:0 24px 70px rgba(10,25,50,.24)}'+
    '.px-art-modal-close{position:absolute;right:12px;top:10px;width:38px;height:38px;border:0;border-radius:10px;background:var(--soft,#f5f7fb);color:var(--ink,#17243b);font-size:26px;line-height:1;cursor:pointer}'+
-   '.px-art-account-logo-wrap{width:76px;height:76px;display:grid;place-items:center;margin:0 0 18px;border:1px solid #e3e8f1;border-radius:15px;background:#fff;padding:8px;box-sizing:border-box}'+
-   '.px-art-account-logo{width:100%;height:100%;object-fit:contain;background:#fff}.px-art-account-panel h2{margin:7px 0 9px;font-size:22px;color:var(--ink,#17243b)}'+
+   '.px-art-account-logo-wrap{display:block;width:230px;max-width:100%;margin:0 0 18px;line-height:0}'+
+   '.px-art-account-logo{display:block;width:100%;height:auto;object-fit:contain}.px-art-account-logo.px-art-logo-dark{display:none}:root[data-theme="dark"] .px-art-account-logo.px-art-logo-light{display:none}:root[data-theme="dark"] .px-art-account-logo.px-art-logo-dark{display:block}.px-art-account-panel h2{margin:7px 0 9px;font-size:22px;color:var(--ink,#17243b)}'+
    '.px-art-account-panel p{font-size:14px;line-height:1.55;color:var(--muted,#68758c)}.px-art-account-continue{display:flex;width:100%;box-sizing:border-box;margin-top:18px}'+
    '.px-art-account-panel .px-art-account-security{font-size:12px;margin:13px 0 0}.px-art-modal-open{overflow:hidden}'+
    '@media(max-width:560px){.px-art-account-panel{padding:24px 20px;border-radius:17px}}'+
@@ -59,8 +62,8 @@
    '.px-art-card h3{font-size:15px;line-height:1.25;margin:0;color:var(--ink,#17243b)}.px-art-card p{font-size:12px;line-height:1.45;margin:0;color:var(--muted,#68758c);min-height:35px}'+
    '.px-art-status{font-size:10px;font-weight:700;color:var(--muted,#68758c);padding-top:8px;border-top:1px solid var(--line,#e3e8f1)}'+
    '.px-art-note{font-size:12px;color:var(--muted,#68758c);margin:16px 0 0}'+
-   '@media(max-width:560px){.px-art-head{align-items:flex-start;gap:12px}.px-art-brand{width:62px;height:62px}.px-art-studio{padding:14px}.px-art-studio img{width:54px;height:54px}.px-art-card{padding:12px}}'+
-   ':root[data-theme="dark"] .px-art-brand,:root[data-theme="dark"] .px-art-icon,:root[data-theme="dark"] .px-art-studio img{background:#fff}';
+   '@media(max-width:560px){.px-art-head{align-items:flex-start;gap:12px}.px-art-brand{width:175px}.px-art-studio{padding:14px}.px-art-card{padding:12px}}'+
+   ':root[data-theme="dark"] .px-art-icon{background:#fff}';
   document.head.appendChild(s);
  }
  function render(){
@@ -92,7 +95,7 @@
    panel=document.createElement('div');
    panel.id='pxArtAccountPanel';
    panel.className='px-art-modal';
-   panel.innerHTML='<div class="px-art-modal-backdrop" data-art-close="1"></div><section class="px-art-account-panel" role="dialog" aria-modal="true" aria-labelledby="pxArtAccountTitle" aria-describedby="pxArtAccountDescription"><button type="button" class="px-art-modal-close" aria-label="Close ArtCraft account panel" data-art-close="1">×</button><div class="px-art-account-logo-wrap"><img src="'+ROOT+'/artcraft-logo.png" alt="ArtCraft logo" class="px-art-account-logo"></div><div class="px-art-eyebrow">ARTCRAFT ACCOUNT ACCESS</div><h2 id="pxArtAccountTitle">Continue to ArtCraft Studio</h2><p id="pxArtAccountDescription">Use your ArtCraft account to access the creative studio. You can sign in or create an account on ArtCraft’s official website.</p><a class="px-art-launch px-art-account-continue" href="https://app.getartcraft.com/browser-studio" target="_blank" rel="noopener noreferrer">Continue to ArtCraft sign in</a><p class="px-art-account-security">Your ArtCraft password is entered only on ArtCraft’s official site. Pelex does not collect your password or claim that your account is connected.</p></section>';
+   panel.innerHTML='<div class="px-art-modal-backdrop" data-art-close="1"></div><section class="px-art-account-panel" role="dialog" aria-modal="true" aria-labelledby="pxArtAccountTitle" aria-describedby="pxArtAccountDescription"><button type="button" class="px-art-modal-close" aria-label="Close ArtCraft account panel" data-art-close="1">×</button><div class="px-art-account-logo-wrap"><img src="https://raw.githubusercontent.com/storytold/wordcraft/bbfacd8f624a751f11e8bc614ddf27dd675f7388/docs/brand/artcraft-logo.svg" alt="ArtCraft" class="px-art-account-logo px-art-logo-light"><img src="https://raw.githubusercontent.com/storytold/wordcraft/bbfacd8f624a751f11e8bc614ddf27dd675f7388/docs/brand/artcraft-logo-white.svg" alt="" aria-hidden="true" class="px-art-account-logo px-art-logo-dark"></div><div class="px-art-eyebrow">ARTCRAFT ACCOUNT ACCESS</div><h2 id="pxArtAccountTitle">Continue to ArtCraft Studio</h2><p id="pxArtAccountDescription">Use your ArtCraft account to access the creative studio. You can sign in or create an account on ArtCraft’s official website.</p><a class="px-art-launch px-art-account-continue" href="https://app.getartcraft.com/browser-studio" target="_blank" rel="noopener noreferrer">Continue to ArtCraft sign in</a><p class="px-art-account-security">Your ArtCraft password is entered only on ArtCraft’s official site. Pelex does not collect your password or claim that your account is connected.</p></section>';
    panel.addEventListener('click',function(e){if(e.target&&e.target.getAttribute('data-art-close')==='1')closeAccountPanel()});
    document.body.appendChild(panel);
   }
