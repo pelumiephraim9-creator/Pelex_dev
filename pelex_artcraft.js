@@ -38,7 +38,7 @@
    '.px-art-studio{display:flex;justify-content:space-between;align-items:center;gap:18px;border:1px solid var(--line,#e3e8f1);border-radius:16px;padding:18px 20px;background:var(--panel,#fff);margin:0 0 26px}'+
    '.px-art-studio-copy{max-width:760px}.px-art-studio h2{margin:5px 0;font-size:20px;color:var(--ink,#17243b)}'+
    '.px-art-studio p{margin:0 0 12px;color:var(--muted,#68758c);font-size:14px;line-height:1.5}'+
-   '.px-art-studio a{font-weight:700;color:var(--accent,#2765bd);text-decoration:none}.px-art-studio img{width:76px;height:76px;object-fit:contain;flex:none;background:#fff;border-radius:14px}'+
+   '.px-art-studio a{font-weight:700;color:var(--accent,#2765bd);text-decoration:none}.px-art-studio img{width:76px;height:76px;object-fit:contain;flex:none;background:#fff!important;border:1px solid #e6eaf0;border-radius:12px;padding:6px;box-sizing:border-box}'+\n   '.px-art-launch{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 18px;border-radius:10px;background:#0b2a5b;color:#fff!important;text-decoration:none;font-weight:700;margin-top:4px}'+\n   '.px-art-launch:hover{background:#123b78}.px-art-account-note{font-size:12px!important;margin:9px 0 0!important;max-width:560px}'+
    '.px-art-section{margin:0 0 14px}.px-art-section h2{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:19px;color:var(--ink,#17243b)}'+
    '.px-art-section h2 span{font-size:11px;font-weight:700;color:var(--muted,#68758c);border:1px solid var(--line,#e3e8f1);padding:4px 8px;border-radius:20px}'+
    '.px-art-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr));gap:13px}'+
@@ -60,7 +60,43 @@
    return '<article class="px-art-card"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p><div class="px-art-status">App launch and file connection: next integration stage</div></article>';
   }).join('');
  }
- function init(){addStyles();render()}
+
+ function addStudioActions(){
+  var copy=document.querySelector('.px-art-studio-copy');
+  if(copy&&!document.getElementById('pxArtStudioLaunch')){
+   var a=document.createElement('a');
+   a.id='pxArtStudioLaunch';
+   a.href='https://app.getartcraft.com/browser-studio';
+   a.target='_blank';
+   a.rel='noopener noreferrer';
+   a.className='px-art-launch';
+   a.textContent='Open ArtCraft Studio';
+   copy.appendChild(a);
+   var note=document.createElement('p');
+   note.className='px-art-account-note';
+   note.textContent='Sign in or create your ArtCraft account securely in the official Studio. Pelex does not collect your ArtCraft password.';
+   copy.appendChild(note);
+  }
+ }
+ function restoreExistingScheduleNavigation(){
+  var nav=document.querySelector('button[data-go="groups"]');
+  if(nav&&!document.querySelector('button[data-go="scheduled"]')){
+   var b=document.createElement('button');
+   b.className='nav';
+   b.setAttribute('data-go','scheduled');
+   b.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Scheduled<span class="nbadge" id="schedBadge" hidden aria-label="New scheduled results"></span>';
+   nav.parentNode.insertBefore(b,nav);
+  }
+  var bot=document.getElementById('sBot');
+  if(bot&&!Array.from(bot.options).some(function(o){return o.value==='general'})){
+   var option=document.createElement('option');
+   option.value='general';
+   option.textContent='General Agent';
+   bot.insertBefore(option,bot.options[0]||null);
+  }
+ }
+
+ function init(){addStyles();render();addStudioActions();restoreExistingScheduleNavigation()}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
  window.PelexArtCraftSpace={apps:APPS,studioUrl:'https://app.getartcraft.com/'};
 })();
