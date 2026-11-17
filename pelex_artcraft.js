@@ -38,7 +38,9 @@
    '.px-art-studio{display:flex;justify-content:space-between;align-items:center;gap:18px;border:1px solid var(--line,#e3e8f1);border-radius:16px;padding:18px 20px;background:var(--panel,#fff);margin:0 0 26px}'+
    '.px-art-studio-copy{max-width:760px}.px-art-studio h2{margin:5px 0;font-size:20px;color:var(--ink,#17243b)}'+
    '.px-art-studio p{margin:0 0 12px;color:var(--muted,#68758c);font-size:14px;line-height:1.5}'+
-   '.px-art-studio a{font-weight:700;color:var(--accent,#2765bd);text-decoration:none}.px-art-studio img{width:76px;height:76px;object-fit:contain;flex:none;background:#fff!important;border:1px solid #e6eaf0;border-radius:12px;padding:6px;box-sizing:border-box}'+\n   '.px-art-launch{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 18px;border-radius:10px;background:#0b2a5b;color:#fff!important;text-decoration:none;font-weight:700;margin-top:4px}'+\n   '.px-art-launch:hover{background:#123b78}.px-art-account-note{font-size:12px!important;margin:9px 0 0!important;max-width:560px}'+
+   '.px-art-studio a{font-weight:700;color:var(--accent,#2765bd);text-decoration:none}.px-art-studio img{width:76px;height:76px;object-fit:contain;flex:none;background:#fff!important;border:1px solid #e6eaf0;border-radius:12px;padding:6px;box-sizing:border-box}'+
+   '.px-art-launch{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 18px;border-radius:10px;background:#0b2a5b;color:#fff!important;text-decoration:none;font-weight:700;margin-top:4px}'+
+   '.px-art-launch:hover{background:#123b78}.px-art-account-note{font-size:12px!important;margin:9px 0 0!important;max-width:560px}'+
    '.px-art-section{margin:0 0 14px}.px-art-section h2{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:19px;color:var(--ink,#17243b)}'+
    '.px-art-section h2 span{font-size:11px;font-weight:700;color:var(--muted,#68758c);border:1px solid var(--line,#e3e8f1);padding:4px 8px;border-radius:20px}'+
    '.px-art-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr));gap:13px}'+
