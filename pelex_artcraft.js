@@ -24,6 +24,13 @@
   ['craft-anything','Craft Anything','Explore software and build your own projects']
  ];
  var VERIFIED_ICONS={photocraft:1,vectorcraft:1,filmcraft:1,lightcraft:1,pdfcraft:1,effectcraft:1,designcraft:1,soundcraft:1,wordcraft:1,deckcraft:1,cadcraft:1,gridcraft:1};
+ var APP_ICON_URLS={
+  anicraft:'https://raw.githubusercontent.com/storytold/anicraft/main/assets/app-icon/hicolor/128x128/apps/ai.storyteller.anicraft.png',
+  figcraft:'https://raw.githubusercontent.com/storytold/figcraft/main/assets/app-icon/hicolor/128x128/apps/ai.storyteller.figcraft.png',
+  texturecraft:'https://raw.githubusercontent.com/storytold/texturecraft/main/assets/app-icon/hicolor/128x128/apps/ai.storyteller.texturecraft.png',
+  materialcraft:'https://raw.githubusercontent.com/storytold/materialcraft/main/assets/app-icon/hicolor/128x128/apps/ai.storyteller.materialcraft.png',
+  'craft-anything':'https://raw.githubusercontent.com/storytold/craft-anything/main/assets/app-icon/hicolor/128x128/apps/ai.storyteller.craft-anything.png'
+ };
  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
  function addStyles(){
   if(document.getElementById('pxArtSpaceCss'))return;
@@ -69,8 +76,15 @@
  function render(){
   var grid=document.getElementById('pxArtGrid');if(!grid||grid.dataset.ready==='1')return;
   grid.dataset.ready='1';
+  grid.addEventListener('error',function(e){
+   var img=e.target;if(!img||!img.classList||!img.classList.contains('px-art-icon'))return;
+   var card=img.closest('.px-art-card'),heading=card&&card.querySelector('h3'),name=heading?heading.textContent:'';
+   var initials=name.split(/\\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase();
+   img.outerHTML='<span class="px-art-monogram" aria-hidden="true">'+esc(initials)+'</span>';
+  },true);
   grid.innerHTML=APPS.map(function(a){
-   var slug=a[0],name=a[1],desc=a[2],icon=VERIFIED_ICONS[slug]?'<img class="px-art-icon" src="'+ROOT+'/apps/'+slug+'/icon.webp" alt="" loading="lazy">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
+   var slug=a[0],name=a[1],desc=a[2],src=APP_ICON_URLS[slug]||(VERIFIED_ICONS[slug]?ROOT+'/apps/'+slug+'/icon.webp':'');
+   var icon=src?'<img class="px-art-icon" src="'+src+'" alt="" loading="lazy" decoding="async">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
    return '<article class="px-art-card"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p><div class="px-art-status">App launch and file connection: next integration stage</div></article>';
   }).join('');
  }
