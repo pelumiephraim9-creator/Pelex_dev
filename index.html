@@ -1414,6 +1414,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <button class="nav newchat" data-go="chat"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New chat</button>
 <button class="nav" data-go="projects"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Chat projects</button>
 <button class="nav" data-go="scheduled"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Scheduled<span class="nbadge" id="schedBadge" hidden aria-label="New scheduled results"></span></button>
+<button class="nav" data-go="artcraft" id="navArtCraft"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 16l.9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16z"/></svg>ArtCraft Space</button>
 <button class="nav" data-go="groups"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.4 3-5 6-5s5.4 1.6 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.2c2.4.2 4 1.6 4.5 4.3"/></svg>Groups<span class="nbadge" id="gBadge" hidden aria-label="Groups with new messages"></span></button>
 <button class="nav" data-go="spotlight"><svg viewBox="0 0 24 24"><path d="M7 4l12 8-12 8z"/></svg>Spotlight</button>
 <div class="agentsgrp" id="agentsGrp"><button type="button" class="nav agentsbtn" id="agentsBtn" aria-expanded="false" aria-controls="agentsPanel"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M3 13v2M21 13v2"/></svg>Agents<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><div class="agentspanel" id="agentsPanel"><button class="nav" data-go="pitch"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-3-7z"/></svg>Pitch Agent</button>
@@ -1658,6 +1659,30 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="slist" id="sList"></div>
 <p class="muted" id="sEmpty" style="margin-top:14px">Nothing scheduled yet.</p>
 </div></section>
+
+<section class="view" id="v-artcraft" hidden>
+ <div class="px-art-space">
+  <header class="px-art-head">
+   <div class="px-art-brand" aria-hidden="true" style="display:grid;place-items:center;color:#245eb5;font-size:30px;font-weight:800">✦</div>
+   <div><div class="px-art-eyebrow">PELEX CREATIVE WORKSPACE</div><h1>ArtCraft Space</h1><p>Your creative tools, organised in one place.</p></div>
+  </header>
+  <section class="px-art-studio">
+   <div class="px-art-studio-copy">
+    <div class="px-art-eyebrow">CREATIVE STUDIO</div>
+    <h2>ArtCraft Studio</h2>
+    <p>Create images, videos, audio and 3D projects with ArtCraft. For now, sign in securely on the official ArtCraft website using your own account. Pelex account connection will be added after ArtCraft confirms a supported OAuth or delegated-access method.</p>
+    <a href="https://app.getartcraft.com/" target="_blank" rel="noopener noreferrer">Open ArtCraft Studio ↗</a>
+   </div>
+   <div aria-hidden="true" style="width:72px;height:72px;flex:none;border-radius:18px;background:#eef4ff;display:grid;place-items:center;color:#245eb5;font-size:34px">✧</div>
+  </section>
+  <section class="px-art-section">
+   <h2>Crafting Apps <span>17 apps</span></h2>
+   <p>Explore the creative app collection. Pelex launch and account linking will be enabled in the next integration stage.</p>
+  </section>
+  <div class="px-art-grid" id="pxArtGrid" aria-live="polite"></div>
+  <p class="px-art-note">Account connection and generation are not active inside Pelex yet. Your ArtCraft credentials and API keys are never requested or stored by this preview.</p>
+ </div>
+</section>
 
 <section class="view" id="v-images" hidden><div class="wrap"><h1>Image generation</h1><div class="card" style="margin-top:18px"><h2>Temporarily unavailable</h2><p class="muted">Pelex cannot create or edit images at the moment. You can still ask Pelex to develop the visual concept, describe the scene, or write a detailed prompt for you.</p><p class="muted">To create the actual image, copy the prompt into ChatGPT image generation or another image-creation tool.</p></div></div></section>
 
@@ -6930,6 +6955,7 @@ function pxCommandHelp(){
 })();
 </script>
 
+<script src="/pelex_artcraft.js?v=1"></script>
 <script src="/pelex_projects.js?v=12"></script>
 <script src="/pelex_addons_runtime.js?v=2"></script>
 
