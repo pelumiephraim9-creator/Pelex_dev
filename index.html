@@ -1428,7 +1428,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="rechead" id="recLabel" hidden><button type="button" class="rechtitle" id="recToggle" aria-expanded="true">Chats <svg viewBox="0 0 24 24" class="rchev"><path d="M6 9l6 6 6-6"/></svg></button><span class="rechtools"><button type="button" id="recAll" aria-label="Show all chats" title="Show all"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></button><button type="button" id="recSearchBtn" aria-label="Search chats" title="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/></svg></button><button type="button" id="recSortBtn" aria-label="Sort chats" title="Sort: Last activity"><svg viewBox="0 0 24 24"><path d="M6 4v16M12 4v16M18 4v16M4 9h4M10 15h4M16 8h4"/></svg></button></span></div>
 <div class="recsearch" id="recSearchWrap" hidden><input id="recSearch" type="search" placeholder="Search chats" autocomplete="off"></div>
 <div id="recents"></div>
-<div class="sidefoot" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><button class="nav" data-go="settings" aria-label="Settings" title="Settings" style="width:44px;height:44px;min-height:44px;justify-content:center;padding:0"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1-2.1"/></svg></button><button class="nav" id="sbAccountBtn" type="button" aria-label="Sign in" title="Sign in" style="width:44px;height:44px;min-height:44px;justify-content:center;padding:0;border-radius:10px"><span class="av"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span></button></div>
+<div class="sidefoot" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><button class="nav" id="sbSettingsBtn" data-go="settings" aria-label="Settings" title="Settings" type="button"><svg viewBox="0 0 32 32" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.1 3.8h5.8l.8 3.1c.8.3 1.5.7 2.2 1.3l3.1-.8 2.9 5-2.3 2.3c.1.9.1 1.7 0 2.6l2.3 2.3-2.9 5-3.1-.8c-.7.6-1.4 1-2.2 1.3l-.8 3.1h-5.8l-.8-3.1c-.8-.3-1.5-.7-2.2-1.3L7 24.6l-2.9-5 2.3-2.3a10 10 0 0 1 0-2.6l-2.3-2.3 2.9-5 3.1.8c.7-.6 1.4-1 2.2-1.3z"/><circle cx="16" cy="16" r="4.2"/></svg></button><button class="nav" id="sbAccountBtn" type="button" aria-label="Sign in" title="Sign in" style="width:52px;height:52px;min-width:52px;min-height:52px;justify-content:center;padding:0;border-radius:14px"><span class="av"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span></button></div>
 </aside>
 
 <div id="onb" role="dialog" aria-modal="true" aria-label="Set up your profile"><div class="onbw">
@@ -6948,6 +6948,21 @@ body::before{display:none!important;content:none!important}
 #pelexNewChatGrip.dragging::before{width:52px;background:var(--btn);transform:scaleY(1.25)}
 #pelexNewChatGrip.ready::before{width:64px;box-shadow:0 0 0 5px rgba(20,43,82,.14),0 6px 14px rgba(0,0,0,.2)}
 @media(prefers-reduced-motion:reduce){#pelexNewChatGrip::before{transition:none}}
+
+/* Scoped sidebar utility controls: Settings and Account only. */
+#sbSettingsBtn,#sbAccountBtn{
+ width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;
+ flex:0 0 52px;justify-content:center!important;align-items:center!important;padding:0!important;
+ border:1px solid var(--line)!important;border-radius:14px!important;
+ background:var(--panel)!important;color:var(--nav-ink)!important;
+ box-shadow:0 2px 7px rgba(12,27,58,.07);
+ transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+#sbSettingsBtn svg{width:30px!important;height:30px!important;stroke-width:2.8!important}
+#sbAccountBtn .av{width:42px!important;height:42px!important;border-radius:12px!important;background:var(--sel)!important;border:1px solid var(--line);color:var(--nav-ink)!important;margin:0!important;flex:none}
+#sbAccountBtn .av svg{width:26px!important;height:26px!important;stroke-width:2!important}
+#sbSettingsBtn:hover,#sbAccountBtn:hover{background:var(--sel)!important;border-color:var(--btn)!important;box-shadow:0 3px 10px rgba(12,27,58,.11);transform:translateY(-1px)}
+#sbSettingsBtn:focus-visible,#sbAccountBtn:focus-visible{outline:3px solid color-mix(in srgb,var(--btn) 35%,transparent);outline-offset:2px}
 </style>
 <script id="pelex-final-ui-behavior">
 (function(){var root=document.documentElement,meta=document.querySelector('meta[name="theme-color"]');function syncThemeColor(){var theme=root.getAttribute('data-theme'),dark=theme==='dark'||(!theme&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(meta)meta.setAttribute('content',dark?'#0C1423':'#FFFFFF')}syncThemeColor();try{new MutationObserver(syncThemeColor).observe(root,{attributes:true,attributeFilter:['data-theme']})}catch(e){}try{var themeMedia=window.matchMedia('(prefers-color-scheme: dark)');if(themeMedia.addEventListener)themeMedia.addEventListener('change',syncThemeColor);else if(themeMedia.addListener)themeMedia.addListener(syncThemeColor)}catch(e){}
