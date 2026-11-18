@@ -4124,6 +4124,7 @@ if('serviceWorker' in navigator){
     var root=document.createElement('div');root.className='md';
     var lines=String(src==null?'':src).replace(/\r/g,'').replace(/[\u200B-\u200D\uFEFF]/g,'').split('\n').map(function(line){
       // Normalize malformed Markdown without exposing formatting markers.
+      line=line.replace(/^\\s*\\*\\*([^*\\n]{2,80}?)\\*{0,2}\\s*$/,'## $1');
       line=line.replace(/^\s*#\*+\s*/,'# ');
       line=line.replace(/^\s*\*+#\s*/,'# ');
       line=line.replace(/^\s*\*{1,3}([A-Za-z][A-Za-z /&-]{0,28}):\*{1,3}\s*/,'$1: ');
@@ -7014,6 +7015,40 @@ body::before{display:none!important;content:none!important}
 }
 #sbSettingsBtn:focus-visible,#sbAccountBtn:focus-visible{
   outline:3px solid color-mix(in srgb,var(--btn) 35%,transparent);outline-offset:2px;
+}
+
+/* Chat message layout: plain assistant text, consistent edges, no overflow. */
+#chat .msg:not(.me):not(.sys){
+  display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+  align-self:stretch!important;box-sizing:border-box!important;
+  padding:8px 2px 2px!important;margin:12px 0 18px!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;overflow:visible!important;
+}
+#chat .msg:not(.me):not(.sys)>.md,
+#chat .msg:not(.me):not(.sys)>.txtp{
+  display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;
+}
+#chat .msg .md{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:normal}
+#chat .msg .md p,#chat .msg .md li,#chat .msg .md .mdh{
+  max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal;
+}
+#chat .msg .md p{margin:.35em 0 .85em;line-height:1.65}
+#chat .msg .md .mdh{font-weight:750;line-height:1.35;margin:1.05em 0 .45em}
+#chat .msg .md .mdh:first-child{margin-top:0}
+#chat .msg .md ul,#chat .msg .md ol{margin:.4em 0 1em;padding-left:1.35rem}
+#chat .msg .md li{padding-left:.12rem;margin:.38em 0;line-height:1.6}
+#chat .msg .md table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important;display:block!important;overflow-x:auto!important}
+#chat .msg .md th,#chat .msg .md td{max-width:none;overflow-wrap:anywhere;word-break:normal}
+#chat .msg .msgactions{display:flex;align-items:center;gap:8px;margin:12px 0 0;padding:0}
+#chat .msg.me{
+  width:fit-content;max-width:min(86%,620px);min-width:0;box-sizing:border-box;
+  margin:12px 0 12px auto;overflow-wrap:anywhere;word-break:normal;
+}
+#chat .msg.me .me-pill{display:block;max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:600px){
+  #chat .msg:not(.me):not(.sys){padding:6px 1px 2px!important;margin:10px 0 16px!important}
+  #chat .msg.me{max-width:86%;padding:13px 15px}
 }
 </style>
 <script id="pelex-final-ui-behavior">
