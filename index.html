@@ -1942,6 +1942,19 @@ function add(t,cls,img,retryFn){
     .replace(/https?:\/\/(?:pelexn8n\.onrender\.com|pelexNA10\.runrender\.com)[^\s<>) ]*/gi,function(url,offset,whole){return whole.slice(Math.max(0,offset-2),offset)===']('?url:''})
     .replace(/\b(?:Download|Preview)\s+(?:PDF|file)\s*:?\s*/gi,'')
     .replace(/\n[ \t]*\n[ \t]*\n+/g,'\n\n').trim():t;
+  // Give ordinary assistant replies a clear topic heading even when the model
+  // forgets one. Preserve intentional headings, code, and structured outputs.
+  if(!cls&&typeof displayT==='string'&&displayT.length>45&&displayT.indexOf('```')<0&&!/^\s{0,3}#{1,4}\s/m.test(displayT)){
+    var firstLine=(displayT.split(/\n/).filter(function(x){return x.trim()})[0]||'').trim();
+    var titleSeed=firstLine.split(/(?<=[.!?])\s+/)[0]||firstLine;
+    titleSeed=titleSeed.replace(/^\s*(?:hello|hi|hey|giggy|sure|certainly|of course)[^,:.!?]{0,45}[,:.!?]\s*/i,'');
+    titleSeed=titleSeed.replace(/^.{0,55}?\b(?:here(?:'s| is)\s+(?:a\s+)?(?:quick\s+)?(?:insight|overview|summary|breakdown)|quick\s+(?:insight|overview|summary))\s*:\s*/i,'');
+    var titleWords=titleSeed.replace(/\*{1,2}/g,'').replace(/[^\p{L}\p{N}\s&/-]/gu,' ').trim().split(/\s+/).filter(Boolean).slice(0,5);
+    if(titleWords.length>=2){
+      var autoTitle=titleWords.map(function(w){return /^(AI|API|NLP|SEO|URL|GDP|USD|BTC|US|UK)$/i.test(w)?w:w.charAt(0).toUpperCase()+w.slice(1)}).join(' ');
+      displayT='## '+autoTitle+'\n\n'+displayT;
+    }
+  }
   if(!cls&&displayT.indexOf('```')>-1){
     displayT.split('```').forEach(function(seg,k){
       if(k%2===0){if(seg.trim()){var tp=document.createElement('span');tp.className='txtp';var sg=seg.replace(/^\n+|\n+$/g,'');if(window.mdRender)tp.appendChild(window.mdRender(sg));else tp.textContent=sg;textNode.appendChild(tp)}}
@@ -7029,7 +7042,14 @@ body::before{display:none!important;content:none!important}
 #chat .msg:not(.me):not(.sys)>.txtp{
   display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;
 }
-#chat .msg .md{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:normal}
+#chat .msg .md{display:block!important;width:100%!important;min-width:0;max-width:100%;text-align:left!important;direction:ltr;overflow-wrap:anywhere;word-break:normal}
+#chat .msg .md p,#chat .msg .md li,#chat .msg .md .mdh{ text-align:left!important; direction:ltr; }
+#chat .msg .md .mdh{display:block;width:100%;font-size:1.08em;letter-spacing:-.01em;color:var(--ink);padding:0;margin:0 0 .65em}
+#chat .msg .md p{margin:.35em 0 .9em;line-height:1.72;text-align:left!important}
+#chat .msg .md strong{font-weight:750;color:var(--ink)}
+#chat .msg .md ul,#chat .msg .md ol{padding-left:1.45rem;margin:.45em 0 1em}
+#chat .msg .md li{padding-left:.12rem;margin:.38em 0;line-height:1.65}
+#chat .msg .md hr{border:0;border-top:1px solid var(--line);margin:1em 0}
 #chat .msg .md p,#chat .msg .md li,#chat .msg .md .mdh{
   max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal;
 }
