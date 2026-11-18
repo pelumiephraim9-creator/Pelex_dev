@@ -1934,7 +1934,7 @@ function add(t,cls,img,retryFn){
   if(typeof t==='string')t=t.replace(/https?:\/\/(?:www\.)?pelex\.tech(?=\/media\/download(?:\?|$))/gi,'https://pelexn8n.onrender.com');
   try{if(typeof t==='string'&&t){var hh=(window.__hist=window.__hist||[]);if(cls==='me')hh.push({role:'user',content:t});else if(!cls)hh.push({role:'assistant',content:t});if(hh.length>40)hh.splice(0,hh.length-40)}}catch(e){}var d=document.createElement('div');d.className='msg '+(cls||'');
   if(img){var imgs=Array.isArray(img)?img:[img],box=d;if(imgs.length>1){box=document.createElement('div');box.className='imgs';d.appendChild(box)}imgs.forEach(function(src){var im=document.createElement('img');im.src=src;im.alt='Uploaded image';box.appendChild(im)})}
-  var textNode=document.createElement('span');
+  var textNode=document.createElement('div');
   // File action URLs are consumed below to build the in-app preview/download card.
   // Keep those backend URLs out of the visible chat message.
   var displayT=(!cls&&typeof t==='string')?t
@@ -4154,14 +4154,14 @@ if('serviceWorker' in navigator){
       var re=/!\[([^\]]*)\]\((https:\/\/[^\s)]+)\)|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*|`([^`\n]+)`|(https?:\/\/[^\s<)\]]+)/g,last=0,m;
       function link(h,t){var a=document.createElement('a');a.href=h;a.textContent=t;a.target='_blank';a.rel='noopener noreferrer nofollow';return a}
       while((m=re.exec(s))){
-        if(m.index>last)p.appendChild(document.createTextNode(s.slice(last,m.index)));
+        if(m.index>last)p.appendChild(document.createTextNode(s.slice(last,m.index).replace(/\*+/g,'')));
         if(m[2]){var im=document.createElement('img');im.src=m[2];im.alt=m[1]||'Image';im.loading='lazy';im.referrerPolicy='no-referrer';im.onerror=function(){this.style.display='none'};p.appendChild(im)}
         else if(m[4])p.appendChild(link(m[4],m[3]));
         else if(m[5]||m[6]){var b=document.createElement('strong');b.textContent=m[5]||m[6];p.appendChild(b)}
         else if(m[7]){var c=document.createElement('code');c.textContent=m[7];p.appendChild(c)}
         else if(m[8]){var u=m[8],tail='';while(/[.,;:!?]$/.test(u)){tail=u.slice(-1)+tail;u=u.slice(0,-1)}p.appendChild(link(u,u));if(tail)p.appendChild(document.createTextNode(tail))}
         last=re.lastIndex}
-      if(last<s.length)p.appendChild(document.createTextNode(s.slice(last)))}
+      if(last<s.length)p.appendChild(document.createTextNode(s.slice(last).replace(/\*+/g,'')))}
     function tbl(rows){var t=document.createElement('table'),n=Math.max.apply(null,rows.map(function(r){return r.length}));
       rows.forEach(function(r,ri){var tr=document.createElement('tr');for(var k=0;k<n;k++){var c=document.createElement(ri===0?'th':'td');inl(c,r[k]||'');tr.appendChild(c)}t.appendChild(tr)});return t}
     var UL=/^\s*[-*\u2022]\s+/,OL=/^\s*\d+[.)]\s+/,SEP=/^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/;
@@ -7042,7 +7042,7 @@ body::before{display:none!important;content:none!important}
 #chat .msg:not(.me):not(.sys)>.txtp{
   display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;
 }
-#chat .msg .md{display:block!important;width:100%!important;min-width:0;max-width:100%;text-align:left!important;direction:ltr;overflow-wrap:anywhere;word-break:normal}
+#chat .msg .md{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important;padding:0!important;text-align:left!important;direction:ltr!important;overflow-wrap:anywhere;word-break:normal;box-sizing:border-box!important}
 #chat .msg .md p,#chat .msg .md li,#chat .msg .md .mdh{ text-align:left!important; direction:ltr; }
 #chat .msg .md .mdh{display:block;width:100%;font-size:1.08em;letter-spacing:-.01em;color:var(--ink);padding:0;margin:0 0 .65em}
 #chat .msg .md p{margin:.35em 0 .9em;line-height:1.72;text-align:left!important}
