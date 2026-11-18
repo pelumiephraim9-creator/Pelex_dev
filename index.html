@@ -6829,7 +6829,22 @@ function pxCommandHelp(){
    var btn=el('pxFSave');btn.disabled=true;message('Saving transaction…');
    var r=x?await window.sb.rpc('business_update_transaction',Object.assign({p_entry_id:x.id},args)):await window.sb.rpc('business_add_transaction',args);
    if(r.error){message('Not saved: '+r.error.message,true);btn.disabled=false;return}
-   box.hidden=true;await load();if(window.__lsLoad)window.__lsLoad();
+   if(r.data===null||r.data===undefined){message('The database did not confirm this transaction. Please refresh the register before trying again.',true);btn.disabled=false;return}
+   var verify=await window.sb.rpc('business_list_transactions',{p_workspace:ws(),p_project:el('pxFProject').value,p_from:date,p_to:date,p_search:null,p_limit:1000});
+   if(verify.error||!(verify.data||[]).some(function(row){return String(row.id)===String(r.data)&&String(row.entry_date)===date})){
+    message('The transaction was submitted, but the register could not confirm the selected date. Refresh the register and check before submitting again.',true);btn.disabled=false;return
+   }
+   var asOfField=el('lsDate');
+   if(asOfField&&(!asOfField.value||date>asOfField.value))asOfField.value=date;
+   var monthValue=date.slice(0,7),yearValue=date.slice(0,4),monthNumber=date.slice(5,7);
+   if(el('pxMonthPick'))el('pxMonthPick').value=monthValue;
+   if(el('pxOpsMonth'))el('pxOpsMonth').value=monthValue;
+   if(el('pxTrYear'))el('pxTrYear').value=yearValue;
+   if(el('pxTrMonth'))el('pxTrMonth').value=monthNumber;
+   box.hidden=true;await load();
+   if(window.__lsLoad)await window.__lsLoad();
+   if(window.__pxDashboardLoad)await window.__pxDashboardLoad();
+   if(window.pxBusinessProjects&&window.pxBusinessProjects.refreshOperations)await window.pxBusinessProjects.refreshOperations();
   };
  }
  function start(){
@@ -6990,5 +7005,7 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
 <script src="/spotlight-layout-fix.js?v=1"></script>
 <script src="/pelex_minimal_business_ui.js?v=7"></script>
 <script src="business-analysis-period-fix.js?v=1"></script>
+<script src="/pelex_ui_corrections.js?v=1"></script>
+<script src="/pelex_business_date_sync.js?v=1"></script>
 </body>
 </html>
