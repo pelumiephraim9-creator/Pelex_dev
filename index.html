@@ -1413,7 +1413,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="brand"><svg class="mark" viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><polygon points="20,3 35,11.5 35,28.5 20,37 5,28.5 5,11.5" fill="none" stroke="#0b1b4a" stroke-width="1.6"/><circle cx="20" cy="3" r="2" fill="#5ec3e6"/><circle cx="20" cy="37" r="2" fill="#5ec3e6"/><circle cx="35" cy="11.5" r="2" fill="var(--btn)"/><circle cx="35" cy="28.5" r="2" fill="var(--btn)"/><circle cx="5" cy="11.5" r="2" fill="var(--btn)"/><circle cx="5" cy="28.5" r="2" fill="var(--btn)"/><rect x="11" y="11" width="18" height="18" rx="5" fill="var(--btn)"/><text x="20" y="25" text-anchor="middle" font-size="13" font-weight="800" font-family="Segoe UI,system-ui,Arial,sans-serif" fill="var(--btnink)">P</text></svg>Pelex<span style="margin-left:auto;display:flex;gap:14px"><button class="iconbtn" id="instNavDesk" aria-label="Install app" hidden><svg viewBox="0 0 24 24"><path d="M12 4v10M8 10l4 4 4-4M5 19h14"/></svg></button><button class="iconbtn" id="sideCollapse" aria-label="Hide sidebar"><svg viewBox="0 0 24 24"><path d="M5 6h8M9 12h11M4 18h12"/></svg></button></span></div>
 <button class="nav newchat" data-go="chat"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New chat</button>
 <button class="nav" data-go="projects"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Chat projects</button>
-<button class="nav" data-go="scheduled"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Scheduled<span class="nbadge" id="schedBadge" hidden aria-label="New scheduled results"></span></button>
+<button class="nav" data-go="artcraft" id="navArtCraft"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 16l.9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16z"/></svg>ArtCraft Space</button>
 <button class="nav" data-go="groups"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.4 3-5 6-5s5.4 1.6 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.2c2.4.2 4 1.6 4.5 4.3"/></svg>Groups<span class="nbadge" id="gBadge" hidden aria-label="Groups with new messages"></span></button>
 <button class="nav" data-go="spotlight"><svg viewBox="0 0 24 24"><path d="M7 4l12 8-12 8z"/></svg>Spotlight</button>
 <div class="agentsgrp" id="agentsGrp"><button type="button" class="nav agentsbtn" id="agentsBtn" aria-expanded="false" aria-controls="agentsPanel"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M3 13v2M21 13v2"/></svg>Agents<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><div class="agentspanel" id="agentsPanel"><button class="nav" data-go="pitch"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-3-7z"/></svg>Pitch Agent</button>
@@ -1428,7 +1428,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="rechead" id="recLabel" hidden><button type="button" class="rechtitle" id="recToggle" aria-expanded="true">Chats <svg viewBox="0 0 24 24" class="rchev"><path d="M6 9l6 6 6-6"/></svg></button><span class="rechtools"><button type="button" id="recAll" aria-label="Show all chats" title="Show all"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></button><button type="button" id="recSearchBtn" aria-label="Search chats" title="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/></svg></button><button type="button" id="recSortBtn" aria-label="Sort chats" title="Sort: Last activity"><svg viewBox="0 0 24 24"><path d="M6 4v16M12 4v16M18 4v16M4 9h4M10 15h4M16 8h4"/></svg></button></span></div>
 <div class="recsearch" id="recSearchWrap" hidden><input id="recSearch" type="search" placeholder="Search chats" autocomplete="off"></div>
 <div id="recents"></div>
-<div class="sidefoot" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><button class="nav" data-go="settings" aria-label="Settings" title="Settings" style="width:44px;height:44px;min-height:44px;justify-content:center;padding:0"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1-2.1"/></svg></button><button class="nav" id="sbAccountBtn" type="button" aria-label="Sign in" title="Sign in" style="width:44px;height:44px;min-height:44px;justify-content:center;padding:0;border-radius:10px"><span class="av"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span></button></div>
+<div class="sidefoot" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><button class="nav" id="sbSettingsBtn" data-go="settings" aria-label="Settings" title="Settings" type="button"><svg viewBox="0 0 32 32" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.1 3.8h5.8l.8 3.1c.8.3 1.5.7 2.2 1.3l3.1-.8 2.9 5-2.3 2.3c.1.9.1 1.7 0 2.6l2.3 2.3-2.9 5-3.1-.8c-.7.6-1.4 1-2.2 1.3l-.8 3.1h-5.8l-.8-3.1c-.8-.3-1.5-.7-2.2-1.3L7 24.6l-2.9-5 2.3-2.3a10 10 0 0 1 0-2.6l-2.3-2.3 2.9-5 3.1.8c.7-.6 1.4-1 2.2-1.3z"/><circle cx="16" cy="16" r="4.2"/></svg></button><button class="nav" id="sbAccountBtn" type="button" aria-label="Sign in" title="Sign in"><span class="av"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.8 3.3-6 7-6s6.4 2.2 7 6"/></svg></span></button></div>
 </aside>
 
 <div id="onb" role="dialog" aria-modal="true" aria-label="Set up your profile"><div class="onbw">
@@ -1648,7 +1648,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div id="sDayWrap" hidden><label for="sDay" class="muted">On</label><select class="inp" id="sDay"><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option><option value="0">Sunday</option></select></div>
 <div><label for="sTime" class="muted">At</label><input class="inp" id="sTime" type="time" value="08:00"><div class="muted" id="sTzNote" style="font-size:12px;margin-top:4px"></div></div>
 <div><label for="sChan" class="muted">Send to</label><select class="inp" id="sChan"><option value="website">This app</option></select></div>
-<div><label for="sBot" class="muted">Run with</label><select class="inp" id="sBot"><option value="general">General Agent</option><option value="business">Business Agent</option><option value="pitch">Pitch Agent</option><option value="gmail">Gmail Bot (Mailbot)</option></select></div>
+<div><label for="sBot" class="muted">Run with</label><select class="inp" id="sBot"><option value="business">Business Agent</option><option value="pitch">Pitch Agent</option><option value="gmail">Gmail Bot (Mailbot)</option></select></div>
 </div>
 <div style="margin-bottom:12px"><label for="sSrc" class="muted">Website to pull from (optional)</label><input class="inp" id="sSrc" type="url" inputmode="url" placeholder="Paste a website link"></div>
 <div id="sMsg" class="muted" style="min-height:20px;font-size:13px;margin-bottom:8px" role="status"></div>
@@ -1658,6 +1658,27 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="slist" id="sList"></div>
 <p class="muted" id="sEmpty" style="margin-top:14px">Nothing scheduled yet.</p>
 </div></section>
+
+<section class="view" id="v-artcraft" hidden>
+ <div class="px-art-space">
+  <header class="px-art-head">
+   <div class="px-art-brand" aria-label="ArtCraft"><img class="px-art-logo-light" src="https://raw.githubusercontent.com/storytold/wordcraft/bbfacd8f624a751f11e8bc614ddf27dd675f7388/docs/brand/artcraft-logo.svg" alt="ArtCraft" loading="eager"><img class="px-art-logo-dark" src="https://raw.githubusercontent.com/storytold/wordcraft/bbfacd8f624a751f11e8bc614ddf27dd675f7388/docs/brand/artcraft-logo-white.svg" alt="" aria-hidden="true" loading="eager"></div>
+   <div><div class="px-art-eyebrow">PELEX CREATIVE WORKSPACE</div><h1>ArtCraft Space</h1><p>Your creative tools, organised in one place.</p></div>
+  </header>
+  <section class="px-art-studio">
+   <div class="px-art-studio-copy">
+    <div class="px-art-eyebrow">CREATIVE STUDIO</div>
+    <h2>ArtCraft Studio</h2>
+    <p>Explore creative tools for images, video, audio and 3D projects in your ArtCraft workspace.</p>
+   </div>
+  </section>
+  <section class="px-art-section">
+   <h2>Crafting Apps <span>17 apps</span></h2>
+   <p>Discover creative tools for your projects.</p>
+  </section>
+  <div class="px-art-grid" id="pxArtGrid" aria-live="polite"></div>
+ </div>
+</section>
 
 <section class="view" id="v-images" hidden><div class="wrap"><h1>Image generation</h1><div class="card" style="margin-top:18px"><h2>Temporarily unavailable</h2><p class="muted">Pelex cannot create or edit images at the moment. You can still ask Pelex to develop the visual concept, describe the scene, or write a detailed prompt for you.</p><p class="muted">To create the actual image, copy the prompt into ChatGPT image generation or another image-creation tool.</p></div></div></section>
 
@@ -1785,7 +1806,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="sgroup">Account</div>
 <div class="scard"><button class="srow" data-t="account"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.5"/><path d="M5 20c1-4 4-5.500 7-5.500s6 1.500 7 5.500"/></svg><span>Profile</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-go="plans"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.500 9.500c-.5-1-1.500-1.500-2.500-1.500-1.500 0-2.500.8-2.500 2s1 1.700 2.500 2 2.500.8 2.500 2-1 2-2.500 2c-1 0-2-.5-2.500-1.500M12 6.500v1.500M12 16v1.500"/></svg><span>Plans &amp; billing</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-t="privacy"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><rect x="9.500" y="10.500" width="5" height="4" rx="1"/></svg><span>Privacy</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>
 <div class="sgroup">App</div>
-<div class="scard"><button class="srow" data-t="custom"><svg viewBox="0 0 24 24"><path d="M5 8h9M18 8h1M5 16h1M10 16h9"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/></svg><span>Personalisation</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-go="plugins"><svg viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v5a5 5 0 0 1-10 0zM12 17v4"/></svg><span>Connectors</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-go="scheduled"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Scheduled tasks</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-go="voice"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v4"/></svg><span>Voice</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><div class="srow"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M4 9v6M20 9v6"/></svg><span>Haptic feedback</span><label class="tog"><input type="checkbox" id="pvHaptic" aria-label="Haptic feedback"><i></i></label></div>
+<div class="scard"><button class="srow" data-t="custom"><svg viewBox="0 0 24 24"><path d="M5 8h9M18 8h1M5 16h1M10 16h9"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/></svg><span>Personalisation</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-go="plugins"><svg viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v5a5 5 0 0 1-10 0zM12 17v4"/></svg><span>Connectors</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-go="voice"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v4"/></svg><span>Voice</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><div class="srow"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M4 9v6M20 9v6"/></svg><span>Haptic feedback</span><label class="tog"><input type="checkbox" id="pvHaptic" aria-label="Haptic feedback"><i></i></label></div>
 </div>
 <div class="sgroup">Notifications</div>
 <p class="muted" style="margin:0 0 8px;font-size:13px">Choose which Pelex events can notify you. Scheduled task alerts appear when a task finishes while Pelex is open.</p>
@@ -4103,6 +4124,7 @@ if('serviceWorker' in navigator){
     var root=document.createElement('div');root.className='md';
     var lines=String(src==null?'':src).replace(/\r/g,'').replace(/[\u200B-\u200D\uFEFF]/g,'').split('\n').map(function(line){
       // Normalize malformed Markdown without exposing formatting markers.
+      line=line.replace(/^\\s*\\*\\*([^*\\n]{2,80}?)\\*{0,2}\\s*$/,'## $1');
       line=line.replace(/^\s*#\*+\s*/,'# ');
       line=line.replace(/^\s*\*+#\s*/,'# ');
       line=line.replace(/^\s*\*{1,3}([A-Za-z][A-Za-z /&-]{0,28}):\*{1,3}\s*/,'$1: ');
@@ -6808,7 +6830,22 @@ function pxCommandHelp(){
    var btn=el('pxFSave');btn.disabled=true;message('Saving transaction…');
    var r=x?await window.sb.rpc('business_update_transaction',Object.assign({p_entry_id:x.id},args)):await window.sb.rpc('business_add_transaction',args);
    if(r.error){message('Not saved: '+r.error.message,true);btn.disabled=false;return}
-   box.hidden=true;await load();if(window.__lsLoad)window.__lsLoad();
+   if(r.data===null||r.data===undefined){message('The database did not confirm this transaction. Please refresh the register before trying again.',true);btn.disabled=false;return}
+   var verify=await window.sb.rpc('business_list_transactions',{p_workspace:ws(),p_project:el('pxFProject').value,p_from:date,p_to:date,p_search:null,p_limit:1000});
+   if(verify.error||!(verify.data||[]).some(function(row){return String(row.id)===String(r.data)&&String(row.entry_date)===date})){
+    message('The transaction was submitted, but the register could not confirm the selected date. Refresh the register and check before submitting again.',true);btn.disabled=false;return
+   }
+   var asOfField=el('lsDate');
+   if(asOfField&&(!asOfField.value||date>asOfField.value))asOfField.value=date;
+   var monthValue=date.slice(0,7),yearValue=date.slice(0,4),monthNumber=date.slice(5,7);
+   if(el('pxMonthPick'))el('pxMonthPick').value=monthValue;
+   if(el('pxOpsMonth'))el('pxOpsMonth').value=monthValue;
+   if(el('pxTrYear'))el('pxTrYear').value=yearValue;
+   if(el('pxTrMonth'))el('pxTrMonth').value=monthNumber;
+   box.hidden=true;await load();
+   if(window.__lsLoad)await window.__lsLoad();
+   if(window.__pxDashboardLoad)await window.__pxDashboardLoad();
+   if(window.pxBusinessProjects&&window.pxBusinessProjects.refreshOperations)await window.pxBusinessProjects.refreshOperations();
   };
  }
  function start(){
@@ -6905,7 +6942,15 @@ function pxCommandHelp(){
    $('pxYearTable').innerHTML=yearRows.length?'<div style="overflow-x:auto"><table class="ls-table"><thead><tr><th>Month</th><th>Cash in</th><th>Cash out</th><th>Operating profit</th><th>Closing cash</th></tr></thead><tbody>'+yearRows.map(function(x){return '<tr><td><button type="button" class="btn alt" data-px-month-open="'+esc(x.month)+'" style="padding:4px 8px">'+esc(x.month)+'</button></td><td>'+cash(x.money_in,cur)+'</td><td>'+cash(x.money_out,cur)+'</td><td>'+cash(x.profit,cur)+'</td><td>'+cash(x.closing,cur)+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">No ledger transactions for '+y+'.</p>';
    $('pxYearTable').querySelectorAll('[data-px-month-open]').forEach(function(b){b.onclick=function(){var v=b.getAttribute('data-px-month-open');$('pxMonthPick').value=v;$('pxTrYear').value=v.slice(0,4);$('pxTrMonth').value=v.slice(5,7);$('pxTrYear').dispatchEvent(new Event('change',{bubbles:true}));$('pxMonthPick').dispatchEvent(new Event('change',{bubbles:true}));var reg=$('pxTrRows');if(reg){var panel=reg.closest('.dcard')||reg;panel.scrollIntoView({behavior:'smooth',block:'start'});}};});
    $('pxYearNote').textContent='*Original yearly capital is a fixed opening base. Monthly totals show cash movement and operating result. Select a month to open its detailed transactions in Data Entry.';
-  }catch(e){$('pxMonthNote').textContent='We could not refresh the financial summary. Please try again.';$('pxYearTable').textContent='Yearly figures are temporarily unavailable.'}
+  }catch(e){
+   var unavailable='<div class="ls-empty">This dashboard section could not be loaded. Please retry.</div>';
+   ['pxVolChart','pxTxnPie','pxOpsPie','pxOpsDashboard'].forEach(function(id){var node=$(id);if(node&&!node.textContent.trim())node.innerHTML=unavailable});
+   if($('pxMonthCards')&&!$('pxMonthCards').textContent.trim())$('pxMonthCards').innerHTML='<div class="ls-empty">Financial figures are temporarily unavailable.</div>';
+   if($('pxYearCards')&&!$('pxYearCards').textContent.trim())$('pxYearCards').innerHTML='<div class="ls-empty">Yearly figures are temporarily unavailable.</div>';
+   $('pxMonthNote').innerHTML='The business dashboard could not be fully refreshed. <button type="button" class="btn alt" id="pxDashboardRetry">Retry dashboard</button>';
+   var retry=$('pxDashboardRetry');if(retry)retry.onclick=load;
+   $('pxYearTable').textContent='Yearly figures are temporarily unavailable.';
+  }
   finally{busy=false;if(rerun){rerun=false;setTimeout(load,0)}}
  }
  function mount(){
@@ -6924,12 +6969,12 @@ function pxCommandHelp(){
   setTimeout(load,300);
  }
  var oldGo=window.go;
- if(typeof oldGo==='function')window.go=function(v,t){oldGo(v,t);if(v==='business')setTimeout(mount,300)};
- window.addEventListener('load',function(){setTimeout(mount,1800)});
- setInterval(function(){if($('bDash')&&!$('bDash').hidden){mount();if($('pxFinancialSummary')&&$('pxMonthCards').textContent==='')load()}},5000);
+ if(typeof oldGo==='function')window.go=function(v,t){oldGo(v,t);if(v==='business')setTimeout(function(){mount();load()},300)};
+ window.addEventListener('load',function(){setTimeout(function(){mount();if($('bDash')&&!$('bDash').hidden)load()},1800)});
 })();
 </script>
 
+<script src="/pelex_artcraft.js?v=2"></script>
 <script src="/pelex_projects.js?v=12"></script>
 <script src="/pelex_addons_runtime.js?v=2"></script>
 
@@ -6948,6 +6993,63 @@ body::before{display:none!important;content:none!important}
 #pelexNewChatGrip.dragging::before{width:52px;background:var(--btn);transform:scaleY(1.25)}
 #pelexNewChatGrip.ready::before{width:64px;box-shadow:0 0 0 5px rgba(20,43,82,.14),0 6px 14px rgba(0,0,0,.2)}
 @media(prefers-reduced-motion:reduce){#pelexNewChatGrip::before{transition:none}}
+
+/* Preview polish: clearer, larger sidebar utility controls. */
+#sbSettingsBtn,#sbAccountBtn{
+  width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;
+  flex:0 0 52px;justify-content:center!important;align-items:center!important;padding:0!important;
+  border:1px solid var(--line)!important;border-radius:14px!important;
+  background:var(--panel)!important;color:var(--nav-ink)!important;
+  box-shadow:0 2px 7px rgba(12,27,58,.07);
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+#sbSettingsBtn svg{width:30px!important;height:30px!important;stroke-width:2.8!important}
+#sbAccountBtn .av{
+  width:42px!important;height:42px!important;border-radius:12px!important;
+  background:var(--sel)!important;border:1px solid var(--line);color:var(--nav-ink)!important;
+}
+#sbAccountBtn .av svg{width:26px!important;height:26px!important;stroke-width:1.9!important}
+#sbSettingsBtn:hover,#sbAccountBtn:hover{
+  background:var(--sel)!important;border-color:var(--btn)!important;
+  box-shadow:0 3px 10px rgba(12,27,58,.11);transform:translateY(-1px);
+}
+#sbSettingsBtn:focus-visible,#sbAccountBtn:focus-visible{
+  outline:3px solid color-mix(in srgb,var(--btn) 35%,transparent);outline-offset:2px;
+}
+
+/* Chat message layout: plain assistant text, consistent edges, no overflow. */
+#chat .msg:not(.me):not(.sys){
+  display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+  align-self:stretch!important;box-sizing:border-box!important;
+  padding:8px 2px 2px!important;margin:12px 0 18px!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;overflow:visible!important;
+}
+#chat .msg:not(.me):not(.sys)>.md,
+#chat .msg:not(.me):not(.sys)>.txtp{
+  display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;
+}
+#chat .msg .md{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:normal}
+#chat .msg .md p,#chat .msg .md li,#chat .msg .md .mdh{
+  max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal;
+}
+#chat .msg .md p{margin:.35em 0 .85em;line-height:1.65}
+#chat .msg .md .mdh{font-weight:750;line-height:1.35;margin:1.05em 0 .45em}
+#chat .msg .md .mdh:first-child{margin-top:0}
+#chat .msg .md ul,#chat .msg .md ol{margin:.4em 0 1em;padding-left:1.35rem}
+#chat .msg .md li{padding-left:.12rem;margin:.38em 0;line-height:1.6}
+#chat .msg .md table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important;display:block!important;overflow-x:auto!important}
+#chat .msg .md th,#chat .msg .md td{max-width:none;overflow-wrap:anywhere;word-break:normal}
+#chat .msg .msgactions{display:flex;align-items:center;gap:8px;margin:12px 0 0;padding:0}
+#chat .msg.me{
+  width:fit-content;max-width:min(86%,620px);min-width:0;box-sizing:border-box;
+  margin:12px 0 12px auto;overflow-wrap:anywhere;word-break:normal;
+}
+#chat .msg.me .me-pill{display:block;max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:600px){
+  #chat .msg:not(.me):not(.sys){padding:6px 1px 2px!important;margin:10px 0 16px!important}
+  #chat .msg.me{max-width:86%;padding:13px 15px}
+}
 </style>
 <script id="pelex-final-ui-behavior">
 (function(){var root=document.documentElement,meta=document.querySelector('meta[name="theme-color"]');function syncThemeColor(){var theme=root.getAttribute('data-theme'),dark=theme==='dark'||(!theme&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(meta)meta.setAttribute('content',dark?'#0C1423':'#FFFFFF')}syncThemeColor();try{new MutationObserver(syncThemeColor).observe(root,{attributes:true,attributeFilter:['data-theme']})}catch(e){}try{var themeMedia=window.matchMedia('(prefers-color-scheme: dark)');if(themeMedia.addEventListener)themeMedia.addEventListener('change',syncThemeColor);else if(themeMedia.addListener)themeMedia.addListener(syncThemeColor)}catch(e){}
@@ -6961,5 +7063,7 @@ var barwrap=document.querySelector('#v-chat .barwrap');if(barwrap&&!document.get
 <script src="/spotlight-layout-fix.js?v=1"></script>
 <script src="/pelex_minimal_business_ui.js?v=7"></script>
 <script src="business-analysis-period-fix.js?v=1"></script>
+<script src="/pelex_ui_corrections.js?v=1"></script>
+<script src="/pelex_business_date_sync.js?v=1"></script>
 </body>
 </html>
