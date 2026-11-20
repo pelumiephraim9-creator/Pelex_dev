@@ -100,9 +100,9 @@
     var card=Array.prototype.find.call(document.querySelectorAll('.px-art-card[data-artcraft-id]'),function(el){return el.getAttribute('data-artcraft-id')===pkg.id});
     if(!card)return;
     var status=card.querySelector('.px-art-status'),action=card.querySelector('.px-art-action');
-    var url='https://github.com/pelumiephraim9-creator/Uncle_Pelex_Agent/releases/download/artcraft-bundles/'+encodeURIComponent(pkg.file||(pkg.id+'.zip'));
-    if(status)status.textContent='Package verified · '+(Number(pkg.bytes||0)/1024/1024).toFixed(1)+' MB';
-    if(action){var link=document.createElement('a');link.className='px-art-download';link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=pkg.platform==='desktop'?'Download desktop package':'Download browser package (ZIP)';action.appendChild(link)}
+    var url=pkg.platform==='desktop'?pkg.download_path:pkg.app_url;
+    if(status)status.textContent=pkg.platform==='desktop'?'Desktop package verified · '+(Number(pkg.bytes||0)/1024/1024).toFixed(1)+' MB':'Browser app verified · '+(pkg.version||'official release');
+    if(action&&url){var link=document.createElement('a');link.className='px-art-download';link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=pkg.platform==='desktop'?'Download desktop app':'Launch '+(APPS.filter(function(app){return app[0]===pkg.id})[0]||[])[1];action.appendChild(link)}
    });
   }).catch(function(){/* Keep unavailable state unless a verified manifest is published. */});
  }
