@@ -169,5 +169,11 @@ jobs:
             echo "ArtCraft preview assets are already current"
           else
             git commit -m "Sync official ArtCraft apps and LFS binaries"
-            git push origin HEAD:preview/artcraft-space-latest-interface-20261117
+            # The preview branch can receive UI commits while large packages are
+            # downloading. Rebase this generated package commit on the latest
+            # branch tip instead of failing with a non-fast-forward push.
+            branch="preview/artcraft-space-latest-interface-20261117"
+            git fetch origin "$branch"
+            git rebase "origin/$branch"
+            git push origin "HEAD:refs/heads/$branch"
           fi
