@@ -1,105 +1,103 @@
-name: ArtCraft package intake (up to 2 GiB per package)
+name: ArtCraft official GitHub package sync
 
 on:
   workflow_dispatch:
-    inputs:
-      package_urls_json:
-        description: 'JSON object mapping app IDs to official ZIP download URLs (only packages being added)'
-        required: true
-        type: string
+  schedule:
+    - cron: "0 4 * * 1"
 
 permissions:
   contents: write
 
 concurrency:
-  group: artcraft-package-intake
+  group: artcraft-official-sync
   cancel-in-progress: false
 
 jobs:
-  validate-and-publish:
+  sync-official-releases:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 240
     steps:
-      - name: Check out preview branch
+      - name: Check out ArtCraft preview branch
         uses: actions/checkout@v4
         with:
           ref: preview/artcraft-space-latest-interface-20261117
 
-      - name: Download and validate ArtCraft packages
-        id: packages
+      - name: Download official ArtCraft GitHub releases
         env:
-          PACKAGE_URLS_JSON: ${{ inputs.package_urls_json }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           python3 <<'PY'
-          import json, os, pathlib, re, shutil, subprocess, sys, urllib.request, urllib.error, zipfile
-          MAX = 2 * 1024 * 1024 * 1024
-          APPS = {
-            "photocraft":"web", "vectorcraft":"web", "filmcraft":"desktop",
-            "lightcraft":"web", "pdfcraft":"web", "effectcraft":"web",
-            "anicraft":"web", "designcraft":"web", "figcraft":"web",
-            "texturecraft":"web", "materialcraft":"web", "soundcraft":"web",
-            "wordcraft":"web", "deckcraft":"web", "cadcraft":"web",
-            "gridcraft":"web", "craft-anything":"web"
-          }
-          urls = json.loads(os.environ["PACKAGE_URLS_JSON"])
-          if not isinstance(urls, dict) or not urls:
-            raise SystemExit("Input must be a non-empty JSON object: {app-id: official-https-url}")
-          unknown = set(urls) - set(APPS)
-          if unknown: raise SystemExit("Unknown app IDs: " + ", ".join(sorted(unknown)))
-          out = pathlib.Path("artcraft-release-assets"); out.mkdir(exist_ok=True)
-          report = {"release_tag":"artcraft-bundles","max_package_bytes":MAX,"packages":[]}
-          for app, url in urls.items():
-            if not isinstance(url,str) or not url.startswith("https://"):
-              raise SystemExit(f"{app}: only HTTPS source URLs are accepted")
-            filename = out / f"{app}.zip"
-            req = urllib.request.Request(url, headers={"User-Agent":"Pelex-ArtCraft-Package-Installer/1.0"})
-            total = 0
+          import hashlib, json, os, pathlib, re, subprocess, urllib.request, zipfile
+          apps = [
+            ("photocraft","web"),("vectorcraft","web"),("filmcraft","web"),
+            ("lightcraft","web"),("pdfcraft","web"),("effectcraft","web"),
+            ("anicraft","web"),("designcraft","web"),("figcraft","web"),
+            ("texturecraft","web"),("materialcraft","web"),("soundcraft","web"),
+            ("wordcraft","web"),("deckcraft","web"),("cadcraft","web"),
+            ("gridcraft","web"),("craft-anything","web")
+          ]
+          root=pathlib.Path("artcraft-release-assets"); root.mkdir(exist_ok=True)
+          manifest={"source_organization":"https://github.com/storytold","release_tag":"artcraft-bundles","max_package_bytes":2*1024*1024*1024,"packages":[]}
+          for app, platform in apps:
+            api=f"https://api.github.com/repos/storytold/{app}/releases/latest"
+            req=urllib.request.Request(api,headers={"Accept":"application/vnd.github+json","User-Agent":"Pelex-ArtCraft-Sync"})
             try:
-              with urllib.request.urlopen(req, timeout=60) as response, filename.open("wb") as dest:
-                final_url = response.geturl()
-                if not final_url.startswith("https://"): raise ValueError("download redirected away from HTTPS")
-                while True:
-                  chunk = response.read(8 * 1024 * 1024)
-                  if not chunk: break
-                  total += len(chunk)
-                  if total > MAX: raise ValueError("package exceeds GitHub's 2 GiB per-release-asset limit")
-                  dest.write(chunk)
-            except Exception:
-              filename.unlink(missing_ok=True)
-              raise
-            if total < 22: raise SystemExit(f"{app}: download is empty or not a ZIP archive")
-            if not zipfile.is_zipfile(filename): raise SystemExit(f"{app}: downloaded file is not a ZIP")
-            with zipfile.ZipFile(filename) as z:
-              bad = z.testzip()
-              if bad: raise SystemExit(f"{app}: ZIP CRC validation failed at {bad}")
+              with urllib.request.urlopen(req,timeout=30) as response: release=json.load(response)
+            except Exception as e:
+              manifest["packages"].append({"id":app,"platform":platform,"validated":False,"status":"official_release_unavailable","detail":str(e)})
+              continue
+            assets=release.get("assets",[])
+            selected=[a for a in assets if re.fullmatch(re.escape(app)+r"-web-[^/]+\.zip",a["name"],re.I)]
+            if not selected and app=="filmcraft":
+              selected=[a for a in assets if re.fullmatch(r"filmcraft-[^/]+-windows-x64-portable\.zip",a["name"],re.I)]
+              platform="desktop"
+            if not selected:
+              manifest["packages"].append({"id":app,"platform":platform,"version":release.get("tag_name"),"source_repo":f"https://github.com/storytold/{app}","validated":False,"status":"no_official_web_release_asset"})
+              print(f"NO WEB RELEASE ASSET: {app} ({release.get('tag_name')})")
+              continue
+            asset=selected[0]; size=int(asset.get("size",0))
+            if size>2*1024*1024*1024:
+              raise SystemExit(f"{app}: official release asset exceeds 2 GiB")
+            target=root/f"{app}.zip"
+            req=urllib.request.Request(asset["browser_download_url"],headers={"User-Agent":"Pelex-ArtCraft-Sync"})
+            h=hashlib.sha256(); total=0
+            with urllib.request.urlopen(req,timeout=90) as response,target.open("wb") as dest:
+              if not response.geturl().startswith("https://"): raise SystemExit(f"{app}: non-HTTPS redirect rejected")
+              while True:
+                chunk=response.read(8*1024*1024)
+                if not chunk: break
+                total+=len(chunk)
+                if total>2*1024*1024*1024: raise SystemExit(f"{app}: download exceeds 2 GiB")
+                h.update(chunk); dest.write(chunk)
+            if size and total!=size: raise SystemExit(f"{app}: size mismatch: expected {size}, got {total}")
+            if not zipfile.is_zipfile(target): raise SystemExit(f"{app}: official asset is not a ZIP")
+            with zipfile.ZipFile(target) as z:
+              bad=z.testzip()
+              if bad: raise SystemExit(f"{app}: ZIP CRC failure at {bad}")
               for item in z.infolist():
-                p = pathlib.PurePosixPath(item.filename)
-                if p.is_absolute() or ".." in p.parts:
-                  raise SystemExit(f"{app}: unsafe ZIP path rejected: {item.filename}")
-              names = [x.filename.lower() for x in z.infolist() if not x.is_dir()]
-              if APPS[app] == "web" and not any(pathlib.PurePosixPath(n).name == "index.html" for n in names):
-                raise SystemExit(f"{app}: browser package has no index.html; refusing to publish")
-            import hashlib
-            hasher = hashlib.sha256()\n            with filename.open("rb") as source:\n              for chunk in iter(lambda: source.read(8 * 1024 * 1024), b""):\n                hasher.update(chunk)\n            digest = hasher.hexdigest()
-            report["packages"].append({"id":app,"platform":APPS[app],"file":filename.name,"bytes":total,"sha256":digest,"source_url":url,"validated":True})
-            print(f"VALIDATED {app}: {total} bytes SHA256 {digest}")
-          pathlib.Path("artcraft-release-assets/package-manifest.json").write_text(json.dumps(report,indent=2))
+                p=pathlib.PurePosixPath(item.filename)
+                if p.is_absolute() or ".." in p.parts: raise SystemExit(f"{app}: unsafe ZIP path {item.filename}")
+              names=[x.filename.lower() for x in z.infolist() if not x.is_dir()]
+              if platform=="web" and not any(pathlib.PurePosixPath(n).name=="index.html" for n in names):
+                raise SystemExit(f"{app}: browser ZIP has no index.html")
+            record={"id":app,"platform":platform,"version":release.get("tag_name"),"file":target.name,"bytes":total,"sha256":h.hexdigest(),"source_repo":f"https://github.com/storytold/{app}","source_url":asset["browser_download_url"],"validated":True,"status":"ready"}
+            manifest["packages"].append(record)
+            print(f"READY {app} {record['version']} ({total} bytes)")
+          (root/"package-manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
           PY
 
-      - name: Create or update stable package release
+      - name: Publish official binaries as GitHub Release assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           if gh release view artcraft-bundles >/dev/null 2>&1; then
-            echo "Using existing ArtCraft package release"
+            echo "Updating ArtCraft binary release"
           else
-            gh release create artcraft-bundles --title "ArtCraft app packages" --notes "Validated ArtCraft packages for the Pelex ArtCraft preview. Each archive is limited to 2 GiB. Browser packages are distributed as ZIP downloads; desktop packages remain separate."
+            gh release create artcraft-bundles --title "ArtCraft official app packages" --notes "Mirrored, validated release binaries downloaded directly from the official storytold GitHub repositories. Browser packages are WebAssembly builds. FilmCraft is desktop-only where no browser bundle is published. Each individual asset is limited to 2 GiB."
           fi
           gh release upload artcraft-bundles artcraft-release-assets/*.zip artcraft-release-assets/package-manifest.json --clobber
 
-      - name: Publish validated package manifest to preview branch
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Publish manifest for ArtCraft frontend
         run: |
           mkdir -p public/artcraft
           cp artcraft-release-assets/package-manifest.json public/artcraft/package-manifest.json
@@ -109,6 +107,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "Manifest unchanged"
           else
-            git commit -m "Publish validated ArtCraft package manifest"
+            git commit -m "Sync official ArtCraft app package manifest"
             git push origin HEAD:preview/artcraft-space-latest-interface-20261117
           fi
