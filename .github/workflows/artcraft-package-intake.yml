@@ -1,6 +1,10 @@
 name: ArtCraft official GitHub package sync
 
 on:
+  push:
+    branches: [preview/artcraft-space-latest-interface-20261117]
+    paths:
+      - '.github/workflows/artcraft-package-intake.yml'
   workflow_dispatch:
   schedule:
     - cron: "0 4 1 * *"
