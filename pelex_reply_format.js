@@ -34,7 +34,7 @@
   }
   function inline(parent,text){
     var re=/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s<)\]]+)|\*\*([^*\n]+)\*\*|__([^_\n]+)__|\*([^*\n]+)\*|_([^_\n]+)_|`([^`\n]+)`/g;
-    var last=0,m;
+    var last=0,m,tail='';
     while((m=re.exec(text))){
       if(m.index>last)parent.appendChild(document.createTextNode(text.slice(last,m.index)));
       var node=null,url;
