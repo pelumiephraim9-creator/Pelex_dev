@@ -4280,6 +4280,13 @@ if('serviceWorker' in navigator){
   var _g=go;go=function(v,t){_g(v,t);if(v==='business')loadBusiness();if(v==='support'){supLeave();}};
   var _uc=window.onUserChange;window.onUserChange=function(u){if(_uc)_uc(u);loadPlans()};
   paintPlans();
+  /* Keep staff-only Support navigation in sync with the authenticated Supabase user,
+     including restored sessions and tabs returning from the background. */
+  if(typeof authReadyPromise!=='undefined'&&authReadyPromise&&typeof authReadyPromise.then==='function'){
+    authReadyPromise.then(function(){checkSupport()}).catch(function(){});
+  }else{checkSupport()}
+  window.addEventListener('focus',function(){if(dbOk())checkSupport()});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&dbOk())checkSupport()});
 })();
 </script>
 <script>
