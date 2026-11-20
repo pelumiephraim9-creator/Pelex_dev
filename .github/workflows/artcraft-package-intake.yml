@@ -80,7 +80,7 @@ jobs:
               if APPS[app] == "web" and not any(pathlib.PurePosixPath(n).name == "index.html" for n in names):
                 raise SystemExit(f"{app}: browser package has no index.html; refusing to publish")
             import hashlib
-            digest = hashlib.sha256(filename.read_bytes()).hexdigest()
+            hasher = hashlib.sha256()\n            with filename.open("rb") as source:\n              for chunk in iter(lambda: source.read(8 * 1024 * 1024), b""):\n                hasher.update(chunk)\n            digest = hasher.hexdigest()
             report["packages"].append({"id":app,"platform":APPS[app],"file":filename.name,"bytes":total,"sha256":digest,"source_url":url,"validated":True})
             print(f"VALIDATED {app}: {total} bytes SHA256 {digest}")
           pathlib.Path("artcraft-release-assets/package-manifest.json").write_text(json.dumps(report,indent=2))
