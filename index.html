@@ -2610,7 +2610,12 @@ if(sb){
   });
   sb.auth.onAuthStateChange(function(ev,session){
     applyUser(session?session.user:null);
-    if(session){flushPendingMessages();if(ev==='SIGNED_IN'&&!document.getElementById('v-signin').hidden)go('chat')}
+    if(session){
+      flushPendingMessages();
+      if(ev==='SIGNED_IN'&&!document.getElementById('v-signin').hidden)go('chat');
+      /* Give Supabase a moment to persist the refreshed session before checking staff access. */
+      setTimeout(function(){if(window.pelexCheckSupport)window.pelexCheckSupport()},250);
+    }else if(window.pelexCheckSupport){window.pelexCheckSupport()}
   });
 }
 setAuthMode('in');
@@ -4233,9 +4238,28 @@ if('serviceWorker' in navigator){
   var sup=false,supList=[],supCur=null,supLast=0,supT=null,supN=0;
   function supBadge(n){var b=$n('supBadge');b.textContent=n>9?'9+':String(n);b.hidden=n===0}
   async function checkSupport(){
-    if(!dbOk()){sup=false;$n('navSupport').hidden=true;return}
-    try{sup=!!(await rpc('is_support'))}catch(e){sup=false}
-    $n('navSupport').hidden=!sup;if(sup)pollSupport()}
+    var nav=$n('navSupport');
+    if(!sb||!sb.auth){sup=false;nav.hidden=true;return false}
+    try{
+      /* Read the authenticated user directly from Supabase instead of relying
+         only on the cached signedIn/curUser values from the page bootstrap. */
+      var verified=await sb.auth.getUser();
+      var user=verified&&verified.data&&verified.data.user;
+      if(verified.error||!user){sup=false;nav.hidden=true;return false}
+      if(!curUser||curUser.id!==user.id){curUser=user;signedIn=true}
+      var allowed=await rpc('is_support');
+      sup=allowed===true;
+      nav.hidden=!sup;
+      nav.setAttribute('aria-hidden',sup?'false':'true');
+      if(sup)pollSupport();
+      return sup;
+    }catch(e){
+      sup=false;nav.hidden=true;nav.setAttribute('aria-hidden','true');
+      console.warn('Pelex Support access check failed:',e);
+      return false;
+    }
+  }
+  window.pelexCheckSupport=checkSupport;
   async function pollSupport(){
     if(!sup||!dbOk())return;
     try{supList=await rpc('support_open_requests')||[]}catch(e){return}
