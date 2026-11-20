@@ -1,0 +1,108 @@
+{
+  "release_tag": "artcraft-bundles",
+  "max_package_bytes": 2147483648,
+  "apps": [
+    {
+      "id": "photocraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "vectorcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "filmcraft",
+      "platform": "desktop",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "lightcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "pdfcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "effectcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "anicraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "designcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "figcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "texturecraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "materialcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "soundcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "wordcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "deckcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "cadcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "gridcraft",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    },
+    {
+      "id": "craft-anything",
+      "platform": "web",
+      "source_url": null,
+      "status": "awaiting_official_download_url"
+    }
+  ]
+}
