@@ -1,108 +1,109 @@
 {
   "release_tag": "artcraft-bundles",
   "max_package_bytes": 2147483648,
-  "apps": [
+  "source": "official storytold GitHub releases",
+  "packages": [
     {
       "id": "photocraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "vectorcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "filmcraft",
       "platform": "desktop",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "lightcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "pdfcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "effectcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "anicraft",
-      "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "platform": "desktop",
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "designcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "figcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "texturecraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "materialcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "soundcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "wordcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "deckcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "cadcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "gridcraft",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     },
     {
       "id": "craft-anything",
       "platform": "web",
-      "source_url": null,
-      "status": "awaiting_official_download_url"
+      "validated": false,
+      "status": "awaiting_official_sync"
     }
   ]
 }
