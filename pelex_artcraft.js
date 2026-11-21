@@ -93,14 +93,14 @@
  }
 
  function loadPackageManifest(){
-  fetch('/artcraft/package-manifest.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('manifest unavailable');return r.json()}).then(function(data){
+  fetch('/public/artcraft/package-manifest.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('manifest unavailable');return r.json()}).then(function(data){
    var packages=Array.isArray(data.packages)?data.packages:[];
    packages.forEach(function(pkg){
     if(!pkg||pkg.validated!==true||!pkg.id||!APPS.some(function(app){return app[0]===pkg.id}))return;
     var card=Array.prototype.find.call(document.querySelectorAll('.px-art-card[data-artcraft-id]'),function(el){return el.getAttribute('data-artcraft-id')===pkg.id});
     if(!card)return;
     var status=card.querySelector('.px-art-status'),action=card.querySelector('.px-art-action');
-    var url=pkg.platform==='desktop'?(pkg.download_url||pkg.download_path):pkg.app_url;
+    var appUrl=pkg.app_url||'';if(appUrl.indexOf('/artcraft/')===0)appUrl='/public'+appUrl;var url=pkg.platform==='desktop'?(pkg.download_url||pkg.download_path):appUrl;
     if(status)status.textContent=pkg.platform==='desktop'?'Desktop package verified · '+(Number(pkg.bytes||0)/1024/1024).toFixed(1)+' MB':'Browser app verified · '+(pkg.version||'official release');
     if(action&&url){var link=document.createElement('a');link.className='px-art-download';link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=pkg.platform==='desktop'?'Download desktop app':'Launch '+(APPS.filter(function(app){return app[0]===pkg.id})[0]||[])[1];action.appendChild(link)}
    });
