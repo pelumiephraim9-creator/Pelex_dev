@@ -46,7 +46,8 @@
       "bytes": 113447048,
       "sha256": "bfb00e2089df5f13e6f76aab117a4572a8d005d009c5818989688b140a502710",
       "official_asset": "filmcraft-0.20.1-windows-x64-portable.zip",
-      "official_asset_url": "https://github.com/storytold/filmcraft/releases/download/v0.20.1/filmcraft-0.20.1-windows-x64-portable.zip"
+      "official_asset_url": "https://github.com/storytold/filmcraft/releases/download/v0.20.1/filmcraft-0.20.1-windows-x64-portable.zip",
+      "download_url": "https://github.com/pelumiephraim9-creator/Uncle_Pelex_Agent/releases/download/artcraft-bundles/filmcraft.zip"
     },
     {
       "id": "lightcraft",
@@ -106,7 +107,8 @@
       "bytes": 18965079,
       "sha256": "cd51c7e2bc81957f7a162596eea564c78fc134acae27ea5c2163f5d617a53ce4",
       "official_asset": "anicraft-0.2.1-windows-x64-portable.zip",
-      "official_asset_url": "https://github.com/storytold/anicraft/releases/download/v0.2.1/anicraft-0.2.1-windows-x64-portable.zip"
+      "official_asset_url": "https://github.com/storytold/anicraft/releases/download/v0.2.1/anicraft-0.2.1-windows-x64-portable.zip",
+      "download_url": "https://github.com/pelumiephraim9-creator/Uncle_Pelex_Agent/releases/download/artcraft-bundles/anicraft.zip"
     },
     {
       "id": "designcraft",
