@@ -81,52 +81,55 @@
   grid.addEventListener('error',function(e){
    var img=e.target;if(!img||!img.classList||!img.classList.contains('px-art-icon'))return;
    var card=img.closest('.px-art-card'),heading=card&&card.querySelector('h3'),name=heading?heading.textContent:'';
-   var initials=name.split(/\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase();
+   var initials=name.split(/\\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase();
    img.outerHTML='<span class="px-art-monogram" aria-hidden="true">'+esc(initials)+'</span>';
   },true);
   grid.innerHTML=APPS.map(function(a){
    var slug=a[0],name=a[1],desc=a[2],src=APP_ICON_URLS[slug]||(VERIFIED_ICONS[slug]?ROOT+'/apps/'+slug+'/icon.webp':'');
-   var icon=src?'<img class="px-art-icon" src="'+src+'" alt="" loading="lazy" decoding="async">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
-   return '<article class="px-art-card" data-artcraft-id="'+esc(slug)+'"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p></article>';
+   var icon=src?'<img class="px-art-icon" src="'+src+'" alt="" loading="lazy" decoding="async">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
+   return '<article class="px-art-card" data-artcraft-id="'+esc(slug)+'" role="button" tabindex="0" aria-label="Open '+esc(name)+'"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p><div class="px-art-status">Open inside Pelex</div></article>';
   }).join('');
+  grid.addEventListener('click',function(e){
+   var card=e.target.closest('.px-art-card[data-artcraft-id]');
+   if(!card||!grid.contains(card))return;
+   launchArtCraftCard(card.getAttribute('data-artcraft-id'));
+  });
+  grid.addEventListener('keydown',function(e){
+   if(e.key!=='Enter'&&e.key!==' ')return;
+   var card=e.target.closest('.px-art-card[data-artcraft-id]');
+   if(!card||!grid.contains(card))return;
+   e.preventDefault();
+   launchArtCraftCard(card.getAttribute('data-artcraft-id'));
+  });
   loadPackageManifest();
  }
-
+ var ARTCRAFT_DOWNLOADS={};
+ function launchArtCraftCard(slug){
+  var app=APPS.find(function(item){return item[0]===slug});
+  if(!app)return;
+  if(slug==='filmcraft'||slug==='anicraft'){
+   var download=ARTCRAFT_DOWNLOADS[slug];
+   if(download){window.location.assign(download);return;}
+   console.warn('ArtCraft desktop download is not available yet:',slug);
+   return;
+  }
+  openAppInsidePelex('/public/artcraft/apps/'+encodeURIComponent(slug)+'/',app[1]);
+ }
  function loadPackageManifest(){
   fetch('/public/artcraft/package-manifest.json',{cache:'no-store'}).then(function(r){
-   if(!r.ok)throw new Error('manifest unavailable');
+   if(!r.ok)throw new Error('manifest unavailable: '+r.status);
    return r.json();
   }).then(function(data){
    var packages=Array.isArray(data.packages)?data.packages:[];
    packages.forEach(function(pkg){
-    if(!pkg||pkg.validated!==true||!pkg.id||!APPS.some(function(app){return app[0]===pkg.id}))return;
-    var card=Array.prototype.find.call(document.querySelectorAll('.px-art-card[data-artcraft-id]'),function(el){
-     return el.getAttribute('data-artcraft-id')===pkg.id;
-    });
-    if(!card)return;
-    var app=APPS.find(function(item){return item[0]===pkg.id});
-    var url=pkg.app_url||'';
-    if(url.indexOf('/artcraft/')===0)url='/public'+url;
+    if(!pkg||pkg.validated!==true||!pkg.id)return;
     if(pkg.platform==='desktop'){
-     url=pkg.download_url||pkg.download_path||'';
-     if(!url)return;
-     card.addEventListener('click',function(){window.location.href=url});
-     card.setAttribute('role','link');
-     card.setAttribute('tabindex','0');
-     card.setAttribute('aria-label','Download '+app[1]);
-     card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();window.location.href=url}});
-    }else{
-     if(!url)return;
-     card.addEventListener('click',function(){openAppInsidePelex(url,app[1])});
-     card.setAttribute('role','button');
-     card.setAttribute('tabindex','0');
-     card.setAttribute('aria-label','Open '+app[1]+' inside Pelex');
-     card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openAppInsidePelex(url,app[1])}});
+     var url=pkg.download_url||pkg.download_path;
+     if(url)ARTCRAFT_DOWNLOADS[pkg.id]=url;
     }
-    card.setAttribute('data-ready','true');
    });
   }).catch(function(error){
-   console.error('ArtCraft apps could not be loaded:',error);
+   console.error('ArtCraft download manifest could not be loaded:',error);
   });
  }
  function openAppInsidePelex(url,title){
