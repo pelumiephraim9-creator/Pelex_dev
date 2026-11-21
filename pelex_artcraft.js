@@ -63,7 +63,7 @@
    '.px-art-section{margin:0 0 14px}.px-art-section h2{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:19px;color:var(--ink,#17243b)}'+
    '.px-art-section h2 span{font-size:11px;font-weight:700;color:var(--muted,#68758c);border:1px solid var(--line,#e3e8f1);padding:4px 8px;border-radius:20px}'+
    '.px-art-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr));gap:13px}'+
-   '.px-art-card{min-width:0;border:1px solid var(--line,#e3e8f1);border-radius:15px;padding:14px;background:var(--panel,#fff);display:flex;flex-direction:column;gap:8px}'+
+   '.px-art-card{position:relative;min-width:0;border:1px solid var(--line,#e3e8f1);border-radius:15px;padding:14px;background:var(--panel,#fff);display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:border-color .15s,transform .15s}'+'.px-art-card:hover{border-color:var(--accent,#2765bd);transform:translateY(-2px)}'+'.px-art-card:focus-within{outline:2px solid var(--accent,#2765bd);outline-offset:2px}'+'.px-art-card-open{position:absolute;inset:0;z-index:2;border-radius:inherit;text-decoration:none}'+
    '.px-art-cardtop{display:flex;align-items:center;gap:11px}.px-art-icon{width:48px;height:48px;object-fit:contain;border-radius:11px;background:#fff;flex:none}'+
    '.px-art-monogram{width:48px;height:48px;display:grid;place-items:center;border-radius:11px;background:var(--bg,#f2f5fa);border:1px solid var(--line,#e3e8f1);font-weight:800;color:var(--ink,#17243b);flex:none}'+
    '.px-art-card h3{font-size:15px;line-height:1.25;margin:0;color:var(--ink,#17243b)}.px-art-card p{font-size:12px;line-height:1.45;margin:0;color:var(--muted,#68758c);min-height:35px}'+
@@ -87,24 +87,40 @@
   grid.innerHTML=APPS.map(function(a){
    var slug=a[0],name=a[1],desc=a[2],src=APP_ICON_URLS[slug]||(VERIFIED_ICONS[slug]?ROOT+'/apps/'+slug+'/icon.webp':'');
    var icon=src?'<img class="px-art-icon" src="'+src+'" alt="" loading="lazy" decoding="async">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
-   return '<article class="px-art-card" data-artcraft-id="'+esc(slug)+'"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p><div class="px-art-status">Package not yet installed</div><div class="px-art-action"></div></article>';
+   return '<article class="px-art-card" data-artcraft-id="'+esc(slug)+'"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p></article>';
   }).join('');
   loadPackageManifest();
  }
 
  function loadPackageManifest(){
-  fetch('/public/artcraft/package-manifest.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('manifest unavailable');return r.json()}).then(function(data){
+  fetch('/public/artcraft/package-manifest.json',{cache:'no-store'}).then(function(r){
+   if(!r.ok)throw new Error('manifest unavailable');
+   return r.json();
+  }).then(function(data){
    var packages=Array.isArray(data.packages)?data.packages:[];
    packages.forEach(function(pkg){
     if(!pkg||pkg.validated!==true||!pkg.id||!APPS.some(function(app){return app[0]===pkg.id}))return;
-    var card=Array.prototype.find.call(document.querySelectorAll('.px-art-card[data-artcraft-id]'),function(el){return el.getAttribute('data-artcraft-id')===pkg.id});
+    var card=Array.prototype.find.call(document.querySelectorAll('.px-art-card[data-artcraft-id]'),function(el){
+     return el.getAttribute('data-artcraft-id')===pkg.id;
+    });
     if(!card)return;
-    var status=card.querySelector('.px-art-status'),action=card.querySelector('.px-art-action');
-    var appUrl=pkg.app_url||'';if(appUrl.indexOf('/artcraft/')===0)appUrl='/public'+appUrl;var url=pkg.platform==='desktop'?(pkg.download_url||pkg.download_path):appUrl;
-    if(status)status.textContent=pkg.platform==='desktop'?'Desktop package verified · '+(Number(pkg.bytes||0)/1024/1024).toFixed(1)+' MB':'Browser app verified · '+(pkg.version||'official release');
-    if(action&&url){var link=document.createElement('a');link.className='px-art-download';link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=pkg.platform==='desktop'?'Download desktop app':'Launch '+(APPS.filter(function(app){return app[0]===pkg.id})[0]||[])[1];action.appendChild(link)}
+    var appUrl=pkg.app_url||'';
+    if(appUrl.indexOf('/artcraft/')===0)appUrl='/public'+appUrl;
+    var url=pkg.platform==='desktop'?(pkg.download_url||pkg.download_path):appUrl;
+    if(!url)return;
+    var app=APPS.find(function(item){return item[0]===pkg.id});
+    var link=document.createElement('a');
+    link.className='px-art-card-open';
+    link.href=url;
+    link.target='_blank';
+    link.rel='noopener noreferrer';
+    link.setAttribute('aria-label',pkg.platform==='desktop'?'Download '+app[1]:'Open '+app[1]);
+    card.appendChild(link);
+    card.setAttribute('data-ready','true');
    });
-  }).catch(function(){/* Keep unavailable state unless a verified manifest is published. */});
+  }).catch(function(error){
+   console.error('ArtCraft apps could not be loaded:',error);
+  });
  }
 
  function addStudioActions(){
