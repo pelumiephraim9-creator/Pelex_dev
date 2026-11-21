@@ -59,6 +59,7 @@
    '.px-art-account-logo{display:block;width:100%;height:auto;object-fit:contain}.px-art-account-logo.px-art-logo-dark{display:none}:root[data-theme="dark"] .px-art-account-logo.px-art-logo-light{display:none}:root[data-theme="dark"] .px-art-account-logo.px-art-logo-dark{display:block}.px-art-account-panel h2{margin:7px 0 9px;font-size:22px;color:var(--ink,#17243b)}'+
    '.px-art-account-panel p{font-size:14px;line-height:1.55;color:var(--muted,#68758c)}.px-art-account-continue{display:flex;width:100%;box-sizing:border-box;margin-top:18px}'+
    '.px-art-account-panel .px-art-account-security{font-size:12px;margin:13px 0 0}.px-art-modal-open{overflow:hidden}'+
+   '.px-art-app-modal[hidden]{display:none!important}.px-art-app-modal{position:fixed;inset:0;z-index:10060;background:var(--panel,#fff);display:flex;flex-direction:column;box-sizing:border-box}.px-art-app-toolbar{height:54px;min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;border-bottom:1px solid var(--line,#e3e8f1);background:var(--panel,#fff);color:var(--ink,#17243b)}.px-art-app-title{font-weight:700;font-size:14px}.px-art-app-close{border:1px solid var(--line,#e3e8f1);background:var(--soft,#f5f7fb);color:var(--ink,#17243b);border-radius:9px;padding:8px 13px;font:inherit;cursor:pointer}.px-art-app-frame{display:block;width:100%;height:calc(100% - 54px);min-height:0;flex:1;border:0;background:#fff}'+
    '@media(max-width:560px){.px-art-account-panel{padding:24px 20px;border-radius:17px}}'+
    '.px-art-section{margin:0 0 14px}.px-art-section h2{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:19px;color:var(--ink,#17243b)}'+
    '.px-art-section h2 span{font-size:11px;font-weight:700;color:var(--muted,#68758c);border:1px solid var(--line,#e3e8f1);padding:4px 8px;border-radius:20px}'+
@@ -89,17 +90,16 @@
    var icon=src?'<img class="px-art-icon" src="'+src+'" alt="" loading="lazy" decoding="async">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
    return '<article class="px-art-card" data-artcraft-id="'+esc(slug)+'" role="button" tabindex="0" aria-label="Open '+esc(name)+'"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p><div class="px-art-status">Open inside Pelex</div></article>';
   }).join('');
-  grid.addEventListener('click',function(e){
-   var card=e.target.closest('.px-art-card[data-artcraft-id]');
-   if(!card||!grid.contains(card))return;
-   launchArtCraftCard(card.getAttribute('data-artcraft-id'));
-  });
-  grid.addEventListener('keydown',function(e){
-   if(e.key!=='Enter'&&e.key!==' ')return;
-   var card=e.target.closest('.px-art-card[data-artcraft-id]');
-   if(!card||!grid.contains(card))return;
-   e.preventDefault();
-   launchArtCraftCard(card.getAttribute('data-artcraft-id'));
+  Array.prototype.forEach.call(grid.querySelectorAll('.px-art-card[data-artcraft-id]'),function(card){
+   card.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    launchArtCraftCard(card.getAttribute('data-artcraft-id'));
+   });
+   card.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    e.preventDefault();e.stopPropagation();
+    launchArtCraftCard(card.getAttribute('data-artcraft-id'));
+   });
   });
   loadPackageManifest();
  }
