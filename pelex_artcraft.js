@@ -104,24 +104,59 @@
      return el.getAttribute('data-artcraft-id')===pkg.id;
     });
     if(!card)return;
-    var appUrl=pkg.app_url||'';
-    if(appUrl.indexOf('/artcraft/')===0)appUrl='/public'+appUrl;
-    var url=pkg.platform==='desktop'?(pkg.download_url||pkg.download_path):appUrl;
-    if(!url)return;
     var app=APPS.find(function(item){return item[0]===pkg.id});
-    var link=document.createElement('a');
-    link.className='px-art-card-open';
-    link.href=url;
-    link.target='_blank';
-    link.rel='noopener noreferrer';
-    link.setAttribute('aria-label',pkg.platform==='desktop'?'Download '+app[1]:'Open '+app[1]);
-    card.appendChild(link);
+    var url=pkg.app_url||'';
+    if(url.indexOf('/artcraft/')===0)url='/public'+url;
+    if(pkg.platform==='desktop'){
+     url=pkg.download_url||pkg.download_path||'';
+     if(!url)return;
+     card.addEventListener('click',function(){window.location.href=url});
+     card.setAttribute('role','link');
+     card.setAttribute('tabindex','0');
+     card.setAttribute('aria-label','Download '+app[1]);
+     card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();window.location.href=url}});
+    }else{
+     if(!url)return;
+     card.addEventListener('click',function(){openAppInsidePelex(url,app[1])});
+     card.setAttribute('role','button');
+     card.setAttribute('tabindex','0');
+     card.setAttribute('aria-label','Open '+app[1]+' inside Pelex');
+     card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openAppInsidePelex(url,app[1])}});
+    }
     card.setAttribute('data-ready','true');
    });
   }).catch(function(error){
    console.error('ArtCraft apps could not be loaded:',error);
   });
  }
+ function openAppInsidePelex(url,title){
+  var panel=document.getElementById('pxArtAppModal');
+  if(!panel){
+   panel=document.createElement('section');
+   panel.id='pxArtAppModal';
+   panel.className='px-art-app-modal';
+   panel.hidden=true;
+   panel.innerHTML='<div class="px-art-app-toolbar"><span class="px-art-app-title"></span><button type="button" class="px-art-app-close">Back to Pelex</button></div><iframe class="px-art-app-frame" title="ArtCraft application" allow="fullscreen; clipboard-read; clipboard-write; web-share" allowfullscreen></iframe>';
+   panel.querySelector('.px-art-app-close').addEventListener('click',closeAppInsidePelex);
+   document.body.appendChild(panel);
+  }
+  panel.querySelector('.px-art-app-title').textContent=title;
+  var frame=panel.querySelector('iframe');
+  frame.src=url;
+  frame.title=title;
+  panel.hidden=false;
+  document.body.classList.add('px-art-modal-open');
+  document.addEventListener('keydown',handleAppEscape);
+ }
+ function closeAppInsidePelex(){
+  var panel=document.getElementById('pxArtAppModal');
+  if(!panel)return;
+  panel.querySelector('iframe').src='about:blank';
+  panel.hidden=true;
+  document.body.classList.remove('px-art-modal-open');
+  document.removeEventListener('keydown',handleAppEscape);
+ }
+ function handleAppEscape(e){if(e.key==='Escape')closeAppInsidePelex()}
 
  function addStudioActions(){
   var copy=document.querySelector('.px-art-studio-copy');
