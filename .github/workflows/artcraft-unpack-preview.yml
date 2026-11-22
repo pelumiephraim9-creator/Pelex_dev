@@ -1,0 +1,83 @@
+name: ArtCraft unpack and publish preview assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix/artcraft-unzip-runtime-20261122
+    paths:
+      - "public/artcraft/package-manifest.json"
+      - "scripts/artcraft_extract.py"
+      - ".github/workflows/artcraft-unpack-preview.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: artcraft-unpack-preview
+  cancel-in-progress: false
+
+jobs:
+  unpack-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out preview fix branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/artcraft-unzip-runtime-20261122
+          lfs: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify and unzip official web packages
+        id: unpack
+        env:
+          ARTCRAFT_ASSET_BASE_URL: ${{ secrets.ARTCRAFT_ASSET_BASE_URL }}
+        run: |
+          python scripts/artcraft_extract.py | tee artcraft-unpack.log
+          wasm_dir=$(sed -n 's/^WASM_DIR=//p' artcraft-unpack.log | tail -1)
+          echo "wasm_dir=$wasm_dir" >> "$GITHUB_OUTPUT"
+
+      - name: Upload WASM runtime files to Cloudflare R2
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ARTCRAFT_R2_BUCKET: ${{ secrets.ARTCRAFT_R2_BUCKET }}
+          WASM_DIR: ${{ steps.unpack.outputs.wasm_dir }}
+        run: |
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "::error::Add CLOUDFLARE_ACCOUNT_ID repository secret"; exit 1)
+          test -n "$CLOUDFLARE_API_TOKEN" || (echo "::error::Add CLOUDFLARE_API_TOKEN repository secret"; exit 1)
+          test -n "$ARTCRAFT_R2_BUCKET" || (echo "::error::Add ARTCRAFT_R2_BUCKET repository secret"; exit 1)
+          npm install --global wrangler@latest
+          if find "$WASM_DIR" -type f -name '*.wasm' -print -quit | grep -q .; then
+            find "$WASM_DIR" -type f -name '*.wasm' -print0 | while IFS= read -r -d '' file; do
+              key="artcraft-wasm/${file#"$WASM_DIR"/}"
+              npx --yes wrangler r2 object put "$ARTCRAFT_R2_BUCKET/$key" --file "$file" --remote
+            done
+          fi
+
+      - name: Commit extracted browser app files to preview branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/artcraft/apps
+          if git diff --cached --quiet; then
+            echo "No extracted app-file changes to commit."
+          else
+            git commit -m "Unpack verified official ArtCraft web applications"
+            git push origin HEAD:fix/artcraft-unzip-runtime-20261122
+          fi
+
+      - name: Upload validation summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: artcraft-unpack-validation
+          path: |
+            artcraft-unpack.log
+            public/artcraft/apps/*/index.html
+          if-no-files-found: warn
