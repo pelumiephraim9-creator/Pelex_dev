@@ -77,10 +77,16 @@ for pkg in packages:
         for wasm in wasm_files:
             shutil.copy2(wasm, wasm_target / wasm.name)
         # Point the app's absolute WASM fetch path at the R2 public domain.
-        for html in target.rglob("*.html"):
-            content = html.read_text(encoding="utf-8")
-            content = content.replace(f"/artcraft-wasm/{app_id}/", f"{ASSET_BASE}/{app_id}/")
-            html.write_text(content, encoding="utf-8")
+        # Replace absolute WASM runtime paths wherever the official build references them.
+        text_suffixes = {".html", ".js", ".mjs", ".css", ".json", ".webmanifest", ".svg"}
+        for asset in target.rglob("*"):
+            if asset.is_file() and asset.suffix.lower() in text_suffixes:
+                try:
+                    content = asset.read_text(encoding="utf-8")
+                except UnicodeDecodeError:
+                    continue
+                content = content.replace(f"/artcraft-wasm/{app_id}/", f"{ASSET_BASE}/{app_id}/")
+                asset.write_text(content, encoding="utf-8")
         summary.append({"id": app_id, "sha256": actual, "index": str((target / index.relative_to(app_root)).relative_to(ROOT)), "wasm_files": [p.name for p in wasm_files]})
         shutil.rmtree(extract_root)
         print(f"VERIFIED + UNZIPPED {app_id}: {len(wasm_files)} WASM file(s)", flush=True)
