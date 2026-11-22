@@ -38,9 +38,35 @@ jobs:
         env:
           ARTCRAFT_ASSET_BASE_URL: ${{ secrets.ARTCRAFT_ASSET_BASE_URL }}
         run: |
+          set -o pipefail
           python scripts/artcraft_extract.py | tee artcraft-unpack.log
           wasm_dir=$(sed -n 's/^WASM_DIR=//p' artcraft-unpack.log | tail -1)
           echo "wasm_dir=$wasm_dir" >> "$GITHUB_OUTPUT"
+
+      - name: Configure R2 browser CORS
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ARTCRAFT_R2_BUCKET: ${{ secrets.ARTCRAFT_R2_BUCKET }}
+        run: |
+          cat > artcraft-r2-cors.json <<'JSON'
+          {
+            "rules": [
+              {
+                "allowed": {
+                  "origins": [
+                    "https://pelex.tech",
+                    "https://www.pelex.tech",
+                    "https://preview-artcraft-space-lates.pelex-dev.pages.dev"
+                  ],
+                  "methods": ["GET", "HEAD"]
+                },
+                "maxAgeSeconds": 3600
+              }
+            ]
+          }
+          JSON
+          npx --yes wrangler r2 bucket cors set "$ARTCRAFT_R2_BUCKET" --file artcraft-r2-cors.json --force
 
       - name: Upload WASM runtime files to Cloudflare R2
         env:
