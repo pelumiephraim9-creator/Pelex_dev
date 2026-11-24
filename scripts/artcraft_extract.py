@@ -143,9 +143,12 @@ for package in packages:
             final_text = asset.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
-        malformed = re.search(r"""https?://[^\s\'"<>]*https?://[^\s\'"<>]*""", final_text)
+        validation_text = final_text.replace(ASSET_BASE, "ARTCRAFT_ASSET_BASE")
+        malformed = re.search(r"""https?://[^\s\'"<>]*https?://[^\s\'"<>]*""", validation_text)
         if malformed:
-            print(f"DEBUG malformed URL in {asset.relative_to(target)}: {malformed.group(0)[:500]!r}", flush=True)
+            print(f"DEBUG malformed URL (asset base redacted): {malformed.group(0)[:500]!r}", flush=True)
+            print(f"DEBUG URL scheme count after base redaction: {validation_text.count(chr(58)+chr(47)+chr(47))}", flush=True)
+            raise SystemExit(f"Malformed duplicated URL remains in {app_id}: {asset.relative_to(target)}")
             raise SystemExit(f"Malformed duplicated URL remains in {app_id}: {asset.relative_to(target)}")
             raise SystemExit(f"Malformed duplicated URL remains in {app_id}: {asset.relative_to(target)}")
     for local_wasm in target.rglob("*.wasm"):
