@@ -31,7 +31,7 @@
         .catch(() => new Uint8Array());
       // Compile once; the render workers (worker.js) instantiate the same compiled module.
       const [module, font] = await Promise.all([
-        WebAssembly.compileStreaming(fetch("./lightcraft_web_bg.wasm")),
+        WebAssembly.compileStreaming(fetch("https://artcraft-assets.pelex.techhttps://artcraft-assets.pelex.tech/artcraft-wasm/lightcraft/lightcraft_web_bg.wasm")),
         chineseFont,
       ]);
       globalThis.lightcraftModule = module;
