@@ -59,23 +59,8 @@ jobs:
           test -d "$WASM_DIR" || (echo "::error::WASM extraction directory is missing"; exit 1)
           python -m pip install --disable-pip-version-check awscli
           endpoint="https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
-          cat > artcraft-r2-cors.json <<'JSON'
-          {
-            "CORSRules": [
-              {
-                "AllowedOrigins": [
-                  "https://pelex.tech",
-                  "https://www.pelex.tech",
-                  "https://preview-artcraft-space-lates.pelex-dev.pages.dev"
-                ],
-                "AllowedMethods": ["GET", "HEAD"],
-                "AllowedHeaders": ["*"],
-                "MaxAgeSeconds": 3600
-              }
-            ]
-          }
-          JSON
-          aws s3api put-bucket-cors --bucket "$ARTCRAFT_R2_BUCKET" --cors-configuration file://artcraft-r2-cors.json --endpoint-url "$endpoint"
+          # Bucket CORS is configured separately in the R2 dashboard.
+          # R2 S3 credentials are deliberately limited to object upload access.
           count=0
           while IFS= read -r -d '' file; do
             key="artcraft-wasm/${file#"$WASM_DIR"/}"
