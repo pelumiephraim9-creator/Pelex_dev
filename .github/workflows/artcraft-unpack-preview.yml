@@ -43,48 +43,48 @@ jobs:
           wasm_dir=$(sed -n 's/^WASM_DIR=//p' artcraft-unpack.log | tail -1)
           echo "wasm_dir=$wasm_dir" >> "$GITHUB_OUTPUT"
 
-      - name: Configure R2 browser CORS
+      - name: Upload WASM runtime files to Cloudflare R2
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           ARTCRAFT_R2_BUCKET: ${{ secrets.ARTCRAFT_R2_BUCKET }}
+          WASM_DIR: ${{ steps.unpack.outputs.wasm_dir }}
         run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "::error::Add CLOUDFLARE_ACCOUNT_ID repository secret"; exit 1)
+          test -n "$AWS_ACCESS_KEY_ID" || (echo "::error::Add R2_ACCESS_KEY_ID repository secret"; exit 1)
+          test -n "$AWS_SECRET_ACCESS_KEY" || (echo "::error::Add R2_SECRET_ACCESS_KEY repository secret"; exit 1)
+          test -n "$ARTCRAFT_R2_BUCKET" || (echo "::error::Add ARTCRAFT_R2_BUCKET repository secret"; exit 1)
+          test -d "$WASM_DIR" || (echo "::error::WASM extraction directory is missing"; exit 1)
+          python -m pip install --disable-pip-version-check awscli
+          endpoint="https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
           cat > artcraft-r2-cors.json <<'JSON'
           {
-            "rules": [
+            "CORSRules": [
               {
-                "allowed": {
-                  "origins": [
-                    "https://pelex.tech",
-                    "https://www.pelex.tech",
-                    "https://preview-artcraft-space-lates.pelex-dev.pages.dev"
-                  ],
-                  "methods": ["GET", "HEAD"]
-                },
-                "maxAgeSeconds": 3600
+                "AllowedOrigins": [
+                  "https://pelex.tech",
+                  "https://www.pelex.tech",
+                  "https://preview-artcraft-space-lates.pelex-dev.pages.dev"
+                ],
+                "AllowedMethods": ["GET", "HEAD"],
+                "AllowedHeaders": ["*"],
+                "MaxAgeSeconds": 3600
               }
             ]
           }
           JSON
-          npx --yes wrangler r2 bucket cors set "$ARTCRAFT_R2_BUCKET" --file artcraft-r2-cors.json --force
-
-      - name: Upload WASM runtime files to Cloudflare R2
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          ARTCRAFT_R2_BUCKET: ${{ secrets.ARTCRAFT_R2_BUCKET }}
-          WASM_DIR: ${{ steps.unpack.outputs.wasm_dir }}
-        run: |
-          test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "::error::Add CLOUDFLARE_ACCOUNT_ID repository secret"; exit 1)
-          test -n "$CLOUDFLARE_API_TOKEN" || (echo "::error::Add CLOUDFLARE_API_TOKEN repository secret"; exit 1)
-          test -n "$ARTCRAFT_R2_BUCKET" || (echo "::error::Add ARTCRAFT_R2_BUCKET repository secret"; exit 1)
-          npm install --global wrangler@latest
-          if find "$WASM_DIR" -type f -name '*.wasm' -print -quit | grep -q .; then
-            find "$WASM_DIR" -type f -name '*.wasm' -print0 | while IFS= read -r -d '' file; do
-              key="artcraft-wasm/${file#"$WASM_DIR"/}"
-              npx --yes wrangler r2 object put "$ARTCRAFT_R2_BUCKET/$key" --file "$file" --remote
-            done
-          fi
+          aws s3api put-bucket-cors --bucket "$ARTCRAFT_R2_BUCKET" --cors-configuration file://artcraft-r2-cors.json --endpoint-url "$endpoint"
+          count=0
+          while IFS= read -r -d '' file; do
+            key="artcraft-wasm/${file#"$WASM_DIR"/}"
+            echo "Uploading $key"
+            aws s3 cp "$file" "s3://$ARTCRAFT_R2_BUCKET/$key" --endpoint-url "$endpoint" --region auto --content-type application/wasm
+            count=$((count + 1))
+          done < <(find "$WASM_DIR" -type f -name '*.wasm' -print0)
+          test "$count" -gt 0 || (echo "::error::No WASM files were found to upload"; exit 1)
+          echo "Uploaded $count WASM runtime file(s) to R2."
 
       - name: Commit extracted browser app files to preview branch
         run: |
