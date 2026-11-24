@@ -100,7 +100,7 @@
     }
     try {
       // Compile once: the page and its render workers instantiate the same module.
-      const wasmUrl = new URL("/artcraft-wasm/effectcraft/effectcraft_web_bg.wasm");
+      const wasmUrl = new URL("https://artcraft-assets.pelex.techhttps://artcraft-assets.pelex.tech/artcraft-wasm/effectcraft/effectcraft_web_bg.wasm", location.href);
       let module;
       try {
         module = await WebAssembly.compileStreaming(fetch(wasmUrl));

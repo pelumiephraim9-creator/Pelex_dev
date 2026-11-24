@@ -342,7 +342,7 @@ async function __wbg_init(module_or_path) {
     }
 
     if (module_or_path === undefined) {
-        module_or_path = new URL('pdfcraft-ocr-worker-b363fe94bbdd0923_bg.wasm', import.meta.url);
+        module_or_path = new URL('https://artcraft-assets.pelex.techhttps://artcraft-assets.pelex.tech/artcraft-wasm/pdfcraft/pdfcraft-ocr-worker-b363fe94bbdd0923_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 

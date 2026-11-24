@@ -24,7 +24,7 @@ self.onmessage = (e) => {
   const m = e.data;
   if (m.type === "init") {
     ready = (async () => {
-      await init({ module_or_path: m.module ?? new URL("effectcraft_web_bg.wasm", m.base) });
+      await init({ module_or_path: m.module ?? new URL("https://artcraft-assets.pelex.techhttps://artcraft-assets.pelex.tech/artcraft-wasm/effectcraft/effectcraft_web_bg.wasm", m.base) });
       ec.workerInit();
       if (m.frames) await ec.workerFrameInit(!!m.gpu);
       else await ec.workerJobInit(!!m.gpu);

@@ -2410,7 +2410,7 @@ async function __wbg_init(module_or_path) {
     }
 
     if (module_or_path === undefined) {
-        module_or_path = new URL('lightcraft_web_bg.wasm', import.meta.url);
+        module_or_path = new URL('https://artcraft-assets.pelex.techhttps://artcraft-assets.pelex.tech/artcraft-wasm/lightcraft/lightcraft_web_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 

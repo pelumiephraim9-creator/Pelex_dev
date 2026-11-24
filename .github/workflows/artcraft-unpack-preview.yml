@@ -1,0 +1,94 @@
+name: ArtCraft unpack and publish preview assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix/artcraft-unzip-runtime-20261122
+    paths:
+      - "public/artcraft/package-manifest.json"
+      - "scripts/artcraft_extract.py"
+      - ".github/workflows/artcraft-unpack-preview.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: artcraft-unpack-preview
+  cancel-in-progress: false
+
+jobs:
+  unpack-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out preview fix branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/artcraft-unzip-runtime-20261122
+          lfs: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify and unzip official web packages
+        id: unpack
+        env:
+          ARTCRAFT_ASSET_BASE_URL: ${{ secrets.ARTCRAFT_ASSET_BASE_URL }}
+        run: |
+          set -o pipefail
+          python scripts/artcraft_extract.py | tee artcraft-unpack.log
+          wasm_dir=$(sed -n 's/^WASM_DIR=//p' artcraft-unpack.log | tail -1)
+          echo "wasm_dir=$wasm_dir" >> "$GITHUB_OUTPUT"
+
+      - name: Upload WASM runtime files to Cloudflare R2
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          ARTCRAFT_R2_BUCKET: ${{ secrets.ARTCRAFT_R2_BUCKET }}
+          WASM_DIR: ${{ steps.unpack.outputs.wasm_dir }}
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "::error::Add CLOUDFLARE_ACCOUNT_ID repository secret"; exit 1)
+          test -n "$AWS_ACCESS_KEY_ID" || (echo "::error::Add R2_ACCESS_KEY_ID repository secret"; exit 1)
+          test -n "$AWS_SECRET_ACCESS_KEY" || (echo "::error::Add R2_SECRET_ACCESS_KEY repository secret"; exit 1)
+          test -n "$ARTCRAFT_R2_BUCKET" || (echo "::error::Add ARTCRAFT_R2_BUCKET repository secret"; exit 1)
+          test -d "$WASM_DIR" || (echo "::error::WASM extraction directory is missing"; exit 1)
+          python -m pip install --disable-pip-version-check awscli
+          endpoint="https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          # Bucket CORS is configured separately in the R2 dashboard.
+          # R2 S3 credentials are deliberately limited to object upload access.
+          count=0
+          while IFS= read -r -d '' file; do
+            key="artcraft-wasm/${file#"$WASM_DIR"/}"
+            echo "Uploading $key"
+            aws s3 cp "$file" "s3://$ARTCRAFT_R2_BUCKET/$key" --endpoint-url "$endpoint" --region auto --content-type application/wasm
+            count=$((count + 1))
+          done < <(find "$WASM_DIR" -type f -name '*.wasm' -print0)
+          test "$count" -gt 0 || (echo "::error::No WASM files were found to upload"; exit 1)
+          echo "Uploaded $count WASM runtime file(s) to R2."
+
+      - name: Commit extracted browser app files to preview branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/artcraft/apps
+          if git diff --cached --quiet; then
+            echo "No extracted app-file changes to commit."
+          else
+            git commit -m "Unpack verified official ArtCraft web applications"
+            git push origin HEAD:fix/artcraft-unzip-runtime-20261122
+          fi
+
+      - name: Upload validation summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: artcraft-unpack-validation
+          path: |
+            artcraft-unpack.log
+            public/artcraft/apps/*/index.html
+          if-no-files-found: warn

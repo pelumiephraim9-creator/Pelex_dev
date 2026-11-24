@@ -6,7 +6,7 @@
 // one activates. Anything else same-origin is fetched from the network and cached for next time,
 // except the config file, which must stay live.
 const VERSION = "7110fea2d01a994d";
-const FILES = ["./", "./audio-worklet.js", "./effectcraft_web.js", "./effectcraft_web_bg.wasm", "./favicon.svg", "./icon-256.png", "./icon-512.png", "./index.html", "./manifest.webmanifest", "./snippets/effectcraft-web-37988623cc869135/js/host.js", "./snippets/eframe-d31a8450ea12dfc1/inline0.js", "./worker.js"];
+const FILES = ["./", "./audio-worklet.js", "./effectcraft_web.js", "https://artcraft-assets.pelex.techhttps://artcraft-assets.pelex.tech/artcraft-wasm/effectcraft/effectcraft_web_bg.wasm", "./favicon.svg", "./icon-256.png", "./icon-512.png", "./index.html", "./manifest.webmanifest", "./snippets/effectcraft-web-37988623cc869135/js/host.js", "./snippets/eframe-d31a8450ea12dfc1/inline0.js", "./worker.js"];
 const CACHE = `effectcraft-${VERSION}`;
 
 self.addEventListener("install", (event) => {

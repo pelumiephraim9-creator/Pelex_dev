@@ -59,6 +59,13 @@
    '.px-art-account-logo{display:block;width:100%;height:auto;object-fit:contain}.px-art-account-logo.px-art-logo-dark{display:none}:root[data-theme="dark"] .px-art-account-logo.px-art-logo-light{display:none}:root[data-theme="dark"] .px-art-account-logo.px-art-logo-dark{display:block}.px-art-account-panel h2{margin:7px 0 9px;font-size:22px;color:var(--ink,#17243b)}'+
    '.px-art-account-panel p{font-size:14px;line-height:1.55;color:var(--muted,#68758c)}.px-art-account-continue{display:flex;width:100%;box-sizing:border-box;margin-top:18px}'+
    '.px-art-account-panel .px-art-account-security{font-size:12px;margin:13px 0 0}.px-art-modal-open{overflow:hidden}'+
+   '.px-art-app-modal[hidden]{display:none!important}.px-art-app-modal{position:fixed;inset:0;z-index:10060;display:flex;flex-direction:column;background:var(--panel,#fff);color:var(--ink,#17243b);overflow:hidden}'+
+   '.px-art-app-toolbar{height:54px;min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;border-bottom:1px solid var(--line,#e3e8f1);background:var(--panel,#fff);box-sizing:border-box}'+
+   '.px-art-app-title{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'+
+   '.px-art-app-close{border:1px solid var(--line,#e3e8f1);border-radius:9px;background:var(--soft,#f5f7fb);color:var(--ink,#17243b);font:inherit;font-size:13px;font-weight:700;padding:9px 13px;cursor:pointer;white-space:nowrap}'+
+   '.px-art-app-frame{display:block;flex:1 1 auto;width:100%;height:calc(100% - 54px);min-height:0;border:0;background:#262626}'+
+   '@supports(height:100dvh){.px-art-app-modal{height:100dvh}}'+
+   '@media(max-width:560px){.px-art-app-toolbar{height:50px;min-height:50px;padding:0 10px}.px-art-app-frame{height:calc(100% - 50px)}}'+
    '@media(max-width:560px){.px-art-account-panel{padding:24px 20px;border-radius:17px}}'+
    '.px-art-section{margin:0 0 14px}.px-art-section h2{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-size:19px;color:var(--ink,#17243b)}'+
    '.px-art-section h2 span{font-size:11px;font-weight:700;color:var(--muted,#68758c);border:1px solid var(--line,#e3e8f1);padding:4px 8px;border-radius:20px}'+
@@ -87,49 +94,73 @@
   grid.innerHTML=APPS.map(function(a){
    var slug=a[0],name=a[1],desc=a[2],src=APP_ICON_URLS[slug]||(VERIFIED_ICONS[slug]?ROOT+'/apps/'+slug+'/icon.webp':'');
    var icon=src?'<img class="px-art-icon" src="'+src+'" alt="" loading="lazy" decoding="async">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
-   return '<article class="px-art-card" data-artcraft-id="'+esc(slug)+'"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p></article>';
+   return '<article class="px-art-card" data-artcraft-id="'+esc(slug)+'" role="button" tabindex="0" aria-label="Open '+esc(name)+'"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p><div class="px-art-status" aria-live="polite">Ready to open</div></article>';
   }).join('');
-  loadPackageManifest();
- }
-
- function loadPackageManifest(){
-  fetch('/public/artcraft/package-manifest.json',{cache:'no-store'}).then(function(r){
-   if(!r.ok)throw new Error('manifest unavailable');
-   return r.json();
-  }).then(function(data){
-   var packages=Array.isArray(data.packages)?data.packages:[];
-   packages.forEach(function(pkg){
-    if(!pkg||pkg.validated!==true||!pkg.id||!APPS.some(function(app){return app[0]===pkg.id}))return;
-    var card=Array.prototype.find.call(document.querySelectorAll('.px-art-card[data-artcraft-id]'),function(el){
-     return el.getAttribute('data-artcraft-id')===pkg.id;
-    });
-    if(!card)return;
-    var app=APPS.find(function(item){return item[0]===pkg.id});
-    var url=pkg.app_url||'';
-    if(url.indexOf('/artcraft/')===0)url='/public'+url;
-    if(pkg.platform==='desktop'){
-     url=pkg.download_url||pkg.download_path||'';
-     if(!url)return;
-     card.addEventListener('click',function(){window.location.href=url});
-     card.setAttribute('role','link');
-     card.setAttribute('tabindex','0');
-     card.setAttribute('aria-label','Download '+app[1]);
-     card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();window.location.href=url}});
-    }else{
-     if(!url)return;
-     card.addEventListener('click',function(){openAppInsidePelex(url,app[1])});
-     card.setAttribute('role','button');
-     card.setAttribute('tabindex','0');
-     card.setAttribute('aria-label','Open '+app[1]+' inside Pelex');
-     card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openAppInsidePelex(url,app[1])}});
-    }
-    card.setAttribute('data-ready','true');
+  Array.prototype.forEach.call(grid.querySelectorAll('.px-art-card[data-artcraft-id]'),function(card){
+   var slug=card.getAttribute('data-artcraft-id');
+   card.addEventListener('click',function(){launchArtCraftCard(slug)});
+   card.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    e.preventDefault();launchArtCraftCard(slug);
    });
-  }).catch(function(error){
-   console.error('ArtCraft apps could not be loaded:',error);
   });
  }
+
+ var packageManifestPromise=null;
+ function loadPackageManifest(){
+  if(packageManifestPromise)return packageManifestPromise;
+  var candidates=['/public/artcraft/package-manifest.json','/artcraft/package-manifest.json'];
+  packageManifestPromise=candidates.reduce(function(p,url){
+   return p.catch(function(){return fetch(url,{cache:'no-store'}).then(function(r){
+    if(!r.ok)throw new Error('Manifest request failed ('+r.status+'): '+url);
+    return r.json();
+   })});
+  },Promise.reject(new Error('No manifest URL tried')));
+  return packageManifestPromise;
+ }
+ function setCardStatus(card,message,isError){
+  var status=card&&card.querySelector('.px-art-status');
+  if(status){status.textContent=message;status.style.color=isError?'#b42318':''}
+  if(card){card.setAttribute('aria-busy',isError?'false':'true')}
+ }
+ function launchArtCraftCard(slug){
+  var card=document.querySelector('.px-art-card[data-artcraft-id="'+slug+'"]');
+  var app=APPS.find(function(item){return item[0]===slug});
+  if(!card||!app)return;
+  setCardStatus(card,'Loading application details…',false);
+  loadPackageManifest().then(function(data){
+   var pkg=(Array.isArray(data.packages)?data.packages:[]).find(function(item){return item&&item.id===slug&&item.validated===true});
+   if(!pkg)throw new Error('This package is not marked as validated in the manifest.');
+   if(pkg.platform==='desktop'){
+    var download=pkg.download_url||pkg.download_path;
+    if(!download)throw new Error('Desktop download link is missing.');
+    setCardStatus(card,'Starting desktop download…',false);
+    window.location.href=download;
+    return;
+   }
+   var url=pkg.app_url||'';
+   if(!url)throw new Error('Application launch path is missing.');
+   /* /public is a source-folder name, not part of a deployed Pages URL. */
+   if(pkg.asset_base_url||data.asset_base_url){
+    var base=(pkg.asset_base_url||data.asset_base_url).replace(/\/$/,'');
+    url=base+(url.charAt(0)==='/'?url:'/'+url);
+   }
+   setCardStatus(card,'Opening '+app[1]+'…',false);
+   openAppInsidePelex(url,app[1]);
+   setCardStatus(card,'Opened inside Pelex',false);
+  }).catch(function(error){
+   console.error('ArtCraft launch failed for '+slug+':',error);
+   setCardStatus(card,'Could not open: '+error.message,true);
+  }).finally(function(){if(card)card.setAttribute('aria-busy','false')});
+ }
+ var artCraftHistoryActive=false;
  function openAppInsidePelex(url,title){
+  /* Create one top-level history entry so browser Back returns to the Pelex workspace. */
+  if(!artCraftHistoryActive){
+   var nextUrl=window.location.pathname+window.location.search+'#artcraft-'+encodeURIComponent(title.toLowerCase().replace(/[^a-z0-9]+/g,'-'));
+   window.history.pushState({pelexArtCraft:true},'',nextUrl);
+   artCraftHistoryActive=true;
+  }
   var panel=document.getElementById('pxArtAppModal');
   if(!panel){
    panel=document.createElement('section');
@@ -150,12 +181,23 @@
  }
  function closeAppInsidePelex(){
   var panel=document.getElementById('pxArtAppModal');
-  if(!panel)return;
+  if(!panel||panel.hidden)return;
   panel.querySelector('iframe').src='about:blank';
   panel.hidden=true;
   document.body.classList.remove('px-art-modal-open');
   document.removeEventListener('keydown',handleAppEscape);
+  if(artCraftHistoryActive){artCraftHistoryActive=false;window.history.back();}
  }
+ window.addEventListener('popstate',function(){
+  if(!artCraftHistoryActive)return;
+  artCraftHistoryActive=false;
+  var panel=document.getElementById('pxArtAppModal');
+  if(!panel||panel.hidden)return;
+  panel.querySelector('iframe').src='about:blank';
+  panel.hidden=true;
+  document.body.classList.remove('px-art-modal-open');
+  document.removeEventListener('keydown',handleAppEscape);
+ });
  function handleAppEscape(e){if(e.key==='Escape')closeAppInsidePelex()}
 
  function addStudioActions(){
