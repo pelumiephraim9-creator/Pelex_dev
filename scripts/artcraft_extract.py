@@ -14,9 +14,18 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "public/artcraft/package-manifest.json"
 APPS_DIR = ROOT / "public/artcraft/apps"
 WASM_TMP = pathlib.Path(tempfile.mkdtemp(prefix="artcraft-wasm-"))
-ASSET_BASE = os.environ.get("ARTCRAFT_ASSET_BASE_URL", "").rstrip("/")
+ASSET_BASE = os.environ.get("ARTCRAFT_ASSET_BASE_URL", "").strip().rstrip("/")
 if not ASSET_BASE:
     raise SystemExit("Missing ARTCRAFT_ASSET_BASE_URL secret (public R2 custom-domain base URL ending in /artcraft-wasm).")
+
+# Repair a duplicated URL accidentally saved in the repository secret, e.g.
+# https://hosthttps://host/artcraft-wasm. Keep the final complete URL.
+if ASSET_BASE.count("://") > 1:
+    ASSET_BASE = ASSET_BASE[ASSET_BASE.rfind("https://"):]
+if not ASSET_BASE.startswith("https://") or "://" in ASSET_BASE[len("https://"):]:
+    raise SystemExit("ARTCRAFT_ASSET_BASE_URL is malformed; expected one HTTPS URL.")
+if not ASSET_BASE.endswith("/artcraft-wasm"):
+    raise SystemExit("ARTCRAFT_ASSET_BASE_URL must end with /artcraft-wasm.")
 
 
 def safe_extract(zf, dest):
@@ -123,6 +132,16 @@ for package in packages:
         if updated != source:
             asset.write_text(updated, encoding="utf-8")
 
+    # Fail closed if any generated text asset still contains a duplicated URL.
+    for asset in target.rglob("*"):
+        if not asset.is_file() or asset.suffix.lower() not in text_suffixes:
+            continue
+        try:
+            final_text = asset.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        if re.search(r"https?://[^\\s'\\"<>)]*https?://", final_text):
+            raise SystemExit(f"Malformed duplicated URL remains in {app_id}: {asset.relative_to(target)}")
     for local_wasm in target.rglob("*.wasm"):
         local_wasm.unlink()
 
