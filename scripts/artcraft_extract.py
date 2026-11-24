@@ -128,7 +128,20 @@ for package in packages:
             updated = reference.sub(lambda _match: public_url, updated)
         # Normalize malformed concatenated HTTPS prefixes regardless of whether
         # the embedded WASM filename appears in the extracted inventory.
-        updated = re.sub(r"https?://\S*?(?=https?://)", "", updated)
+        # Exact repair for the duplicated Pelex R2 domain seen in PhotoCraft.
+        duplicated_base = "https://artcraft-assets.pelex.techhttps://artcraft-assets.pelex.tech/"
+        updated = updated.replace(duplicated_base, "https://artcraft-assets.pelex.tech/")
+        # Generic fallback: normalize each whitespace-delimited URL token independently.
+        normalized_lines = []
+        for line in updated.splitlines(keepends=True):
+            pieces = line.split()
+            normalized = []
+            for piece in pieces:
+                if piece.count("https://") > 1:
+                    piece = "https://" + piece.rsplit("https://", 1)[1]
+                normalized.append(piece)
+            normalized_lines.append(" ".join(normalized))
+        updated = "".join(normalized_lines)
         # Catch app-specific absolute paths assembled in source text even when their
         # WASM filename is not present in the extracted inventory.
         updated = updated.replace(f"/artcraft-wasm/{app_id}/", f"{ASSET_BASE}/{app_id}/")
