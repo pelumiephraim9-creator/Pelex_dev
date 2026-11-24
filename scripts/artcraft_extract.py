@@ -113,7 +113,7 @@ for package in packages:
             # malformed URL such as https://hosthttps://host/.../file.wasm.
             escaped = re.escape(filename)
             reference = re.compile(
-                r"""(?:https?://[^\\s'"<>)]*/|(?:\\.\\.?/|/)?(?:[A-Za-z0-9_.@+-]+/)*)"""
+                r"""(?:https?://[^\s'"<>)]*/|(?:\.\.?/|/)?(?:[A-Za-z0-9_.@+-]+/)*)"""
                 + escaped
             )
             updated = reference.sub(lambda _match: public_url, updated)
