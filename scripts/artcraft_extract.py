@@ -126,22 +126,9 @@ for package in packages:
                 + escaped
             )
             updated = reference.sub(lambda _match: public_url, updated)
-        # Normalize malformed concatenated HTTPS prefixes regardless of whether
-        # the embedded WASM filename appears in the extracted inventory.
-        # Exact repair for the duplicated Pelex R2 domain seen in PhotoCraft.
-        duplicated_base = "https://artcraft-assets.pelex.techhttps://artcraft-assets.pelex.tech/"
-        updated = updated.replace(duplicated_base, "https://artcraft-assets.pelex.tech/")
-        # Generic fallback: normalize each whitespace-delimited URL token independently.
-        normalized_lines = []
-        for line in updated.splitlines(keepends=True):
-            pieces = line.split()
-            normalized = []
-            for piece in pieces:
-                if piece.count("https://") > 1:
-                    piece = "https://" + piece.rsplit("https://", 1)[1]
-                normalized.append(piece)
-            normalized_lines.append(" ".join(normalized))
-        updated = "".join(normalized_lines)
+        # Repair duplicated HTTPS prefixes within each URL reference, without
+        # rewriting unrelated markup or merging separate URLs on minified lines.
+        updated = re.sub(r"""(https?://[^\s\'"<>]*?)(https?://)""", r"\2", updated)
         # Catch app-specific absolute paths assembled in source text even when their
         # WASM filename is not present in the extracted inventory.
         updated = updated.replace(f"/artcraft-wasm/{app_id}/", f"{ASSET_BASE}/{app_id}/")
@@ -156,7 +143,7 @@ for package in packages:
             final_text = asset.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
-        if any(token.count("://") > 1 for token in final_text.replace(chr(34), " ").replace(chr(39), " ").replace("<", " ").replace(">", " ").split()):
+        if re.search(r"""https?://[^\s\'"<>]*https?://""", final_text):
             raise SystemExit(f"Malformed duplicated URL remains in {app_id}: {asset.relative_to(target)}")
     for local_wasm in target.rglob("*.wasm"):
         local_wasm.unlink()
