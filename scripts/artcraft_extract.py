@@ -108,8 +108,17 @@ for package in packages:
             continue
         updated = source
         for filename, public_url in wasm_urls.items():
+            # Replace the complete reference, including any existing absolute URL or
+            # /artcraft-wasm/<app>/ prefix. Replacing only the basename creates a
+            # malformed URL such as https://hosthttps://host/.../file.wasm.
             escaped = re.escape(filename)
-            updated = re.sub(r"(?<![A-Za-z0-9_.-])(?:\./)?" + escaped, lambda _match: public_url, updated)
+            reference = re.compile(
+                r'(?:https?://[^\\s\\'"<>)]*/|(?:\\.\\.?/|/)?(?:[A-Za-z0-9_.@+-]+/)*)'
+                + escaped
+            )
+            updated = reference.sub(lambda _match: public_url, updated)
+        # Catch app-specific absolute paths assembled in source text even when their
+        # WASM filename is not present in the extracted inventory.
         updated = updated.replace(f"/artcraft-wasm/{app_id}/", f"{ASSET_BASE}/{app_id}/")
         if updated != source:
             asset.write_text(updated, encoding="utf-8")
