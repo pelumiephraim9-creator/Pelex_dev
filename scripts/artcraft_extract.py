@@ -140,7 +140,7 @@ for package in packages:
             final_text = asset.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
-        if re.search(r"https?://[^\\s'\\"<>)]*https?://", final_text):
+        if any(line.count("://") > 1 for line in final_text.splitlines()):
             raise SystemExit(f"Malformed duplicated URL remains in {app_id}: {asset.relative_to(target)}")
     for local_wasm in target.rglob("*.wasm"):
         local_wasm.unlink()
