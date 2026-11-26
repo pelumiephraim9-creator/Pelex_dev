@@ -1478,14 +1478,14 @@ main{min-height:0;height:100%;overflow:hidden}
 </section>
 
 <section class="view" id="v-library" hidden><div class="wrap">
-<h1>Library</h1><div class="muted">Images and documents you share with Pelex are kept here on this device.</div>
+<h2>Library</h2><div class="muted">Images and documents you share with Pelex are kept here on this device.</div>
 <div class="grid" id="libGrid"></div>
 <p class="muted" id="libEmpty" style="margin-top:14px">Nothing saved yet. Attach an image or document in chat and it will appear here.</p>
 <div style="margin-top:16px"><button class="btn alt" id="libClear">Clear library</button></div>
 </div></section>
 
 <section class="view" id="v-pitch" hidden><div class="wrap"><div class="abanner" data-agent="pitch" hidden></div><div style="margin:0 0 14px"><button class="btn alt" type="button" data-sched-agent="pitch">Schedule a task for this agent</button></div>
-<h1>Pitch Agent</h1><div class="muted">Finds jobs and clients, writes in your tone, and asks you before anything is sent.</div>
+<h2>Pitch Agent</h2><div class="muted">Finds jobs and clients, writes in your tone, and asks you before anything is sent.</div>
 <div class="dash" id="pDash" hidden>
  <div class="dcard"><h2>Your progress</h2><div class="pmet" id="pMet"></div><div class="muted dnote" id="pMetNote"></div></div>
  <div class="dcard"><h2>Updates for your field</h2><div id="pNews" class="ilist"></div><div class="muted dnote" id="pNewsNote"></div></div>
@@ -1518,7 +1518,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="muted" id="pNext"></div><button class="btn" id="pSaveS" type="button" style="margin-top:10px">Save schedule</button></div>
 </div></section>
 <section class="view" id="v-groups" hidden><div class="wrap">
-<div class="ghead"><div><h1>Groups</h1><div class="muted">Chat with friends and colleagues, and bring in Pelex Support when you need help.</div></div>
+<div class="ghead"><div><h2>Groups</h2><div class="muted">Chat with friends and colleagues, and bring in Pelex Support when you need help.</div></div>
 <div class="gtools" id="gTools" hidden><div class="gmini"><button type="button" class="gav sm" id="gMeEmoji" aria-label="Change your emoji">&#128578;</button><span class="gmeT"><b id="gMeName">You</b><span><code id="gMeId">PLX-......</code> <button type="button" class="btn alt gsm" id="gMeCopy">Copy</button></span></span></div><button type="button" class="btn" id="gNew">New group</button></div></div>
 <div id="gOut" class="card" style="margin-top:18px" hidden><h2>Sign in to use groups</h2><span class="muted">Your Pelex ID and your groups live in your account.</span><button class="btn" id="gSignIn" type="button">Sign in</button></div>
 <div id="gIn" hidden>
@@ -1540,7 +1540,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="lp-toast" id="gToast" role="status" aria-live="polite" hidden></div>
 <section class="view" id="v-gmail" hidden><div class="wrap">
 <div class="abanner" data-agent="gmail" hidden></div><div style="margin:0 0 14px"><button class="btn alt" type="button" data-sched-agent="gmail">Schedule a task for this agent</button></div>
-<h1>Gmail Bot</h1><div class="muted">Write better emails with AI and voice. You always review a message before anything is sent.</div>
+<h2>Gmail Bot</h2><div class="muted">Write better emails with AI and voice. You always review a message before anything is sent.</div>
 <div class="dash" id="gDash" hidden>
  <div class="dcard"><h2>Your Gmail accounts</h2><div class="muted dnote">Switch each account on or off. Pelex only works on the accounts that are on.</div><div id="gAccts" class="ilist"></div><div class="muted dnote" id="gAcctNote"></div></div>
  <div class="dcard"><h2>Recent emails</h2><div class="muted dnote">Tap a card to read the summary.</div><div id="gFlip" class="flist"></div><div class="muted dnote" id="gFlipNote"></div></div>
@@ -1560,7 +1560,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="muted">Pelex drafts email text for you to review and open in Gmail. You send it yourself. Pelex does not currently read your inbox, attachments or labels. Voice input uses your browser's speech service, which may send audio to your device maker.</div></div>
 </div></section>
 <section class="view" id="v-business" hidden><div class="wrap"><div class="abanner" data-agent="business" hidden></div><div style="margin:0 0 14px"><button class="btn alt" type="button" data-sched-agent="business">Schedule a task for this agent</button></div>
-<h1>Business Agent</h1><div class="muted">Manage each business independently, review performance, record transactions and get professional operational analysis.</div>
+<h2>Business Agent</h2><div class="muted">Manage each business independently, review performance, record transactions and get professional operational analysis.</div>
 <div class="dash" id="bWork" hidden>
  <div class="dcard"><div class="dhead"><h2>Workspace & team access</h2><span class="ttag">Owner + up to 3</span></div>
   <p class="muted dnote">A workspace is your secure team container, not an individual business. Create or join it once, then create each independent business in the “Your businesses · business setup” card directly below. Members can view by default; only the owner can give someone edit access.</p>
@@ -1622,7 +1622,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="supbar"><input class="inp" id="bIn" placeholder="Ask your bot something" maxlength="1000" aria-label="Test message"><button class="btn" id="bSend" type="button">Send</button></div>
 </div></div></section>
 <section class="view" id="v-support" hidden><div class="wrap">
-<h1>Support inbox</h1><div class="muted">Groups that called Pelex Support. Open one to read the chat and reply as Pelex Support.</div>
+<h2>Support inbox</h2><div class="muted">Groups that called Pelex Support. Open one to read the chat and reply as Pelex Support.</div>
 <div class="glist" id="supList" style="margin-top:16px"></div><p class="muted" id="supEmpty">No open requests right now.</p>
 <div id="supRoom" hidden>
 <div class="prow" style="margin:6px 0 10px"><button class="btn alt" id="supBack" type="button">Back</button><button class="btn alt gdanger" id="supClose" type="button">Close this request</button></div>
@@ -1632,7 +1632,7 @@ main{min-height:0;height:100%;overflow:hidden}
 </div></div></section>
 
 <section class="view" id="v-scheduled" hidden><div class="wrap">
-<button class="iconbtn backToSettings" data-go="settings" aria-label="Back to Settings" title="Back to Settings" style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Scheduled</h1><div class="muted">Tell Pelex what to do and how often.</div>
+<button class="iconbtn backToSettings" data-go="settings" aria-label="Back to Settings" title="Back to Settings" style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 6l-6 6 6 6"/></svg></button><h2>Scheduled</h2><div class="muted">Tell Pelex what to do and how often.</div>
 <div class="qchips" id="sChips">
 <button type="button" class="qchip" data-ins="Give me the latest Netflix movies and shows, and what is trending on Netflix right now." data-freq="weekly">&#127916; Latest on Netflix</button>
 <button type="button" class="qchip" data-ins="Give me the latest Prime Video movies and shows, and what is trending on Prime Video right now." data-freq="weekly">&#127871; Latest on Prime Video</button>
@@ -1664,7 +1664,7 @@ main{min-height:0;height:100%;overflow:hidden}
  <div class="px-art-space">
   <header class="px-art-head">
    <div class="px-art-brand" aria-label="ArtCraft"><img class="px-art-logo-light" src="https://raw.githubusercontent.com/storytold/wordcraft/bbfacd8f624a751f11e8bc614ddf27dd675f7388/docs/brand/artcraft-logo.svg" alt="ArtCraft" loading="eager"><img class="px-art-logo-dark" src="https://raw.githubusercontent.com/storytold/wordcraft/bbfacd8f624a751f11e8bc614ddf27dd675f7388/docs/brand/artcraft-logo-white.svg" alt="" aria-hidden="true" loading="eager"></div>
-   <div><div class="px-art-eyebrow">PELEX CREATIVE WORKSPACE</div><h1>ArtCraft Space</h1><p>Your creative tools, organised in one place.</p></div>
+   <div><div class="px-art-eyebrow">PELEX CREATIVE WORKSPACE</div><h2>ArtCraft Space</h2><p>Your creative tools, organised in one place.</p></div>
   </header>
   <section class="px-art-studio">
    <div class="px-art-studio-copy">
@@ -1681,7 +1681,7 @@ main{min-height:0;height:100%;overflow:hidden}
  </div>
 </section>
 
-<section class="view" id="v-images" hidden><div class="wrap"><h1>Image generation</h1><div class="card" style="margin-top:18px"><h2>Temporarily unavailable</h2><p class="muted">Pelex cannot create or edit images at the moment. You can still ask Pelex to develop the visual concept, describe the scene, or write a detailed prompt for you.</p><p class="muted">To create the actual image, copy the prompt into ChatGPT image generation or another image-creation tool.</p></div></div></section>
+<section class="view" id="v-images" hidden><div class="wrap"><h2>Image generation</h2><div class="card" style="margin-top:18px"><h2>Temporarily unavailable</h2><p class="muted">Pelex cannot create or edit images at the moment. You can still ask Pelex to develop the visual concept, describe the scene, or write a detailed prompt for you.</p><p class="muted">To create the actual image, copy the prompt into ChatGPT image generation or another image-creation tool.</p></div></div></section>
 
 <section class="view" id="v-signin" hidden>
 <header class="lp-nav"><div class="lp-in">
@@ -1692,7 +1692,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <div class="lp-hero lp-in">
 <div class="lp-left"><h2 class="lp-h2">Let Pelex handle the busywork</h2><p class="lp-sub">Plan, write, code and search, by text or voice.</p>
 <div id="lp-card"><div class="authcard">
-<h1 id="authTitle">Sign in</h1>
+<h2 id="authTitle">Sign in</h2>
 <div class="muted" id="authSub">Sign in to save your chats, library and plan across devices.</div>
 <button class="oauthbtn" id="authGoogle"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.07-1.47-.22-2.12H12v3.85h6.6c-.13 1.1-.86 2.76-2.47 3.87l-.02.15 3.59 2.78.25.02c2.28-2.1 3.57-5.2 3.57-8.55"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.9l-3.79-2.94c-1.02.7-2.4 1.2-4.16 1.2-3.18 0-5.88-2.1-6.84-5.02l-.14.01-3.73 2.88-.05.13C3.21 21.3 7.26 24 12 24"/><path fill="#FBBC05" d="M5.16 14.34A7.4 7.4 0 0 1 4.75 12c0-.81.14-1.6.4-2.34l-.01-.16-3.78-2.94-.12.06A12 12 0 0 0 0 12c0 1.93.46 3.76 1.24 5.38z"/><path fill="#EA4335" d="M12 4.74c2.25 0 3.77.97 4.64 1.78l3.38-3.3C17.94 1.2 15.24 0 12 0 7.26 0 3.21 2.7 1.24 6.62l3.9 3.04C6.12 6.84 8.82 4.74 12 4.74"/></svg>Continue with Google</button>
 <button class="oauthbtn" id="authGithub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.98 5.24.98 11.52c0 5.02 3.26 9.28 7.78 10.78.57.1.78-.25.78-.55v-2.17c-3.16.7-3.83-1.36-3.83-1.36-.52-1.3-1.26-1.65-1.26-1.65-1.03-.7.08-.69.08-.69 1.14.08 1.74 1.17 1.74 1.17 1.01 1.74 2.65 1.24 3.3.95.1-.73.4-1.24.72-1.52-2.52-.29-5.17-1.26-5.17-5.6 0-1.24.44-2.25 1.17-3.04-.12-.29-.5-1.44.11-3 0 0 .96-.3 3.14 1.16a10.9 10.9 0 0 1 5.72 0c2.18-1.46 3.14-1.16 3.14-1.16.61 1.56.23 2.71.11 3 .73.79 1.17 1.8 1.17 3.04 0 4.35-2.66 5.3-5.19 5.59.41.35.77 1.04.77 2.1v3.11c0 .3.2.66.79.55a11.03 11.03 0 0 0 7.76-10.78C23.02 5.24 18.27.5 12 .5"/></svg>Continue with GitHub</button>
@@ -1737,14 +1737,14 @@ main{min-height:0;height:100%;overflow:hidden}
 
 
 <section class="view" id="v-projects" hidden><div class="wrap">
-<h1>Chat projects</h1><div class="muted">Each project keeps its own chats and conversation history.</div>
+<h2>Chat projects</h2><div class="muted">Each project keeps its own chats and conversation history.</div>
 <div style="margin-top:16px"><button class="btn" id="newProjectBtn">New project</button></div>
 <div class="grid" id="projectsGrid"></div>
 <p class="muted" id="projectsEmpty" style="margin-top:14px">No projects yet. Start one to keep related chats together.</p>
 </div></section>
 
 <section class="view" id="v-plugins" hidden><div class="wrap">
-<button class="iconbtn backToSettings" data-go="settings" aria-label="Back to Settings" title="Back to Settings" style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Connectors</h1><div id="plugs">
+<button class="iconbtn backToSettings" data-go="settings" aria-label="Back to Settings" title="Back to Settings" style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 6l-6 6 6 6"/></svg></button><h2>Connectors</h2><div id="plugs">
 <div class="card" style="border-style:dashed">
 <h2>Add a connector</h2>
 <div class="addplug">
@@ -1758,7 +1758,7 @@ main{min-height:0;height:100%;overflow:hidden}
 
 
 <section class="view" id="v-plans" hidden><div class="wrap">
-<button class="iconbtn backToSettings" data-go="settings" aria-label="Back to Settings" title="Back to Settings" style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Plans</h1><div class="muted">Every plan starts with a 2-day free trial. You are asked to activate only after the trial ends.</div>
+<button class="iconbtn backToSettings" data-go="settings" aria-label="Back to Settings" title="Back to Settings" style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 6l-6 6 6 6"/></svg></button><h2>Plans</h2><div class="muted">Every plan starts with a 2-day free trial. You are asked to activate only after the trial ends.</div>
 <div class="grid">
 <div class="card"><h2>General</h2><div class="price">Free</div><span class="muted">Chat, web search, voice and image upload with a daily limit. No login needed.</span><span class="muted">General Premium: <span data-ngn="&#8358;6,500" data-usd="$5"></span> monthly, <span data-ngn="&#8358;4,000" data-usd="$3"></span> biweekly or <span data-ngn="&#8358;65,000" data-usd="$50"></span> per year. Unlimited chat (fair use) and live walkthroughs.</span><button class="btn alt">Start free</button></div>
 
@@ -1770,7 +1770,7 @@ main{min-height:0;height:100%;overflow:hidden}
 
 <section class="view" id="v-voice" hidden><div class="wrap narrow">
 <button class="iconbtn backToSettings" data-go="settings" aria-label="Back to Settings" title="Back to Settings" style="margin-bottom:8px"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 6l-6 6 6 6"/></svg></button>
-<h1>Voice settings</h1>
+<h2>Voice settings</h2>
 <div class="voiceCards" id="voiceCards">
 <button type="button" class="voiceCard" data-v="female"><span class="vcDot vc-female"></span><span>Warm</span></button>
 <button type="button" class="voiceCard" data-v="male"><span class="vcDot vc-male"></span><span>Steady</span></button>
@@ -1802,7 +1802,7 @@ main{min-height:0;height:100%;overflow:hidden}
 </div></div>
 
 <section class="view" id="v-settings" hidden><div class="wrap">
-<h1>Settings</h1>
+<h2>Settings</h2>
 <div class="pane" id="p-home">
 <div class="sgroup">Account</div>
 <div class="scard"><button class="srow" data-t="account"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.5"/><path d="M5 20c1-4 4-5.500 7-5.500s6 1.500 7 5.500"/></svg><span>Profile</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-go="plans"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.500 9.500c-.5-1-1.500-1.500-2.500-1.500-1.500 0-2.500.8-2.500 2s1 1.700 2.500 2 2.500.8 2.500 2-1 2-2.500 2c-1 0-2-.5-2.500-1.500M12 6.500v1.500M12 16v1.500"/></svg><span>Plans &amp; billing</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button class="srow" data-t="privacy"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><rect x="9.500" y="10.500" width="5" height="4" rx="1"/></svg><span>Privacy</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>
@@ -1875,7 +1875,7 @@ main{min-height:0;height:100%;overflow:hidden}
 <section class="view" id="v-spotlight" hidden>
 <div class="wrap px-spot-app">
   <header class="px-spot-heading">
-    <div><div class="px-spot-kicker">PELEX · DISCOVER</div><h1>Spotlight</h1><p>Discover videos, ideas and creators from across the web.</p></div>
+    <div><div class="px-spot-kicker">PELEX · DISCOVER</div><h2>Spotlight</h2><p>Discover videos, ideas and creators from across the web.</p></div>
     <button type="button" class="px-spot-saved-toggle" id="pxSpotSavedToggle" aria-expanded="false">♡ Saved videos</button>
   </header>
   <div class="px-spot-workspace">
