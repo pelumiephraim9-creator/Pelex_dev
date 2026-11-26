@@ -13,7 +13,7 @@ function call(action,provider,query,pageToken){
 }
 function sourceMarkup(){
  var all='<button class="px-spot-source" type="button" data-source="" aria-pressed="'+(!state.active)+'"><span class="px-spot-source-icon">✦</span><span class="px-spot-source-copy"><b>All sources</b><small>Explore everything</small></span></button>';
- return all+state.providers.map(function(p){var id=p.id||p.name||'',logo=logos[id];return '<button class="px-spot-source" type="button" data-source="'+esc(id)+'" aria-pressed="'+(state.active===id)+'"><span class="px-spot-source-icon">'+(logo?'<img src="https://cdn.simpleicons.org/'+logo+'" alt="">':'▶')+'</span><span class="px-spot-source-copy"><b>'+esc(names[id]||p.name||id)+'</b><small>Explore videos</small></span></button>'}).join('');
+ return all+state.providers.map(function(p){var id=p.id||p.name||'',logo=logos[id];return '<button class="px-spot-source" type="button" data-source="'+esc(id)+'" aria-pressed="'+(state.active===id)+'"><span class="px-spot-source-icon">'+(logo?'<img src="https://cdn.simpleicons.org/'+logo+'" alt="'+esc(names[id]||p.name||id)+' logo">':'▶')+'</span><span class="px-spot-source-copy"><b>'+esc(names[id]||p.name||id)+'</b><small>Explore videos</small></span></button>'}).join('');
 }
 function renderSourceNav(){var root=$('pxSpotSources');if(root)root.innerHTML=sourceMarkup()}
 function renderCard(v,provider){

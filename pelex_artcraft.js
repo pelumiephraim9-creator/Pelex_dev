@@ -87,7 +87,7 @@
   },true);
   grid.innerHTML=APPS.map(function(a){
    var slug=a[0],name=a[1],desc=a[2],src=APP_ICON_URLS[slug]||(VERIFIED_ICONS[slug]?ROOT+'/apps/'+slug+'/icon.webp':'');
-   var icon=src?'<img class="px-art-icon" src="'+src+'" alt="" loading="lazy" decoding="async">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
+   var icon=src?'<img class="px-art-icon" src="'+src+'" alt="'+esc(name)+' icon" loading="lazy" decoding="async">':'<span class="px-art-monogram" aria-hidden="true">'+esc(name.split(/\\s+/).map(function(x){return x[0]}).join('').slice(0,2).toUpperCase())+'</span>';
    return '<article class="px-art-card" data-artcraft-id="'+esc(slug)+'" role="button" tabindex="0" aria-label="Open '+esc(name)+'"><div class="px-art-cardtop">'+icon+'<h3>'+esc(name)+'</h3></div><p>'+esc(desc)+'</p><div class="px-art-status">Open inside Pelex</div></article>';
   }).join('');
   Array.prototype.forEach.call(grid.querySelectorAll('.px-art-card[data-artcraft-id]'),function(card){
