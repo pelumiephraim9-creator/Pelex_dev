@@ -3583,7 +3583,7 @@ if('serviceWorker' in navigator){
       var c=await sb.from('chats').select('*'),m=await sb.from('messages').select('*'),t=await sb.from('scheduled_tasks').select('*'),pr=await sb.from('projects').select('*');
       out.chats=c.data||[];out.messages=m.data||[];out.scheduled_tasks=t.data||[];out.projects=pr.data||[];
       var b=new Blob([JSON.stringify(out,null,2)],{type:'application/json'}),a=document.createElement('a');
-      a.href=URL.createObjectURL(b);a.download='uncle-pelex-my-data.json';document.body.appendChild(a);a.click();a.remove();
+      a.href=URL.createObjectURL(b);a.download='pelex-my-data.json';document.body.appendChild(a);a.click();a.remove();
       setTimeout(function(){URL.revokeObjectURL(a.href)},2000);note('privNote','Your data has been downloaded.');
     }catch(e){note('privNote','Could not prepare your data right now.',true)}
   });
