@@ -1,4 +1,4 @@
-# Uncle Pelex Agent 1.0
+#  Pelex
 
 The live chat website for the Uncle Pelex AI Agent: a conversational assistant with text chat, live voice conversation, image understanding, and document/PDF reading.
 
