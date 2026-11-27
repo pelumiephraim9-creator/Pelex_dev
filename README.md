@@ -1,6 +1,6 @@
 #  Pelex
 
-The live chat website for the Uncle Pelex AI Agent: a conversational assistant with text chat, live voice conversation, image understanding, and document/PDF reading.
+Pelex – Your Intelligent AI Platform is a unified AI platform providing text chat, voice interaction, image understanding, document reading, and specialised AI capabilities.
 
 ## Structure
 
